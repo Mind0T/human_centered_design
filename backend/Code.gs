@@ -1,6 +1,5 @@
 /**
- * ORBITAL · Backend del equipo (v2)
- * NASA Space Apps CDMX 2026 · Equipo Tacos de Asada
+ * HCD Kit · Backend del equipo (v2)
  *
  * Guarda lo que el equipo escribe en aterrizar.html, empatia.html y riesgo.html
  * en la pestaña "Datos" (almacén crudo) y, a partir de ella, arma pestañas
@@ -15,7 +14,7 @@
  *   6 · Insumos requerimientos materia prima para la hoja de requerimientos
  *
  * Las pestañas 0–6 se reconstruyen solas (al escribir, como máximo cada 20 s,
- * al abrir la hoja, desde el menú ORBITAL o desde la página Insights).
+ * al abrir la hoja, desde el menú "HCD Kit" o desde la página Insights).
  * No las editen a mano: se sobrescriben. Editen desde las páginas.
  *
  * Instalación y actualización: ver backend-setup.md.
@@ -23,7 +22,8 @@
 
 var SHEET_NAME = 'Datos';
 var HEADERS = ['ts', 'room', 'tool', 'id', 'zone', 'author', 'key', 'value', 'votes'];
-var DEFAULT_ROOM = 'tacos-de-asada';
+/* Debe COINCIDIR con DEFAULT_ROOM de sync.js. Cámbialo por el nombre de tu equipo/proyecto. */
+var DEFAULT_ROOM = 'proyecto-demo';
 var TAB = {
   leeme: '0 · LEEME', aterrizar: '1 · Aterrizar', empatia: '2 · Empatía',
   cedulas: '3 · Riesgo · Cédulas', eventos: '4 · Riesgo · Eventos',
@@ -160,7 +160,7 @@ function out_(obj) {
 /* ============================ MENÚ ============================ */
 function onOpen() {
   try {
-    SpreadsheetApp.getUi().createMenu('ORBITAL')
+    SpreadsheetApp.getUi().createMenu('HCD Kit')
       .addItem('Actualizar pestañas legibles', 'actualizarVistas')
       .addToUi();
   } catch (_) {}
@@ -192,15 +192,20 @@ function maybeBuildViews_(room) {
   } catch (_) {}
 }
 
-/* Integrantes del equipo: cada quien tiene su propia columna en las vistas.
-   El "slug" debe coincidir con el que generan las páginas (minúsculas, sin acentos ni espacios). */
+/* Integrantes del equipo: cada quien tiene su propia columna en las pestañas legibles.
+   Ajusta esta lista con tu equipo real; para practicar solo basta con una entrada.
+
+   IMPORTANTE sobre el "slug": las páginas convierten el nombre que cada persona escribe
+   en la barra de conexión (⚙️ Conectar) a minúsculas y le QUITAN acentos, espacios y
+   símbolos (p. ej. "Ana Pérez" → "anaprez", "José" → "jos"). El slug de abajo debe quedar
+   igual a ese resultado, o esa persona no tendrá columna propia (sus notas igual se
+   guardan en "Datos", solo que sin columna en las vistas). Lo más simple: usa nombres sin
+   acentos y escríbelos igual en la página. */
 var PP_SEP = '~~';
 var ROSTER = [
   { slug: 'irvin', name: 'Irvin' },
-  { slug: 'grace', name: 'Grace' },
-  { slug: 'ruben', name: 'Ruben' },
-  { slug: 'rodrigo', name: 'Rodrigo' },
-  { slug: 'jona', name: 'Jona' }
+  { slug: 'integrante2', name: 'Integrante 2' },
+  { slug: 'integrante3', name: 'Integrante 3' }
 ];
 function rosterNames_() { return ROSTER.map(function (p) { return p.name; }); }
 
@@ -274,7 +279,7 @@ function json_(s) { try { return JSON.parse(s); } catch (_) { return null; } }
 function buildViews_(room) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var name = ss.getName();
-  if (/^(Hoja de cálculo sin título|Untitled spreadsheet)/.test(name)) ss.rename('ORBITAL · Datos del equipo');
+  if (/^(Hoja de cálculo sin título|Untitled spreadsheet)/.test(name)) ss.rename('HCD Kit · Datos del equipo');
   var store = sheet_(); plainText_(store);
   var all = data_(store).filter(function (r) { return String(r[1]) === room; });
   var at = kv_(all, 'aterrizar'), ce = kv_(all, 'riesgo_cedulas'), em = kv_(all, 'empatia');
@@ -461,7 +466,7 @@ function buildViews_(room) {
 
   /* ---------- 0 · LEEME ---------- */
   writeTab_(TAB.leeme, '#f4f8ff', [
-    { title: 'ORBITAL · Cómo leer esta hoja · ' + updated },
+    { title: 'HCD Kit · Cómo leer esta hoja · ' + updated },
     { title: 'Pestañas', header: ['Pestaña', 'Qué contiene', 'Una fila es…'], rows: [
       [TAB.aterrizar, 'Taller “Aterrizar el reto”: canvas, preguntas, autorrevisión, matriz e ideación', 'un recuadro, una pregunta o una idea'],
       [TAB.empatia, 'Mapa de empatía de Katya E. y su POV', 'una nota adhesiva'],
@@ -472,12 +477,12 @@ function buildViews_(room) {
       [SHEET_NAME, 'Almacén crudo que usan las páginas (no se ve bonito a propósito)', 'un campo de un formulario, una nota o un registro']
     ] },
     { title: 'Reglas', rows: [
-      ['Las pestañas 0 a 6 se reconstruyen solas cada vez que alguien escribe (como máximo cada 20 s), al abrir la hoja o desde el menú ORBITAL › Actualizar pestañas legibles.'],
+      ['Las pestañas 0 a 6 se reconstruyen solas cada vez que alguien escribe (como máximo cada 20 s), al abrir la hoja o desde el menú HCD Kit › Actualizar pestañas legibles.'],
       ['No editen las pestañas 0 a 6 a mano: se sobrescriben. Para cambiar algo, háganlo desde las páginas (aterrizar.html, empatia.html, riesgo.html).'],
       ['No borren ni renombren la pestaña “Datos”: es donde viven los datos de verdad.']
     ] },
     { title: 'Diccionario de la pestaña “Datos”', header: ['Columna o clave', 'Significado'], rows: [
-      ['ts', 'Fecha y hora de la última escritura'], ['room', 'Equipo (por defecto tacos-de-asada)'], ['tool', 'Herramienta: aterrizar, empatia, riesgo_cedulas o riesgo'],
+      ['ts', 'Fecha y hora de la última escritura'], ['room', 'Equipo (por defecto proyecto-demo; cámbialo en sync.js y en Code.gs)'], ['tool', 'Herramienta: aterrizar, empatia, riesgo_cedulas o riesgo'],
       ['id · zone · votes', 'Solo para notas de empatía y registros de riesgo (eventos y autorreportes)'], ['author', 'Quién escribió (el nombre de la barra de conexión)'],
       ['key · value', 'Un campo y su valor. Una fila por campo: cada cambio actualiza la misma fila'],
       ['pov · escenario', 'Empatía: la necesidad (POV) y el escenario que se empatizó'],

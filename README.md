@@ -32,7 +32,7 @@ Las tres herramientas colaborativas (`empatia`, `aterrizar`, `riesgo`) escriben 
 ## Cómo usar este machote para un proyecto nuevo
 
 1. **Clona** este repositorio con el nombre de tu proyecto.
-2. **Conecta tu propio Sheet** (paso único): sigue [`backend/backend-setup.md`](backend/backend-setup.md), crea tu Google Sheet + Apps Script y pega su URL `/exec` en `sync.js` (`HARDCODED_ENDPOINT`). Cambia también `DEFAULT_ROOM` por el nombre de tu equipo. **No reutilices el endpoint de otro proyecto** o escribirás sobre sus datos. Sin conectar nada, las páginas funcionan en local (localStorage).
+2. **Conecta tu propio Sheet** (paso único, ~5 min): sigue la guía rápida [`backend/CONECTAR.md`](backend/CONECTAR.md) (o la referencia completa en [`backend/backend-setup.md`](backend/backend-setup.md)). Creas tu Google Sheet + Apps Script y pegas su URL `/exec` en `sync.js` (`HARDCODED_ENDPOINT`); cambia también `DEFAULT_ROOM` por el nombre de tu equipo (en `sync.js` **y** en `backend/Code.gs`). **No reutilices el endpoint de otro proyecto** o escribirás sobre sus datos. Sin conectar nada, las páginas funcionan en local (localStorage).
 3. **Rellena** `proyecto.html` sustituyendo los marcadores `[ así ]` y los textos en cursiva por tu contenido. Haz lo mismo con la marca editable en `index.html`.
 4. **Agrega herramientas**: el index tiene una tarjeta "Más herramientas" para ir sumando lo que aprendas (journey map, card sorting, pruebas de usabilidad, etc.).
 
