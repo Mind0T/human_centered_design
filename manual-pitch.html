@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ORBITAL · Manual de pitch ganador</title>
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png">
+<link rel="shortcut icon" href="favicon.ico">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="description" content="Manual de pitch para NASA Space Apps CDMX 2026 adaptado a ORBITAL: las 7 piezas de un pitch ganador con borradores del proyecto, los 5 criterios de los jueces, el formato de entrega (video de 30 s o 7 diapositivas) y los checklists de ensayo y envío." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;800;900&family=Overpass:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --navy-900:#071428;--navy-800:#0a1a33;--navy-700:#0d2244;--navy-600:#102a55;
+    --royal:#1e52c8;--royal-bright:#2a66e6;--blue-soft:#4e8fe6;--blue-pale:#9cc1f2;
+    --lime:#d7e64b;--white:#f4f8ff;--mute:#a9bbd6;--line:rgba(156,193,242,.16);
+    --card:rgba(18,38,74,.6);--ok:#4ccb8f;--warn:#f2c14e;--crit:#ef6a5a;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:"Overpass",system-ui,sans-serif;background:var(--navy-900);color:var(--white);line-height:1.55;-webkit-font-smoothing:antialiased;overflow:hidden}
+  h1,h2,h3,h4,.display{font-family:"Archivo",sans-serif;letter-spacing:-.01em}
+
+  .deck{position:fixed;inset:0;background:
+      radial-gradient(1200px 760px at 82% 12%, rgba(30,82,200,.32), transparent 60%),
+      radial-gradient(900px 640px at 6% 96%, rgba(20,50,130,.3), transparent 60%),
+      linear-gradient(180deg,var(--navy-800),var(--navy-900))}
+  .slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;
+    padding:clamp(24px,4vh,52px) clamp(22px,6vw,96px) clamp(72px,10vh,96px);
+    opacity:0;visibility:hidden;transform:scale(.985);
+    transition:opacity .5s ease,transform .6s cubic-bezier(.2,.7,.2,1),visibility .5s;
+    overflow-y:auto}
+  .slide.active{opacity:1;visibility:visible;transform:none;z-index:2}
+  .sin{width:100%;max-width:1080px;margin:auto}
+
+  .rings{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+  .rings span{position:absolute;border-radius:50%;border:1px solid rgba(120,160,230,.10)}
+
+  .r{opacity:0;transform:translateY(26px);
+     transition:opacity .6s cubic-bezier(.2,.7,.2,1),transform .6s cubic-bezier(.2,.7,.2,1)}
+  .slide.active .r{opacity:1;transform:none;transition-delay:var(--d,0s)}
+
+  .eyebrow{font-family:"Archivo";font-weight:800;text-transform:uppercase;letter-spacing:.14em;font-size:clamp(.66rem,1.1vw,.78rem);color:var(--lime);display:inline-flex;align-items:center;gap:10px}
+  .eyebrow::before{content:"";width:26px;height:2px;background:var(--lime);display:inline-block}
+  h2.title{font-size:clamp(1.6rem,4vw,2.8rem);font-weight:900;line-height:1.03;margin:8px 0 12px}
+  .sub{color:var(--mute);font-size:clamp(.98rem,1.6vw,1.15rem);max-width:74ch}
+  .sub b{color:var(--white)}
+  .hl{color:var(--lime)} em{color:var(--blue-soft);font-style:normal}
+  .note{color:var(--mute);font-size:clamp(.8rem,1.25vw,.9rem);margin-top:14px}
+  .note a,.sub a,.tip a,td a{color:var(--blue-pale);text-decoration:none;border-bottom:1px dotted rgba(156,193,242,.5)}
+  .note a:hover,.sub a:hover,.tip a:hover,td a:hover{color:var(--white)}
+
+  .brandmark{display:flex;align-items:center;gap:14px;margin-bottom:34px}
+  .logo-ring{width:50px;height:50px;flex:0 0 auto}
+  .brandmark small{display:block;font-size:.6rem;letter-spacing:.3em;color:var(--mute);font-weight:700;font-family:"Archivo"}
+  .brandmark b{font-size:1rem;letter-spacing:.04em;font-family:"Archivo";font-weight:900;text-transform:uppercase}
+  .hero h1{font-weight:900;font-size:clamp(2.4rem,7vw,5rem);line-height:.97;margin:14px 0 22px;max-width:18ch}
+  .hero .lead{color:var(--blue-pale);font-size:clamp(1.05rem,2.1vw,1.35rem);max-width:62ch}
+
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:8px}
+  .three{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:8px}
+  .scard{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px}
+  .scard .tagk{font-size:.7rem;color:var(--lime);font-family:"Archivo";font-weight:800;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+  .scard h3{font-size:clamp(1rem,1.8vw,1.2rem);font-weight:800;margin-bottom:8px}
+  .scard p{color:var(--mute);font-size:clamp(.88rem,1.35vw,.98rem)}
+  .scard p b{color:var(--white)}
+
+  .statement{background:linear-gradient(135deg,var(--navy-600),var(--navy-700));border:1px solid var(--line);border-left:5px solid var(--lime);border-radius:18px;padding:clamp(20px,3vw,32px)}
+  .statement p{font-family:"Archivo";font-weight:600;font-size:clamp(1.05rem,2.3vw,1.5rem);line-height:1.32}
+  .statement .by{margin-top:12px;color:var(--mute);font-size:.9rem}
+  .statement .by b{color:var(--lime)}
+
+  /* mapa */
+  .ridge{display:grid;gap:8px;margin-top:14px}
+  .ridgecard{display:grid;grid-template-columns:46px 1fr auto;gap:14px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:9px 16px}
+  .ridgecard .L{font-family:"Archivo";font-weight:900;font-size:1.35rem;color:var(--lime);text-align:center;background:rgba(215,230,75,.1);border-radius:12px;padding:5px 0}
+  .ridgecard .rt{font-weight:800;font-size:.98rem}
+  .ridgecard .rd{color:var(--mute);font-size:.85rem;margin-top:1px}
+  .crit{font-family:"Archivo";font-weight:800;font-size:.62rem;letter-spacing:.06em;text-transform:uppercase;color:var(--blue-soft);background:rgba(78,143,230,.14);border-radius:999px;padding:4px 10px;white-space:nowrap}
+
+  /* regla + orbital */
+  .haz{display:grid;grid-template-columns:.9fr 1.3fr;gap:22px;margin-top:10px;align-items:start}
+  .col h4{font-size:.74rem;font-family:"Archivo";font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--blue-soft);margin-bottom:12px}
+  .col ul{list-style:none;display:grid;gap:10px}
+  .col li{color:var(--mute);font-size:clamp(.88rem,1.35vw,.98rem);padding-left:18px;position:relative;line-height:1.42}
+  .col li::before{content:"";position:absolute;left:0;top:8px;width:7px;height:7px;border-radius:50%;background:var(--blue-soft)}
+  .col li b{color:var(--white)}
+  .orb{background:linear-gradient(135deg,rgba(30,82,200,.28),var(--navy-700));border:1px solid rgba(215,230,75,.38);border-radius:18px;padding:20px 22px}
+  .orb h4{display:flex;align-items:center;gap:10px;font-family:"Archivo";font-weight:800;font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:var(--lime);margin-bottom:12px}
+  .orb h4 .draft{font-size:.6rem;color:var(--navy-900);background:var(--lime);border-radius:999px;padding:2px 8px;letter-spacing:.06em}
+  .orb ul{list-style:none;display:grid;gap:10px}
+  .orb li{color:var(--mute);font-size:clamp(.88rem,1.35vw,.98rem);line-height:1.42;padding-left:18px;position:relative}
+  .orb li::before{content:"";position:absolute;left:0;top:8px;width:7px;height:7px;border-radius:50%;background:var(--lime)}
+  .orb li b{color:var(--white)}
+  .orb li i{color:var(--blue-pale)}
+  .en{margin-top:12px;border-left:3px solid var(--blue-soft);background:rgba(7,20,40,.45);border-radius:0 10px 10px 0;padding:9px 14px;color:var(--blue-pale);font-size:.9rem;line-height:1.45}
+  .en small{font-family:"Archivo";font-weight:800;font-size:.6rem;letter-spacing:.1em;color:var(--blue-soft);margin-right:8px}
+
+  .tip{margin-top:16px;background:rgba(215,230,75,.08);border-left:3px solid var(--lime);border-radius:0 12px 12px 0;padding:12px 18px;font-size:clamp(.86rem,1.3vw,.96rem);color:var(--mute);line-height:1.5}
+  .tip b{color:var(--lime)}
+
+  .formula{display:flex;flex-wrap:wrap;align-items:stretch;gap:8px;margin:10px 0 4px}
+  .fchip{flex:1 1 150px;background:var(--card);border:1px solid var(--line);border-top:3px solid var(--lime);border-radius:12px;padding:9px 12px;font-size:.84rem;color:var(--white);font-weight:600;line-height:1.3}
+  .fplus{align-self:center;font-family:"Archivo";font-weight:900;color:var(--blue-soft);font-size:1.15rem}
+
+  /* tablas */
+  .matrix{overflow:auto;border:1px solid var(--line);border-radius:16px;margin-top:14px}
+  table{border-collapse:collapse;width:100%;min-width:640px;font-size:clamp(.8rem,1.2vw,.9rem)}
+  th,td{padding:9px 14px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+  thead th{font-family:"Archivo";font-weight:800;font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--blue-soft);background:rgba(10,26,51,.92)}
+  tbody tr:last-child td{border-bottom:none}
+  td.dir{font-weight:700;color:var(--white);white-space:nowrap}
+  td{color:var(--mute)} td b{color:var(--white)}
+  td.ts{font-family:"Archivo";font-weight:800;color:var(--lime);white-space:nowrap}
+
+  /* mini-diapositivas */
+  .minis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:12px}
+  .mini{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+  .mini .n{font-family:"Archivo";font-weight:900;color:var(--lime);font-size:1.15rem}
+  .mini b{display:block;font-size:.92rem;margin:2px 0 4px}
+  .mini span{color:var(--mute);font-size:.82rem;line-height:1.4;display:block}
+  .mini .pz{margin-top:6px;font-family:"Archivo";font-weight:800;font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;color:var(--blue-soft)}
+
+  /* checklists */
+  .chklist{display:grid;gap:8px;margin-top:12px}
+  .chk{display:flex;gap:14px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 16px;cursor:pointer;transition:.2s;color:var(--mute);font-size:clamp(.86rem,1.3vw,.96rem);line-height:1.4;position:relative}
+  .chk:hover{border-color:var(--blue-soft)}
+  .chk input{position:absolute;opacity:0;pointer-events:none}
+  .chk .box{flex:0 0 22px;height:22px;border-radius:7px;border:2px solid var(--blue-soft);margin-top:1px;display:flex;align-items:center;justify-content:center;transition:.2s;color:transparent;font-weight:900;font-size:.82rem}
+  .chk input:checked + .box{background:var(--lime);border-color:var(--lime);color:var(--navy-900)}
+  .chk input:checked ~ .tx{color:var(--white)}
+  .chk input:focus-visible + .box{outline:2px solid var(--white);outline-offset:2px}
+  .chk .tx b{color:var(--white)}
+  .chklist.cols{grid-template-columns:1fr 1fr}
+  .chklist.cols .chk{padding:8px 14px}
+  .chkcount{font-family:"Archivo";font-weight:800;font-size:.8rem;letter-spacing:.06em;color:var(--mute);margin-top:10px}
+  .chkcount b{color:var(--lime)}
+  .demolists{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:12px}
+  .dl{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 18px}
+  .dl h4{font-family:"Archivo";font-weight:800;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+  .dl.show h4{color:var(--ok)} .dl.road h4{color:var(--warn)}
+  .dl ul{list-style:none;display:grid;gap:5px}
+  .dl li{font-size:.86rem;color:var(--white);line-height:1.35;padding-left:16px;position:relative}
+  .dl li::before{content:"";position:absolute;left:0;top:7px;width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.7}
+  .dl.show li::before{color:var(--ok)} .dl.road li::before{color:var(--warn)}
+  .dl li.empty{color:var(--mute);font-style:italic} .dl li.empty::before{display:none}
+
+  .qgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+  .q{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;display:grid;grid-template-columns:34px 1fr;gap:12px;align-items:start}
+  .q .n{font-family:"Archivo";font-weight:900;color:var(--lime);font-size:1.25rem;line-height:1.1}
+  .q b{display:block;font-size:.9rem;color:var(--white);margin-bottom:2px}
+  .q span{color:var(--mute);font-size:.86rem;line-height:1.4}
+
+  .members{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .members span{font-size:.84rem;background:rgba(7,20,40,.5);border:1px solid var(--line);border-radius:999px;padding:5px 12px;color:var(--white)}
+  .members span.me{border-color:rgba(215,230,75,.5);color:var(--lime)}
+
+  .btnrow{display:flex;flex-wrap:wrap;gap:12px;margin-top:18px}
+  .btn{display:inline-block;text-decoration:none;font-family:"Archivo";font-weight:800;font-size:.84rem;color:var(--white);background:rgba(10,26,51,.7);border:1px solid var(--line);border-radius:12px;padding:10px 16px;transition:.2s}
+  .btn:hover{border-color:var(--lime);color:var(--lime)}
+
+  /* CHROME */
+  .prog{position:fixed;top:0;left:0;height:3px;background:var(--lime);width:0;z-index:30;transition:width .4s ease;box-shadow:0 0 12px rgba(215,230,75,.5)}
+  .hud{position:fixed;bottom:18px;right:20px;display:flex;align-items:center;gap:10px;z-index:30}
+  .hud button{width:44px;height:44px;border-radius:12px;border:1px solid var(--line);background:rgba(10,26,51,.7);color:var(--white);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;backdrop-filter:blur(6px)}
+  .hud button:hover{border-color:var(--lime);color:var(--lime)}
+  .hud button:disabled{opacity:.3;cursor:default;border-color:var(--line);color:var(--white)}
+  .counter{font-family:"Archivo";font-weight:800;font-size:.82rem;color:var(--mute);letter-spacing:.08em;padding:0 6px;min-width:62px;text-align:center}
+  .counter b{color:var(--lime)}
+  .hint-key{position:fixed;bottom:24px;left:22px;z-index:30;color:var(--mute);font-size:.76rem;font-family:"Archivo";font-weight:700;letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;gap:8px;opacity:.75}
+  .hint-key kbd{background:rgba(10,26,51,.8);border:1px solid var(--line);border-radius:6px;padding:2px 7px;font-family:"Archivo";font-size:.72rem}
+  .hint-key.gone{opacity:0;transition:opacity .6s;pointer-events:none}
+
+  @media(max-width:900px){
+    .two,.three,.haz,.qgrid,.demolists,.chklist.cols{grid-template-columns:1fr}
+    .minis{grid-template-columns:1fr 1fr}
+    .ridgecard{grid-template-columns:40px 1fr}
+    .ridgecard .crit{display:none}
+    .fplus{display:none}
+    .hint-key{display:none}
+    .slide{padding:62px 22px 90px}
+  }
+</style>
+</head>
+<body>
+
+<div class="prog" id="prog"></div>
+<div class="deck" id="deck">
+
+  <!-- 1 · PORTADA -->
+  <section class="slide hero active">
+    <div class="rings">
+      <span style="width:620px;height:620px;top:-120px;right:-160px"></span>
+      <span style="width:920px;height:920px;top:-240px;right:-300px"></span>
+      <span style="width:1240px;height:1240px;top:-400px;right:-440px"></span>
+    </div>
+    <div class="sin">
+      <div class="brandmark r" style="--d:.05s">
+        <span class="logo-ring"><svg viewBox="0 0 48 48" fill="none"><circle cx="22" cy="26" r="16" stroke="#f4f8ff" stroke-width="2.4"/><path d="M34 14 C 30 10, 24 9, 20 11" stroke="#d7e64b" stroke-width="2.4" stroke-linecap="round"/><circle cx="35" cy="13" r="2.4" fill="#ef6a5a"/></svg></span>
+        <span><small>NASA Space Apps · CDMX 2026 · Equipo ORBITAL</small><b>Manual de pitch</b></span>
+      </div>
+      <div class="eyebrow r" style="--d:.15s">Hackathon 14–15 de noviembre · cómo presentar ORBITAL</div>
+      <h1 class="r" style="--d:.25s">Cómo armar el <span class="hl">pitch ganador</span> de ORBITAL</h1>
+      <p class="lead r" style="--d:.38s">Siete piezas, los cinco criterios de los jueces de Space Apps y un borrador listo para ajustar con lo que ya escribió el equipo.</p>
+    </div>
+  </section>
+
+  <!-- 2 · LAS 7 PIEZAS -->
+  <section class="slide">
+    <div class="sin">
+      <div class="eyebrow r" style="--d:.05s">El mapa</div>
+      <h2 class="title r" style="--d:.12s">Las 7 piezas y el criterio que cada una gana</h2>
+      <p class="sub r" style="--d:.2s">Van en este orden. A la derecha, el criterio oficial de Space Apps al que más ayuda cada pieza.</p>
+      <div class="ridge">
+        <div class="ridgecard r" style="--d:.28s"><div class="L">1</div><div><div class="rt">El gancho emocional y empático</div><div class="rd">Captar al jurado en los primeros 15 a 20 segundos.</div></div><span class="crit">Presentación · Influencia</span></div>
+        <div class="ridgecard r" style="--d:.33s"><div class="L">2</div><div><div class="rt">La propuesta en una sola frase</div><div class="rd">Qué es ORBITAL y a quién ayuda, sin tecnicismos.</div></div><span class="crit">Relevancia · Presentación</span></div>
+        <div class="ridgecard r" style="--d:.38s"><div class="L">3</div><div><div class="rt">Alcance e influencia</div><div class="rd">Qué cubre el MVP y hasta dónde puede llegar.</div></div><span class="crit">Influencia · Relevancia</span></div>
+        <div class="ridgecard r" style="--d:.43s"><div class="L">4</div><div><div class="rt">Demostración (happy path)</div><div class="rd">La solución en acción, con honestidad sobre el roadmap.</div></div><span class="crit">Relevancia · Validez</span></div>
+        <div class="ridgecard r" style="--d:.48s"><div class="L">5</div><div><div class="rt">Ventaja injusta y validación</div><div class="rd">Por qué es confiable, original y difícil de copiar.</div></div><span class="crit">Creatividad · Validez</span></div>
+        <div class="ridgecard r" style="--d:.53s"><div class="L">6</div><div><div class="rt">El equipo</div><div class="rd">Que ustedes pueden ejecutar la visión.</div></div><span class="crit">Presentación</span></div>
+        <div class="ridgecard r" style="--d:.58s"><div class="L">7</div><div><div class="rt">Frase de cierre memorable</div><div class="rd">Del problema a la solución, en una imagen.</div></div><span class="crit">Presentación</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 · CRITERIOS DE LOS JUECES -->
+  <section class="slide">
+    <div class="rings"><span style="width:1000px;height:1000px;top:-250px;right:-350px"></span></div>
+    <div class="sin">
+      <div class="eyebrow r" style="--d:.05s">Lo que miden los jueces</div>
+      <h2 class="title r" style="--d:.12s">Los 5 criterios de Space Apps y cómo responde ORBITAL</h2>
+      <p class="sub r" style="--d:.2s">Jueces de la NASA, agencias socias y la industria evalúan con estos cinco. La guía pide darle a <b>Presentación</b> la misma atención que a los otros cuatro.</p>
+      <div class="matrix r" style="--d:.3s">
+        <table>
+          <thead><tr><th>Criterio</th><th>Qué mide</th><th>Dónde lo ganamos con ORBITAL</th></tr></thead>
+          <tbody>
+            <tr><td class="dir">Influencia</td><td>Alcance positivo: qué tan grande es el problema y a cuánta gente podría ayudar.</td><td>Misiones largas sin médico a bordo y con hasta 20 min de retraso. Pieza 1 y 3.</td></tr>
+            <tr><td class="dir">Creatividad</td><td>Qué tan novedoso es el enfoque frente a una mejora incremental.</td><td>Línea base individual, salud mental como indicador de primera clase y triaje ¿cuerpo o mente?. Pieza 5.</td></tr>
+            <tr><td class="dir">Validez</td><td>Si es sólido científicamente y puede funcionar en el mundo real.</td><td>Fuentes de la NASA, modelos interpretables primero, datos sintéticos declarados como tales, el asistente no diagnostica. Pieza 4 y 5.</td></tr>
+            <tr><td class="dir">Relevancia</td><td>Qué tan bien responde al reto, qué tan completo y factible es, qué tan usable.</td><td>Autoevaluación, figura humana clicable, código de colores e instrucciones simples, justo lo que pide el reto. Pieza 2 y 4.</td></tr>
+            <tr><td class="dir">Presentación</td><td>Qué tan bien comunican el reto, la solución y por qué importa.</td><td>Gancho, una frase, demo clara y cierre. Piezas 1, 2, 6 y 7.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note r" style="--d:.45s">Criterios de la <a href="https://www.spaceappschallenge.org/resources/judging-awards-guide" target="_blank" rel="noopener">guía de jueceo</a> que pude leer (ciclo 2024; el sitio los llama también “Impact”). La guía 2026 se publica el 13 de noviembre: confirmen que no cambió nada.</p>
+    </div>
+  </section>
+
+  <!-- 4 · GANCHO -->
+  <section class="slide">
+    <div class="sin">
+      <div class="eyebrow r" style="--d:.05s">Pieza 1 de 7 · 15 a 20 segundos</div>
+      <h2 class="title r" style="--d:.12s">El gancho emocional y empático</h2>
+      <p class="sub r" style="--d:.2s">Capta el <b>100% de la atención</b> con un dato de choque, una historia o una pregunta retórica, y conecta con una pérdida tangible <b>antes</b> de mencionar la solución.</p>
+      <div class="haz">
+        <div class="col r" style="--d:.3s">
+          <h4>La regla</h4>
+          <ul>
+            <li><b>Dato de choque:</b> una contradicción o riesgo oculto, cuantificable.</li>
+            <li><b>Historia:</b> los zapatos del cliente y su frustración.</li>
+            <li><b>Pregunta retórica:</b> fuerza un “sí” o “no” mental.</li>
+            <li>Pérdida tangible: dinero, tiempo o <b>seguridad</b>.</li>
+          </ul>
+        </div>
+        <div class="orb r" style="--d:.4s">
+          <h4>ORBITAL <span class="draft">Borrador</span></h4>
+          <ul>
+            <li><b>Historia:</b> <i>“Katya lleva meses rumbo a Marte. Le empieza a doler el pecho. Nadie a bordo es médico, y Houston tarda hasta 20 minutos en cada mensaje.”</i></li>
+            <li><b>Dato de choque:</b> <i>“Hasta 40 minutos entre hacer la pregunta y oír la respuesta.”</i> (20 min de ida y 20 de vuelta)</li>
+            <li><b>Pregunta:</b> <i>“¿Qué harías si te duele el pecho y la respuesta de Houston llega en 40 minutos?”</i></li>
+          </ul>
+          <div class="en"><small>EN</small>“Katya is months into her trip to Mars. Her chest starts to hurt. No one on board is a doctor, and Houston is up to 20 minutes away each way.”</div>
+        </div>
+      </div>
+      <div class="tip r" style="--d:.52s"><b>La pérdida tangible de ORBITAL es la seguridad.</b> Elijan uno de los tres y úsenlo en los primeros segundos. El escenario del dolor de pecho viene del video del reto (Rodrigo Leonardi, Agencia Espacial Brasileña).</div>
+    </div>
+  </section>
+
+  <!-- 5 · UNA FRASE -->
+  <section class="slide">
+    <div class="rings"><span style="width:900px;height:900px;top:-200px;left:-300px"></span></div>
+    <div class="sin">
+      <div class="eyebrow r" style="--d:.05s">Pieza 2 de 7</div>
+      <h2 class="title r" style="--d:.12s">La propuesta en una sola frase</h2>
+      <div class="formula r" style="--d:.2s">
+        <div class="fchip">Nombre del proyecto</div><span class="fplus">+</span>
+        <div class="fchip">Qué es / categoría</div><span class="fplus">+</span>
+        <div class="fchip">Propuesta única de valor</div><span class="fplus">+</span>
+        <div class="fchip">A quién ayuda / qué problema resuelve</div>
+      </div>
+      <div class="orb r" style="--d:.32s;margin-top:14px">
+        <h4>ORBITAL <span class="draft">Borrador</span></h4>
+        <div class="statement"><p>“Somos ORBITAL, un sistema de monitoreo de salud para misiones largas que <span class="hl">aprende la línea base de cada astronauta</span> y convierte sus desviaciones, de cuerpo y mente, en guía clara, para que pueda evaluar y actuar por sí mismo cuando Houston está a 20 minutos.”</p></div>
+        <div class="en"><small>EN</small>“We are ORBITAL, a health monitoring system for long missions that learns each astronaut's own baseline and turns deviations, in body and mind, into clear guidance, so they can assess and act on their own health when Houston is 20 minutes away.”</div>
+      </div>
+      <div class="tip r" style="--d:.46s"><b>Pruébenla:</b> si no cabe en una respiración, recórtenla. La etiqueta oficial del proyecto, <i>“Inteligencia de salud para la exploración espacial: cuerpo y mente”</i>, sirve como tagline (el video pide título y tagline).</div>
+    </div>
+  </section>
+
+  <!-- 6 · ALCANCE E INFLUENCIA -->
+  <section class="slide">
+    <div class="sin">
+      <div class="eyebrow r" style="--d:.05s">Pieza 3 de 7</div>
+      <h2 class="title r" style="--d:.12s">Alcance e influencia</h2>
+      <p class="sub r" style="--d:.2s">La guía de pitch pide alcance inicial, ingresos, punto de equilibrio y ROI. En Space Apps no se vende nada: el equivalente es <b>Influencia</b>, es decir, a quién ayuda y hasta dónde llega.</p>
+      <div class="haz">
+        <div class="col r" style="--d:.3s">
+          <h4>La regla</h4>
+          <ul>
+            <li><b>Alcance inicial claro</b> y ruta de expansión.</li>
+            <li>Demuestra que no es un proyecto escolar.</li>
+            <li>Si no hay negocio, muestra el <b>beneficio y a cuántos alcanza</b>.</li>
+          </ul>
+        </div>
+        <div class="orb r" style="--d:.4s">
+          <h4>ORBITAL <span class="draft">Con lo que ya está escrito</span></h4>
+          <ul>
+            <li><b>Hoy (MVP):</b> dos indicadores, frecuencia cardíaca en reposo y patrones de sueño, con ~14 días de datos sintéticos que incluyen escenarios de anomalía.</li>
+            <li><b>Siguiente paso:</b> integrar dispositivos reales (Actiwatch, smartwatch) y los demás indicadores: densidad ósea, masa muscular, respuesta inmune e hidratación.</li>
+            <li><b>Entornos:</b> un selector para nave, estación, rover o base planetaria.</li>
+            <li><b>¿Y en la Tierra?</b> Decisión del equipo (ver última diapositiva). La Agencia Espacial Canadiense dice que lo aprendido en el espacio también sirve en tierra, pero ORBITAL solo puede afirmarlo si lo sostiene.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 · DEMO · HAPPY PATH -->
+  <section class="slide">
+    <div class="rings"><span style="width:1000px;height:1000px;top:-250px;right:-350px"></span></div>
+    <div class="sin">
+      <div class="eyebrow r" style="--d:.05s">Pieza 4 de 7 · 60 a 90 segundos</div>
+      <h2 class="title r" style="--d:.12s">Demostración: el happy path de ORBITAL</h2>
+      <p class="sub r" style="--d:.2s">Una sola historia, de principio a fin. El flujo ya está definido en la descripción del proyecto: <b>Before, During, Triaje y After</b>.</p>
+      <div class="minis">
+        <div class="mini r" style="--d:.28s"><div class="n">1</div><b>Before · línea base</b><span>El sistema ya aprendió cómo duerme y cómo late el corazón de Katya, y muestra lo que espera ver.</span></div>
+        <div class="mini r" style="--d:.36s"><div class="n">2</div><b>During · alerta</b><span>Llega una medición que se sale de lo esperado y persiste. Alerta con indicador, esperado contra observado y desde cuándo.</span></div>
+        <div class="mini r" style="--d:.44s"><div class="n">3</div><b>Triaje · ¿cuerpo o mente?</b><span>Cruza biométricos y contexto, sin descartar lo cardíaco, y orienta con pasos simples.</span></div>
+        <div class="mini r" style="--d:.52s"><div class="n">4</div><b>After · seguimiento</b><span>Registra el evento, pregunta síntomas y contexto, y propone acciones.</span></div>
+      </div>
+      <div class="tip r" style="--d:.64s"><b>Háganlo visible:</b> figura humana clicable, color verde, amarillo o rojo y una gráfica con la línea base. Es lo que el reto pide para la interfaz. El asistente <b>no diagnostica: traduce y guía</b>. Dilo en voz alta.</div>
+    </div>
+  </section>
+
+  <!-- 8 · DEMO · QUÉ MOSTRAMOS -->
+  <section class="slide">
+    <div class="sin">
+      <div class="eyebrow r" style="--d:.05s">Pieza 4 · transparencia técnica</div>
+      <h2 class="title r" style="--d:.12s">¿Qué ya funciona hoy y qué decimos que es roadmap?</h2>
+      <p class="sub r" style="--d:.2s">Marquen lo que ya es <b>100% funcional</b>. Lo demás se dice con honestidad: desarma a los jueces en las preguntas.</p>
+      <div class="chklist cols r" style="--d:.28s" id="demoitems">
+        <label class="chk"><input type="checkbox" data-g="demo" data-c="1" data-t="Forecast de línea base (frecuencia cardíaca en reposo y sueño)"><span class="box">✓</span><span class="tx">Forecast de línea base (frecuencia cardíaca en reposo y sueño)</span></label>
+        <label class="chk"><input type="checkbox" data-g="demo" data-c="2" data-t="Detección de desviaciones persistentes"><span class="box">✓</span><span class="tx">Detección de desviaciones persistentes</span></label>
+        <label class="chk"><input type="checkbox" data-g="demo" data-c="3" data-t="Alerta contextualizada (esperado contra observado)"><span class="box">✓</span><span class="tx">Alerta contextualizada (esperado contra observado)</span></label>
+        <label class="chk"><input type="checkbox" data-g="demo" data-c="4" data-t="Triaje ¿cuerpo o mente?"><span class="box">✓</span><span class="tx">Triaje ¿cuerpo o mente?</span></label>
+        <label class="chk"><input type="checkbox" data-g="demo" data-c="5" data-t="Figura humana clicable con código de colores"><span class="box">✓</span><span class="tx">Figura humana clicable con código de colores</span></label>
+        <label class="chk"><input type="checkbox" data-g="demo" data-c="6" data-t="Gráficas dinámicas (tendencia y línea base)"><span class="box">✓</span><span class="tx">Gráficas dinámicas (tendencia y línea base)</span></label>
+        <label class="chk"><input type="checkbox" data-g="demo" data-c="7" data-t="Asistente (LLM + RAG) que explica sin diagnosticar"><span class="box">✓</span><span class="tx">Asistente (LLM + RAG) que explica sin diagnosticar</span></label>
+        <label class="chk"><input type="checkbox" data-g="demo" data-c="8" data-t="Mini-juegos cognitivos"><span class="box">✓</span><span class="tx">Mini-juegos cognitivos</span></label>
+        <label class="chk"><input type="checkbox" data-g="demo" data-c="9" data-t="Datos de dispositivos reales (Actiwatch, smartwatch)"><span class="box">✓</span><span class="tx">Datos de dispositivos reales (Actiwatch, smartwatch)</span></label>
+      </div>
+      <div class="demolists r" style="--d:.36s">
+        <div class="dl show"><h4>Lo muestro en la demo</h4><ul id="demoShow"></ul></div>
+        <div class="dl road"><h4>Lo digo como roadmap</h4><ul id="demoRoad"></ul></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9 · VENTAJA INJUSTA -->
+  <section class="slide">
+    <div class="rings"><span style="width:900px;height:900px;top:-200px;left:-300px"></span></div>
+    <div class="sin">
+      <div class="eyebrow r" style="--d:.05s">Pieza 5 de 7</div>
+      <h2 class="title r" style="--d:.12s">Ventaja injusta y validación tecnológica</h2>
+      <p class="sub r" style="--d:.2s">Explica por qué es <b>confiable, difícil de replicar y robusta</b>: de dónde salen los datos y qué tecnología sostiene la solución.</p>
+      <div class="two">
+        <div class="orb r" style="--d:.3s">
+          <h4>Por qué es difícil de copiar <span class="draft">Del proyecto</span></h4>
+          <ul>
+            <li><b>Línea base individual:</b> compara a cada astronauta contra sí mismo, no contra un promedio.</li>
+            <li><b>Salud mental de primera clase:</b> estrés, ánimo, sueño y agudeza cognitiva al mismo nivel que la fisiológica.</li>
+            <li><b>Triaje psicofisiológico:</b> discierne antes de alarmar.</li>
+            <li><b>Asistente con límites:</b> LLM + RAG sobre protocolos documentados; traduce y guía, no diagnostica.</li>
+          </ul>
+        </div>
+        <div class="orb r" style="--d:.4s">
+          <h4>Datos y recursos que declaramos <span class="draft">Confirmen</span></h4>
+          <ul>
+            <li><b>Datos sintéticos:</b> dilo tal cual, ~14 días con patrones habituales y anomalías.</li>
+            <li><b>NASA:</b> recursos del Human Research Program: peligros, riesgos y estudios en curso.</li>
+            <li><b>Pruebas cognitivas:</b> parámetros de la batería Cognition de la NASA y Penn para los mini-juegos.</li>
+            <li><b>Otras agencias:</b> recursos públicos, como la Agencia Espacial Canadiense.</li>
+            <li><b>Modelos:</b> Rolling Mean/EWMA, Exponential Smoothing, ARIMA e Isolation Forest, comparados.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="tip r" style="--d:.52s"><b>Requisito del formulario:</b> hay que describir los datos de la NASA que usaron (es obligatorio para el Global Award) y declarar el uso de IA, incluido el asistente LLM.</div>
+    </div>
+  </section>
+
+  <!-- 10 · EQUIPO -->
+  <section class="slide">
+    <div class="sin">
+      <div class="eyebrow r" style="--d:.05s">Pieza 6 de 7</div>
+      <h2 class="title r" style="--d:.12s">El equipo: poder de ejecución</h2>
+      <p class="sub r" style="--d:.2s">Que el jurado vea <b>tres capacidades</b>, no seis nombres: construir, investigar y traducir a producto. Asignen una persona a cada una.</p>
+      <div class="three">
+        <div class="scard r" style="--d:.3s"><div class="tagk">Perfil 1</div><h3>Desarrollo y arquitectura de IA</h3><p>Forecasting, detección de anomalías, backend y asistente. Quien <b>construye la tecnología y los modelos</b>.</p></div>
+        <div class="scard r" style="--d:.4s"><div class="tagk">Perfil 2</div><h3>Investigación y datos</h3><p>Fuentes de la NASA, rigor metodológico y datos sintéticos. Quien <b>valida la problemática</b>.</p></div>
+        <div class="scard r" style="--d:.5s"><div class="tagk">Perfil 3 · Speaker</div><h3>Producto, UX y estrategia</h3><p>Figura clicable, color de estado y la historia de Katya. Quien <b>traduce la tecnología en producto</b> y presenta.</p></div>
+      </div>
+      <div class="members r" style="--d:.58s">
+        <span>Grace Rojas</span><span class="me">Irving Soriano · UX · Frontend · Design Thinking</span><span>Jonathan Sánchez</span><span>Rubén Silva</span><span>Rodrigo Roldán</span><span>Rodrigo Ramírez</span>
+      </div>
+      <div class="tip r" style="--d:.66s"><b>Pendiente:</b> definir quién es el speaker. Si hay integrantes menores de 18, la FAQ 2026 pide no usar sus fotos, video ni voz en la demo.</div>
+    </div>
+  </section>
+
+  <!-- 11 · CIERRE -->
+  <section class="slide">
+    <div class="rings"><span style="width:1000px;height:1000px;top:-250px;right:-350px"></span></div>
+    <div class="sin">
+      <div class="eyebrow r" style="--d:.05s">Pieza 7 de 7</div>
+      <h2 class="title r" style="--d:.12s">La frase de cierre memorable</h2>
+      <p class="sub r" style="--d:.2s">Contrasta lo viejo con lo nuevo: <i>“Dejemos de [lo viejo]. Con [Proyecto], pasamos de [la incertidumbre] a [la certeza].”</i></p>
+      <div class="orb r" style="--d:.3s;margin-top:12px">
+        <h4>ORBITAL <span class="draft">Borrador</span></h4>
+        <div class="statement"><p>“Dejemos de depender de Houston para cada pregunta. Con ORBITAL, pasamos de la <span class="hl">incertidumbre</span> a la <span class="hl">autonomía</span>: una astronauta que se conoce, cuerpo y mente, a millones de kilómetros de casa.”</p></div>
+        <div class="en"><small>EN</small>“Let's stop waiting on Houston for every question. With ORBITAL, we go from uncertainty to autonomy: an astronaut who knows their own body and mind, millions of kilometers from home.”</div>
+      </div>
+      <div class="three" style="margin-top:14px">
+        <div class="scard r" style="--d:.42s"><div class="tagk">Entrega 1</div><h3>Pausa de 2 segundos</h3><p>Silencio <b>antes</b> de la frase.</p></div>
+        <div class="scard r" style="--d:.5s"><div class="tagk">Entrega 2</div><h3>Contacto visual</h3><p>Mira al jurado al decirla.</p></div>
+        <div class="scard r" style="--d:.58s"><div class="tagk">Entrega 3</div><h3>Agradece con seguridad</h3><p>Cierra dando las gracias.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 12 · FORMATO DE ENTREGA Y GUION DE 30 s -->
+  <section class="slide">
+    <div class="sin">
+      <div class="eyebrow r" style="--d:.05s">Formato de entrega de Space Apps</div>
+      <h2 class="title r" style="--d:.12s">Video de 30 segundos o 7 diapositivas</h2>
+      <p class="sub r" style="--d:.2s">La demo oficial va en <b>inglés</b>, en un enlace público sin contraseña ni registro. Estos son los tiempos del video y un borrador para ORBITAL.</p>
+      <div class="matrix r" style="--d:.3s">
+        <table>
+          <thead><tr><th>Tiempo</th><th>Lo que pide la guía</th><th>Borrador ORBITAL (inglés)</th></tr></thead>
+          <tbody>
+            <tr><td class="ts">0:00</td><td>Presentarse y decir el nombre del equipo.</td><td>“Hi, we're Tacos de Asada.”</td></tr>
+            <tr><td class="ts">0:02</td><td>El reto y qué los inspiró.</td><td>“Challenge: health monitoring software for astronauts. On a Mars transit there is no doctor on board and Houston is 20 minutes away.”</td></tr>
+            <tr><td class="ts">0:05</td><td>Título y tagline.</td><td>“ORBITAL: health intelligence for space exploration, body and mind.”</td></tr>
+            <tr><td class="ts">0:10</td><td>La idea con imágenes o prototipo, la experiencia de uso y cómo los datos abiertos de la NASA lo hicieron posible.</td><td>“ORBITAL learns each astronaut's own baseline, flags deviations that persist, and explains in plain words what changed, body or mind, and what to do next. Built on NASA Human Research Program research.”</td></tr>
+            <tr><td class="ts">0:20–0:30</td><td>El impacto futuro.</td><td>“Next: real wearable data and more indicators, so any crew far from Earth can look after itself.”</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note r" style="--d:.45s">Tiempos y requisitos de la <a href="https://www.spaceappschallenge.org/resources/project-submission-guide/" target="_blank" rel="noopener">guía de entrega</a> que pude leer, que parece de la edición 2025 (decía “4 y 5 de octubre”). Verifiquen el formato 2026 en la pestaña Project de su equipo.</p>
+    </div>
+  </section>
+
+  <!-- 13 · DECK DE 7 -->
+  <section class="slide">
+    <div class="rings"><span style="width:900px;height:900px;top:-200px;left:-300px"></span></div>
+    <div class="sin">
+      <div class="eyebrow r" style="--d:.05s">Si eligen diapositivas</div>
+      <h2 class="title r" style="--d:.12s">Las 7 piezas caben en las 7 diapositivas</h2>
+      <p class="sub r" style="--d:.2s">El máximo oficial es de 7 diapositivas, incluida la portada, con pocas palabras y letra legible. Cada una lleva una pieza. Debe haber una imagen del proyecto, la experiencia de uso y cómo los datos y la tecnología lo hicieron posible.</p>
+      <div class="minis">
+        <div class="mini r" style="--d:.26s"><div class="n">1</div><b>Portada</b><span>ORBITAL, tagline, equipo Tacos de Asada, nombres de integrantes y el reto.</span><div class="pz">Pieza 2 (frase) + 6</div></div>
+        <div class="mini r" style="--d:.32s"><div class="n">2</div><b>Katya, sin Houston</b><span>La historia: dolor de pecho, 20 minutos de retraso, nadie es médico.</span><div class="pz">Pieza 1 · gancho</div></div>
+        <div class="mini r" style="--d:.38s"><div class="n">3</div><b>Qué es ORBITAL</b><span>La frase de una sola oración y el diferenciador: cuerpo y mente.</span><div class="pz">Pieza 2</div></div>
+        <div class="mini r" style="--d:.44s"><div class="n">4</div><b>Cómo se ve</b><span>Capturas: figura clicable, color de estado y alerta con línea base.</span><div class="pz">Pieza 4 · demo</div></div>
+        <div class="mini r" style="--d:.5s"><div class="n">5</div><b>Datos y tecnología</b><span>Datos de la NASA usados, stack, modelos y declaración de IA.</span><div class="pz">Pieza 5</div></div>
+        <div class="mini r" style="--d:.56s"><div class="n">6</div><b>Alcance e impacto</b><span>Qué funciona hoy, qué sigue y a quién ayuda.</span><div class="pz">Pieza 3</div></div>
+        <div class="mini r" style="--d:.62s"><div class="n">7</div><b>Cierre</b><span>La frase de cierre y el agradecimiento.</span><div class="pz">Pieza 7</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 14 · CHECKLIST DE ENSAYO -->
+  <section class="slide">
+    <div class="sin">
+      <div class="eyebrow r" style="--d:.05s">Antes de presentar</div>
+      <h2 class="title r" style="--d:.12s">Checklist de ensayo</h2>
+      <p class="sub r" style="--d:.2s">Ensayen con cronómetro y marquen cada punto cuando el equipo lo cumpla. Se guarda en este dispositivo.</p>
+      <div class="chklist r" style="--d:.3s">
+        <label class="chk"><input type="checkbox" data-g="ens" data-c="1"><span class="box">✓</span><span class="tx"><b>Gancho:</b> habla de la seguridad de Katya antes de mencionar ORBITAL y dura 15 a 20 segundos.</span></label>
+        <label class="chk"><input type="checkbox" data-g="ens" data-c="2"><span class="box">✓</span><span class="tx"><b>Una frase:</b> nombre, qué es, valor único y a quién ayuda, sin tecnicismos.</span></label>
+        <label class="chk"><input type="checkbox" data-g="ens" data-c="3"><span class="box">✓</span><span class="tx"><b>Alcance:</b> se entiende qué cubre el MVP, qué sigue y a quién ayuda.</span></label>
+        <label class="chk"><input type="checkbox" data-g="ens" data-c="4"><span class="box">✓</span><span class="tx"><b>Demo:</b> el happy path cabe en 60 a 90 segundos y el roadmap se dice con honestidad.</span></label>
+        <label class="chk"><input type="checkbox" data-g="ens" data-c="5"><span class="box">✓</span><span class="tx"><b>Ventaja injusta:</b> se explica de dónde salen los datos, que son sintéticos, y qué recursos de la NASA se usan.</span></label>
+        <label class="chk"><input type="checkbox" data-g="ens" data-c="6"><span class="box">✓</span><span class="tx"><b>Equipo:</b> se ven las tres capacidades y se sabe quién es el speaker.</span></label>
+        <label class="chk"><input type="checkbox" data-g="ens" data-c="7"><span class="box">✓</span><span class="tx"><b>Cierre:</b> contrasta incertidumbre con autonomía, con pausa de 2 segundos, contacto visual y agradecimiento.</span></label>
+        <label class="chk"><input type="checkbox" data-g="ens" data-c="8"><span class="box">✓</span><span class="tx"><b>Criterios:</b> cada uno de los cinco (Influencia, Creatividad, Validez, Relevancia, Presentación) aparece en algún momento.</span></label>
+      </div>
+      <div class="chkcount r" style="--d:.4s"><b id="cnt-ens">0</b> de 8 puntos listos</div>
+    </div>
+  </section>
+
+  <!-- 15 · CHECKLIST DE ENVÍO -->
+  <section class="slide">
+    <div class="rings"><span style="width:1000px;height:1000px;top:-250px;right:-350px"></span></div>
+    <div class="sin">
+      <div class="eyebrow r" style="--d:.05s">Cierra el domingo 15 de noviembre a las 11:59 p.m.</div>
+      <h2 class="title r" style="--d:.12s">Checklist de envío en Space Apps</h2>
+      <p class="sub r" style="--d:.2s">El envío se hace desde la pestaña Project del equipo y es <b>final</b>. Todo el contenido del formulario va en inglés.</p>
+      <div class="chklist r" style="--d:.28s">
+        <label class="chk"><input type="checkbox" data-g="env" data-c="1"><span class="box">✓</span><span class="tx"><b>Nombre y resumen:</b> Project Name y High-Level Project Summary.</span></label>
+        <label class="chk"><input type="checkbox" data-g="env" data-c="2"><span class="box">✓</span><span class="tx"><b>Demo:</b> enlace público a un video de hasta 30 s con subtítulos en inglés, o a hasta 7 diapositivas. No se pueden subir a la plataforma.</span></label>
+        <label class="chk"><input type="checkbox" data-g="env" data-c="3"><span class="box">✓</span><span class="tx"><b>Proyecto final:</b> enlace al prototipo o al repositorio.</span></label>
+        <label class="chk"><input type="checkbox" data-g="env" data-c="4"><span class="box">✓</span><span class="tx"><b>Descripción detallada:</b> qué hace, cómo funciona, beneficios, qué esperan lograr y qué herramientas usaron.</span></label>
+        <label class="chk"><input type="checkbox" data-g="env" data-c="5"><span class="box">✓</span><span class="tx"><b>Datos:</b> los datos de la NASA que usaron (obligatorio para el Global Award) y los de agencias socias u otros.</span></label>
+        <label class="chk"><input type="checkbox" data-g="env" data-c="6"><span class="box">✓</span><span class="tx"><b>Uso de IA:</b> el asistente LLM y las herramientas de IA que usaron. Lo generado por IA lleva marca visible y nunca modifica logos de la NASA.</span></label>
+        <label class="chk"><input type="checkbox" data-g="env" data-c="7"><span class="box">✓</span><span class="tx"><b>Equipo:</b> todos los integrantes confirmados en el mismo evento local.</span></label>
+        <label class="chk"><input type="checkbox" data-g="env" data-c="8"><span class="box">✓</span><span class="tx"><b>Enlaces:</b> probados en una ventana privada, y luego “Submit for Judging”.</span></label>
+      </div>
+      <div class="chkcount r" style="--d:.38s"><b id="cnt-env">0</b> de 8 puntos listos</div>
+    </div>
+  </section>
+
+  <!-- 16 · DECISIONES PENDIENTES -->
+  <section class="slide">
+    <div class="rings"><span style="width:900px;height:900px;top:-200px;left:-300px"></span></div>
+    <div class="sin">
+      <div class="eyebrow r" style="--d:.05s">Para decidir hoy</div>
+      <h2 class="title r" style="--d:.12s">Seis decisiones del equipo</h2>
+      <p class="sub r" style="--d:.2s">Los borradores de este manual salen del proyecto, pero estas cosas solo las puede decidir el equipo.</p>
+      <div class="qgrid r" style="--d:.3s">
+        <div class="q"><span class="n">1</span><div><b>¿Qué gancho usamos?</b><span>Historia de Katya, dato de 40 minutos o pregunta retórica.</span></div></div>
+        <div class="q"><span class="n">2</span><div><b>¿Video de 30 s o 7 diapositivas?</b><span>Y quién lo arma y lo sube a un enlace público.</span></div></div>
+        <div class="q"><span class="n">3</span><div><b>¿Quién es el speaker?</b><span>Y quién cubre desarrollo y quién investigación.</span></div></div>
+        <div class="q"><span class="n">4</span><div><b>¿Qué ya funciona hoy?</b><span>Marcarlo en la diapositiva 8 antes de ensayar.</span></div></div>
+        <div class="q"><span class="n">5</span><div><b>¿Qué datos de la NASA declaramos?</b><span>Es el campo que da elegibilidad al Global Award.</span></div></div>
+        <div class="q"><span class="n">6</span><div><b>¿Afirmamos uso en la Tierra?</b><span>Solo si el equipo puede sostenerlo ante los jueces.</span></div></div>
+      </div>
+      <div class="btnrow r" style="--d:.5s"><a class="btn" href="index.html">← HCD Kit</a><a class="btn" href="proyecto.html">Descripción del proyecto</a><a class="btn" href="insights.html">📊 Insights</a></div>
+      <p class="note r" style="--d:.58s">Basado en la “Guía para un Pitch Ganador de Hackathon” y en la descripción del proyecto. Criterios y formato: <a href="https://www.spaceappschallenge.org/resources/judging-awards-guide" target="_blank" rel="noopener">guía de jueceo</a>, <a href="https://www.spaceappschallenge.org/resources/project-submission-guide/" target="_blank" rel="noopener">guía de entrega</a> y <a href="https://www.spaceappschallenge.org/resources/participant-faqs/" target="_blank" rel="noopener">FAQ 2026</a>.</p>
+    </div>
+  </section>
+
+</div>
+
+<div class="hud">
+  <button id="prev" aria-label="Anterior"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <span class="counter"><b id="cur">01</b> / <span id="total">16</span></span>
+  <button id="next" aria-label="Siguiente"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <button id="fs" aria-label="Pantalla completa"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 9V5a1 1 0 011-1h4M20 9V5a1 1 0 00-1-1h-4M4 15v4a1 1 0 001 1h4M20 15v4a1 1 0 01-1 1h-4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</div>
+<div class="hint-key" id="keyhint"><kbd>←</kbd><kbd>→</kbd> navega · <kbd>F</kbd> pantalla completa</div>
+
+<script>
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var N = slides.length, i = 0;
+  var prog = document.getElementById('prog'), cur = document.getElementById('cur');
+  var prevB = document.getElementById('prev'), nextB = document.getElementById('next');
+  document.getElementById('total').textContent = String(N).padStart(2,'0');
+  function pad(n){return String(n+1).padStart(2,'0')}
+  function go(n){
+    n = Math.max(0, Math.min(N-1, n));
+    if(n===i && slides[i].classList.contains('active')) return;
+    slides[i].classList.remove('active');
+    i = n;
+    slides[i].classList.add('active');
+    slides[i].scrollTop = 0;
+    prog.style.width = ((i)/(N-1)*100)+'%';
+    cur.textContent = pad(i);
+    prevB.disabled = i===0; nextB.disabled = i===N-1;
+  }
+  function next(){go(i+1)} function prev(){go(i-1)}
+  nextB.addEventListener('click', next);
+  prevB.addEventListener('click', prev);
+  var kh = document.getElementById('keyhint');
+  document.addEventListener('keydown', function(e){
+    if(e.target && /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName) && e.key===' ') return;
+    if(e.key==='ArrowRight'||e.key==='PageDown'||(e.key===' '&&!e.shiftKey)){e.preventDefault();next();kh.classList.add('gone')}
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'||(e.key===' '&&e.shiftKey)){e.preventDefault();prev();kh.classList.add('gone')}
+    else if(e.key==='Home'){go(0)} else if(e.key==='End'){go(N-1)}
+    else if(e.key==='f'||e.key==='F'){toggleFs()}
+  });
+  var tx=0, ty=0;
+  document.getElementById('deck').addEventListener('touchstart',function(e){tx=e.changedTouches[0].clientX;ty=e.changedTouches[0].clientY},{passive:true});
+  document.getElementById('deck').addEventListener('touchend',function(e){
+    var dx=e.changedTouches[0].clientX-tx, dy=e.changedTouches[0].clientY-ty;
+    if(Math.abs(dx)>60 && Math.abs(dx)>Math.abs(dy)){ dx<0?next():prev(); kh.classList.add('gone'); }
+  },{passive:true});
+  function toggleFs(){
+    if(!document.fullscreenElement){ (document.documentElement.requestFullscreen||function(){})(); }
+    else { (document.exitFullscreen||function(){})(); }
+  }
+  document.getElementById('fs').addEventListener('click', toggleFs);
+
+  /* checklists: se guardan solo en este dispositivo */
+  (function(){
+    var KEY='orbital_manual_pitch_v2', boxes=[].slice.call(document.querySelectorAll('input[data-g]'));
+    var saved={}; try{ saved=JSON.parse(localStorage.getItem(KEY)||'{}')||{}; }catch(e){}
+    function id(b){ return b.getAttribute('data-g')+':'+b.getAttribute('data-c'); }
+    boxes.forEach(function(b){ b.checked=!!saved[id(b)]; });
+    function render(){
+      ['ens','env'].forEach(function(g){
+        var el=document.getElementById('cnt-'+g); if(!el) return;
+        el.textContent=boxes.filter(function(b){return b.getAttribute('data-g')===g&&b.checked}).length;
+      });
+      var show=document.getElementById('demoShow'), road=document.getElementById('demoRoad');
+      if(show&&road){
+        var d=boxes.filter(function(b){return b.getAttribute('data-g')==='demo'});
+        function fill(ul,list,empty){ ul.innerHTML=''; if(!list.length){ var li=document.createElement('li'); li.className='empty'; li.textContent=empty; ul.appendChild(li); return; }
+          list.forEach(function(b){ var li=document.createElement('li'); li.textContent=b.getAttribute('data-t'); ul.appendChild(li); }); }
+        fill(show,d.filter(function(b){return b.checked}),'Marquen arriba lo que ya funciona.');
+        fill(road,d.filter(function(b){return !b.checked}),'Todo funciona: nada que aclarar.');
+      }
+    }
+    boxes.forEach(function(b){ b.addEventListener('change', function(){
+      var m={}; boxes.forEach(function(x){ if(x.checked) m[id(x)]=1; });
+      try{ localStorage.setItem(KEY, JSON.stringify(m)); }catch(e){}
+      render(); b.blur();
+    }); });
+    render();
+  })();
+  go(0);
+</script>
+</body>
+</html>

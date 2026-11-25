@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ORBITAL · Aterrizar el reto (taller)</title>
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png">
+<link rel="shortcut icon" href="favicon.ico">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="description" content="Taller paso a paso para aterrizar el reto de la NASA en un problema potente y una idea para prototipar. Formularios rellenables + exportación a Sheets. NASA Space Apps CDMX 2026." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;800;900&family=Overpass:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --navy-900:#071428;--navy-800:#0a1a33;--navy-700:#0d2244;--navy-600:#102a55;
+    --royal:#1e52c8;--royal-bright:#2a66e6;--blue-soft:#4e8fe6;--blue-pale:#9cc1f2;
+    --lime:#d7e64b;--white:#f4f8ff;--mute:#a9bbd6;--line:rgba(156,193,242,.16);
+    --card:rgba(18,38,74,.6);--ok:#4ccb8f;--warn:#f2c14e;--crit:#ef6a5a;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:"Overpass",system-ui,sans-serif;background:var(--navy-900);color:var(--white);line-height:1.55;-webkit-font-smoothing:antialiased;overflow:hidden}
+  h1,h2,h3,h4,.display{font-family:"Archivo",sans-serif;letter-spacing:-.01em}
+  a{color:var(--blue-soft)}
+
+  /* ---------- DECK ---------- */
+  .deck{position:fixed;inset:0;background:
+      radial-gradient(1200px 760px at 82% 12%, rgba(30,82,200,.32), transparent 60%),
+      radial-gradient(900px 640px at 6% 96%, rgba(20,50,130,.3), transparent 60%),
+      linear-gradient(180deg,var(--navy-800),var(--navy-900))}
+  .slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-start;
+    padding:clamp(70px,10vh,98px) clamp(22px,6vw,96px) clamp(88px,12vh,112px);
+    opacity:0;visibility:hidden;transform:scale(.985);
+    transition:opacity .5s ease,transform .6s cubic-bezier(.2,.7,.2,1),visibility .5s;
+    overflow-y:auto}
+  .slide.active{opacity:1;visibility:visible;transform:none;z-index:2}
+  .sin{width:100%;max-width:1080px;margin:auto}
+
+  .rings{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+  .rings span{position:absolute;border-radius:50%;border:1px solid rgba(120,160,230,.10)}
+
+  .r{opacity:0;transform:translateY(26px);
+     transition:opacity .6s cubic-bezier(.2,.7,.2,1),transform .6s cubic-bezier(.2,.7,.2,1)}
+  .slide.active .r{opacity:1;transform:none;transition-delay:var(--d,0s)}
+  .slide.active .pop{animation:pop .6s both;animation-delay:var(--d,0s)}
+  @keyframes pop{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+
+  /* shared type */
+  .eyebrow{font-family:"Archivo";font-weight:800;text-transform:uppercase;letter-spacing:.14em;font-size:clamp(.66rem,1.1vw,.78rem);color:var(--lime);display:inline-flex;align-items:center;gap:10px}
+  .eyebrow::before{content:"";width:26px;height:2px;background:var(--lime);display:inline-block}
+  .numtag{font-family:"Archivo";font-weight:900;color:var(--lime);font-size:clamp(1.3rem,2.4vw,1.7rem);display:block;margin-bottom:6px}
+  h2.title{font-size:clamp(1.9rem,4.8vw,3.4rem);font-weight:900;line-height:1.02;margin:8px 0 14px}
+  h2.title.sm{font-size:clamp(1.6rem,3.6vw,2.6rem);margin:0}
+  .sub{color:var(--mute);font-size:clamp(1rem,1.7vw,1.2rem);max-width:70ch}
+  .hl{color:var(--lime)} em{color:var(--blue-soft);font-style:normal}
+  .chip{display:inline-flex;align-items:center;gap:8px;background:rgba(215,230,75,.14);border:1px solid rgba(215,230,75,.4);color:var(--lime);font-family:"Archivo";font-weight:800;font-size:clamp(.72rem,1.2vw,.82rem);letter-spacing:.06em;text-transform:uppercase;padding:6px 14px;border-radius:999px;margin-bottom:14px}
+
+  /* ---------- HERO ---------- */
+  .brandmark{display:flex;align-items:center;gap:14px;margin-bottom:34px}
+  .logo-ring{width:50px;height:50px;flex:0 0 auto}
+  .brandmark small{display:block;font-size:.6rem;letter-spacing:.3em;color:var(--mute);font-weight:700;font-family:"Archivo"}
+  .brandmark b{font-size:1rem;letter-spacing:.04em;font-family:"Archivo";font-weight:900;text-transform:uppercase}
+  .hero h1{font-weight:900;font-size:clamp(2.4rem,6.6vw,4.8rem);line-height:.98;margin:14px 0 22px;max-width:18ch}
+  .hero .lead{color:var(--blue-pale);font-size:clamp(1.02rem,2vw,1.32rem);max-width:62ch;margin-bottom:26px}
+  .ghostlink{display:inline-flex;align-items:center;gap:9px;background:transparent;color:var(--lime);border:1px solid rgba(215,230,75,.5);font-family:"Archivo",sans-serif;font-weight:800;font-size:clamp(.85rem,1.4vw,.95rem);padding:12px 20px;border-radius:11px;text-decoration:none}
+  .ghostlink:hover{background:rgba(215,230,75,.08)}
+
+  /* plan 90 min */
+  .plan{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:26px}
+  .plan a{display:block;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px 18px;text-decoration:none;color:var(--white);transition:.2s}
+  .plan a:hover{border-color:var(--lime);transform:translateY(-3px)}
+  .plan .pn{font-family:"Archivo";font-weight:900;color:var(--lime);font-size:1rem}
+  .plan .pt{font-weight:800;font-family:"Archivo";font-size:clamp(1.05rem,1.8vw,1.3rem);margin:8px 0 6px}
+  .plan .pm{color:var(--mute);font-size:.88rem}
+
+  /* howbar + traps */
+  .howbar{background:linear-gradient(135deg,rgba(30,82,200,.22),var(--navy-700));border:1px solid var(--line);border-radius:18px;padding:clamp(24px,3.5vw,38px)}
+  .howbar h3{font-size:clamp(1.2rem,2.2vw,1.6rem);margin-bottom:14px;display:flex;align-items:center;gap:9px}
+  .howbar p{color:var(--mute);font-size:clamp(.98rem,1.6vw,1.12rem);margin-bottom:12px}
+  .howbar p:last-of-type{margin-bottom:0}
+  .howbar b{color:var(--white)}
+  .traps{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:18px}
+  .trap{background:rgba(239,106,90,.09);border:1px solid rgba(239,106,90,.3);border-radius:16px;padding:clamp(20px,2.6vw,30px)}
+  .trap .tt{font-family:"Archivo";font-weight:800;color:var(--crit);font-size:clamp(.82rem,1.3vw,.95rem);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+  .trap p{color:var(--mute);font-size:clamp(.95rem,1.5vw,1.08rem);margin:0}
+
+  /* meta cards */
+  .meta{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:18px 0 6px}
+  .mcard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:clamp(16px,2vw,22px) clamp(17px,2.2vw,24px)}
+  .mcard .lbl{font-family:"Archivo";font-weight:800;font-size:.74rem;text-transform:uppercase;letter-spacing:.07em;color:var(--blue-soft);margin-bottom:6px}
+  .mcard p{color:var(--mute);font-size:clamp(.92rem,1.4vw,1.04rem);margin:0}
+  .mcard p b{color:var(--white)}
+  .mcard.key{border-color:rgba(215,230,75,.35)} .mcard.key .lbl{color:var(--lime)}
+  .mcard.err{border-color:rgba(239,106,90,.3)} .mcard.err .lbl{color:var(--crit)}
+  .bigcard{padding:clamp(24px,3.4vw,40px)}
+  .bigcard p{font-size:clamp(1.1rem,2.2vw,1.55rem);line-height:1.4;color:var(--white);font-family:"Archivo";font-weight:600}
+
+  /* instruction statement */
+  .instr{background:linear-gradient(135deg,var(--navy-600),var(--navy-700));border:1px solid var(--line);border-left:5px solid var(--lime);border-radius:18px;padding:clamp(24px,3.6vw,42px);color:var(--mute);font-size:clamp(1.05rem,2.3vw,1.6rem);line-height:1.45;font-family:"Archivo";font-weight:600}
+  .instr b{color:var(--white)}
+  .instr.small{font-size:clamp(.98rem,1.7vw,1.2rem);margin-top:16px}
+  .formula{background:linear-gradient(135deg,var(--navy-600),var(--navy-700));border:1px solid var(--line);border-left:4px solid var(--lime);border-radius:14px;padding:clamp(18px,2.4vw,26px) clamp(20px,2.6vw,30px);margin:6px 0 16px;font-family:"Archivo";font-weight:600;font-size:clamp(1.05rem,2vw,1.4rem);line-height:1.4}
+  .formula em{color:var(--lime);font-style:normal}
+
+  /* fill slides */
+  .fgrid{display:grid;grid-template-columns:1.05fr 1fr;gap:clamp(20px,3vw,44px);align-items:start;margin-top:16px}
+  .fhead{display:flex;align-items:center;gap:14px}
+  .fn{width:38px;height:38px;border-radius:11px;background:rgba(215,230,75,.14);border:1px solid rgba(215,230,75,.4);color:var(--lime);font-family:"Archivo";font-weight:800;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex:0 0 auto}
+  .fq{color:var(--blue-pale);font-size:clamp(1rem,1.8vw,1.22rem);font-weight:600;margin:10px 0 14px}
+  ul.prompts{list-style:none;display:grid;gap:10px}
+  ul.prompts li{color:var(--mute);font-size:clamp(.9rem,1.4vw,1.02rem);padding-left:20px;position:relative;line-height:1.5}
+  ul.prompts li::before{content:"";position:absolute;left:0;top:9px;width:7px;height:7px;border-radius:50%;background:var(--blue-soft)}
+  ul.prompts li em{color:var(--blue-soft)}
+  textarea,input[type=text]{width:100%;background:rgba(7,20,40,.55);border:1px solid var(--line);border-radius:12px;color:var(--white);font-family:"Overpass",sans-serif;font-size:clamp(.96rem,1.5vw,1.08rem);padding:13px 15px;resize:vertical;transition:.15s}
+  textarea:focus,input[type=text]:focus{outline:none;border-color:var(--lime);background:rgba(7,20,40,.85)}
+  textarea{min-height:clamp(150px,26vh,250px)}
+  textarea.tall{min-height:clamp(170px,30vh,300px)}
+  .ds{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:12px}
+  .ds label{cursor:pointer}
+  .ds input{position:absolute;opacity:0;width:0;height:0}
+  .ds span.d,.ds span.s{display:inline-block;font-family:"Archivo";font-weight:800;font-size:.8rem;padding:8px 16px;border-radius:999px;border:1px solid var(--line);color:var(--mute);transition:.15s}
+  .ds input:checked + span.d{background:rgba(76,203,143,.18);border-color:var(--ok);color:var(--ok)}
+  .ds input:checked + span.s{background:rgba(242,193,78,.18);border-color:var(--warn);color:var(--warn)}
+  .dshelp{font-size:.8rem;color:var(--mute);flex-basis:100%}
+  .exrow{margin-top:14px}
+  .exbtn{cursor:pointer;font-family:"Archivo";font-weight:800;font-size:.82rem;color:var(--blue-soft);background:rgba(10,26,51,.5);border:1px dashed rgba(78,143,230,.5);border-radius:11px;padding:10px 16px;transition:.15s;text-align:left}
+  .exbtn:hover{border-color:var(--lime);color:var(--lime)}
+  .povbox{background:linear-gradient(135deg,var(--navy-600),var(--navy-700));border:1px solid var(--line);border-left:4px solid var(--blue-soft);border-radius:14px;padding:clamp(16px,2.2vw,24px) clamp(18px,2.6vw,28px);font-family:"Archivo";font-weight:600;font-size:clamp(1.05rem,2vw,1.45rem);line-height:1.35;margin:16px 0}
+  .povbox em{color:var(--blue-soft)}
+
+  /* autorrevisión */
+  .hecho{background:linear-gradient(135deg,var(--navy-600),var(--navy-700));border:1px solid var(--line);border-left:5px solid var(--lime);border-radius:16px;padding:clamp(18px,2.6vw,28px) clamp(20px,3vw,32px);font-family:"Archivo";font-weight:600;font-size:clamp(1.05rem,2.2vw,1.55rem);line-height:1.35;margin:16px 0 20px;min-height:1.4em}
+  .checks{display:grid;gap:14px}
+  .chk{display:flex;align-items:flex-start;gap:14px;cursor:pointer;color:var(--mute);font-size:clamp(.95rem,1.5vw,1.08rem);background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+  .chk input{appearance:none;-webkit-appearance:none;width:24px;height:24px;border:1px solid var(--line);border-radius:7px;flex:0 0 auto;margin-top:1px;cursor:pointer;transition:.15s;position:relative;background:rgba(7,20,40,.5)}
+  .chk input:checked{background:var(--lime);border-color:var(--lime)}
+  .chk input:checked::after{content:"✓";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#071428;font-size:.95rem;font-weight:900}
+  .chk b{color:var(--white)}
+  .verdict{margin-top:16px;font-family:"Archivo";font-weight:800;font-size:.9rem;padding:8px 16px;border-radius:999px;display:inline-block}
+  .verdict.good{background:rgba(76,203,143,.15);color:var(--ok)}
+  .verdict.warn{background:rgba(242,193,78,.15);color:var(--warn)}
+  .verdict.none{background:rgba(156,193,242,.1);color:var(--mute)}
+  .hecho.empty{color:var(--mute);font-weight:400;font-style:italic;font-size:clamp(.95rem,1.6vw,1.1rem)}
+  .arfoot{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:16px}
+  .arfoot .verdict{margin-top:0}
+  .editlink{cursor:pointer;font-family:"Archivo";font-weight:800;font-size:.82rem;color:var(--white);background:rgba(10,26,51,.6);border:1px solid var(--line);border-radius:11px;padding:10px 16px;transition:.15s}
+  .editlink:hover{border-color:var(--lime);color:var(--lime)}
+
+  /* matriz */
+  .matrix{overflow:auto;border:1px solid var(--line);border-radius:16px;max-height:max(280px,calc(100vh - 290px));margin-top:16px}
+  table{border-collapse:collapse;width:100%;min-width:720px;font-size:clamp(.84rem,1.3vw,.95rem)}
+  th,td{padding:12px 14px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+  thead th{font-family:"Archivo";font-weight:800;font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:var(--blue-soft);background:rgba(10,26,51,.95);position:sticky;top:0;z-index:1}
+  tbody tr:last-child td{border-bottom:none}
+  .mhmw{color:var(--white);font-size:.88rem}
+  .mhmw .rcname{font-family:"Archivo";font-weight:800;color:var(--lime);font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:3px}
+  select{background:rgba(7,20,40,.6);border:1px solid var(--line);border-radius:8px;color:var(--white);font-family:"Overpass";font-size:.95rem;padding:8px 10px;cursor:pointer}
+  select:focus{outline:none;border-color:var(--lime)}
+  .total{font-family:"Archivo";font-weight:900;font-size:1.25rem;color:var(--lime);text-align:center}
+  .pickbtn{cursor:pointer;font-family:"Archivo";font-weight:800;font-size:.75rem;padding:7px 13px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--mute);transition:.15s;white-space:nowrap}
+  .pickbtn:hover{border-color:var(--lime);color:var(--lime)}
+  .pickbtn.on{background:var(--lime);color:#071428;border-color:var(--lime)}
+
+  /* ideation */
+  .rh{display:flex;align-items:center;gap:12px;margin-bottom:8px;flex-wrap:wrap}
+  .rnum{font-family:"Archivo";font-weight:900;color:var(--lime);font-size:clamp(1.2rem,2.2vw,1.6rem)}
+  .rh h3{font-size:clamp(1.4rem,2.8vw,2rem);font-weight:900}
+  .rtime{font-family:"Archivo";font-weight:800;font-size:.7rem;color:var(--lime);background:rgba(215,230,75,.12);border:1px solid rgba(215,230,75,.35);padding:4px 11px;border-radius:999px;text-transform:uppercase;letter-spacing:.05em}
+  p.rd{color:var(--mute);font-size:clamp(.98rem,1.6vw,1.14rem);margin-bottom:16px;max-width:75ch}
+  p.rd b{color:var(--white)}
+  .idealist{display:grid;grid-template-columns:1fr 1fr;gap:10px 22px}
+  .idearow{display:flex;align-items:center;gap:10px}
+  .idearow .num{font-family:"Archivo";font-weight:800;color:var(--mute);font-size:.85rem;width:20px;flex:0 0 auto;text-align:right}
+  .combobox{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:6px}
+  .combocol{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 16px 10px}
+  .combocol h5{font-family:"Archivo";font-weight:800;font-size:.95rem;margin-bottom:4px}
+  .combocol .src{color:var(--mute);font-size:.78rem;margin-bottom:12px}
+  .combocol.dato h5{color:var(--lime)} .combocol.canal h5{color:var(--blue-soft)} .combocol.mom h5{color:var(--warn)}
+  .combocol .col-in{margin-bottom:8px}
+  .combocol input[type=text]{padding:10px 12px}
+  .pickgrid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .chosenq{background:linear-gradient(135deg,rgba(30,82,200,.28),var(--navy-700));border:1px solid rgba(215,230,75,.35);border-radius:14px;padding:14px 18px;margin-bottom:18px}
+  .chosenq .lbl{font-family:"Archivo";font-weight:800;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--lime);margin-bottom:4px}
+  .chosenq .txt{font-size:clamp(.98rem,1.7vw,1.15rem);font-weight:600;color:var(--white)}
+  .chosenq .txt.empty{color:var(--mute);font-weight:400;font-style:italic;font-size:.92rem}
+  .r3row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+  .r3row .lb,.lb{font-size:.82rem;color:var(--mute);margin-bottom:6px;font-family:"Archivo";font-weight:700}
+
+  /* modal de ejemplos */
+  .exsrc{display:none}
+  .modal{position:fixed;inset:0;z-index:60;background:rgba(4,10,22,.8);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:18px}
+  .modal.open{display:flex}
+  .mbox{background:var(--navy-800);border:1px solid var(--line);border-radius:18px;max-width:900px;width:100%;max-height:86vh;overflow:auto;padding:26px 28px;position:relative}
+  .mbox h3{font-size:clamp(1.1rem,2vw,1.4rem);font-weight:900;margin:0 40px 14px 0}
+  .mclose{position:absolute;top:14px;right:14px;width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:rgba(10,26,51,.8);color:var(--white);cursor:pointer;font-size:1rem}
+  .mclose:hover{border-color:var(--lime);color:var(--lime)}
+  .exbody{color:var(--mute);font-size:.94rem}
+  .exbody p b{color:var(--white)}
+  .exbody table{min-width:0;width:100%;font-size:.86rem}
+  .exbody td{padding:9px 11px}
+  .extag{font-family:"Archivo";font-weight:800;font-size:.68rem;padding:2px 7px;border-radius:5px}
+  .extag.d{background:rgba(76,203,143,.16);color:var(--ok)} .extag.s{background:rgba(242,193,78,.16);color:var(--warn)}
+  .exrc{color:var(--lime);font-family:"Archivo";font-weight:700;font-size:.8rem;white-space:nowrap}
+
+  /* closing */
+  .btnrow{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
+  .btnrow .pickbtn{font-size:.85rem;padding:11px 18px}
+  .credit{margin-top:30px;text-align:center;color:var(--mute);font-size:.84rem}
+  .credit .logo-ring{width:34px;height:34px;margin:0 auto 10px;display:block}
+
+  /* ---------- CHROME ---------- */
+  .prog{position:fixed;top:0;left:0;height:3px;background:var(--lime);width:0;z-index:40;transition:width .4s ease;box-shadow:0 0 12px rgba(215,230,75,.5)}
+  .tbar{position:fixed;top:0;left:0;right:0;z-index:35;background:rgba(7,20,40,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .tin{padding:9px 18px;display:flex;align-items:center;gap:7px}
+  .tchip{font-family:"Archivo";font-weight:800;font-size:.74rem;color:var(--mute);background:transparent;cursor:pointer;padding:7px 12px;border-radius:999px;border:1px solid var(--line);white-space:nowrap;transition:.2s}
+  .tchip:hover{color:var(--white);border-color:var(--blue-soft)}
+  .tchip.on{color:#071428;background:var(--lime);border-color:var(--lime)}
+  .tin .sp{flex:1}
+  .tin .tb{font-family:"Archivo";font-weight:800;font-size:.74rem;cursor:pointer;border-radius:10px;padding:8px 12px;border:1px solid var(--line);background:rgba(10,26,51,.6);color:var(--white);transition:.2s;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+  .tin .tb:hover{border-color:var(--lime);color:var(--lime)}
+  .tin .tb.prime{background:var(--lime);color:#071428;border-color:var(--lime)}
+  .saved{font-size:.72rem;color:var(--ok);font-family:"Archivo";font-weight:700;opacity:0;transition:.3s}
+  .saved.show{opacity:1}
+  .hud{position:fixed;bottom:18px;right:20px;display:flex;align-items:center;gap:10px;z-index:30}
+  .hud button{width:44px;height:44px;border-radius:12px;border:1px solid var(--line);background:rgba(10,26,51,.8);color:var(--white);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;backdrop-filter:blur(6px)}
+  .hud button:hover{border-color:var(--lime);color:var(--lime)}
+  .hud button:disabled{opacity:.3;cursor:default;border-color:var(--line);color:var(--white)}
+  .counter{font-family:"Archivo";font-weight:800;font-size:.82rem;color:var(--mute);letter-spacing:.08em;padding:0 6px;min-width:62px;text-align:center}
+  .counter b{color:var(--lime)}
+  .hint-key{position:fixed;bottom:24px;left:22px;z-index:30;color:var(--mute);font-size:.76rem;font-family:"Archivo";font-weight:700;letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;gap:8px;opacity:.75}
+  .hint-key kbd{background:rgba(10,26,51,.8);border:1px solid var(--line);border-radius:6px;padding:2px 7px;font-family:"Archivo";font-size:.72rem}
+  .hint-key.gone{opacity:0;transition:opacity .6s;pointer-events:none}
+
+  @media(max-width:820px){
+    .plan{grid-template-columns:1fr 1fr}
+    .traps,.meta,.fgrid,.combobox,.r3row,.idealist{grid-template-columns:1fr}
+    .hint-key{display:none}
+    .slide{padding:68px 20px 92px}
+    .tchip.hideM{display:none}
+    .tchip.hideM.on{display:inline-flex}
+    .pickgrid{grid-template-columns:1fr}
+    /* matriz como tarjetas en celular */
+    .matrix{max-height:none;overflow:visible;border:none}
+    .matrix table{min-width:0}
+    .matrix thead{display:none}
+    .matrix tbody,.matrix td{display:block}
+    .matrix tr{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px}
+    .matrix td{border:none;padding:0}
+    .matrix td.mhmw{grid-column:1/-1}
+    .matrix td[data-l]::before{content:attr(data-l);display:block;font-family:"Archivo";font-weight:800;font-size:.66rem;text-transform:uppercase;letter-spacing:.05em;color:var(--blue-soft);margin-bottom:6px}
+    .matrix td select{width:100%}
+    .matrix td.total{text-align:left;align-self:center}
+    .matrix td.pickcell{align-self:center;justify-self:end}
+    .tin{padding:8px 12px}
+    .tin .tl{display:none}
+    .tin .tb{padding:8px 11px}
+    .mbox{padding:22px 18px}
+  }
+</style>
+</head>
+<body>
+
+<div class="prog" id="prog"></div>
+
+<!-- BARRA SUPERIOR -->
+<nav class="tbar">
+  <div class="tin">
+    <button type="button" class="tchip" data-goto="plan" data-step="0">Plan</button>
+    <button type="button" class="tchip hideM" data-goto="p1" data-step="1">1 · Entender</button>
+    <button type="button" class="tchip hideM" data-goto="p2" data-step="2">2 · Abrir</button>
+    <button type="button" class="tchip hideM" data-goto="p3" data-step="3">3 · Afinar</button>
+    <button type="button" class="tchip hideM" data-goto="p4" data-step="4">4 · Converger</button>
+    <button type="button" class="tchip hideM" data-goto="p5" data-step="5">5 · Idear</button>
+    <span class="sp"></span>
+    <span class="saved" id="savedMsg">Guardado ✓</span>
+    <button type="button" class="tb" id="copyBtn" title="Copiar todo en formato tabla para pegar en Google Sheets">⧉<span class="tl"> Copiar para Sheets</span></button>
+    <button type="button" class="tb prime" id="csvBtn" title="Descargar CSV para abrir en Sheets/Excel">↓<span class="tl"> Exportar</span></button>
+  </div>
+</nav>
+
+<div class="deck" id="deck">
+
+  <!-- PORTADA -->
+  <section class="slide hero active" id="cover">
+    <div class="rings">
+      <span style="width:620px;height:620px;top:-120px;right:-160px"></span>
+      <span style="width:920px;height:920px;top:-240px;right:-300px"></span>
+      <span style="width:1240px;height:1240px;top:-400px;right:-440px"></span>
+    </div>
+    <div class="sin" style="position:relative;z-index:1">
+      <div class="brandmark r" style="--d:.05s">
+        <span class="logo-ring"><svg viewBox="0 0 48 48" fill="none"><circle cx="22" cy="26" r="16" stroke="#f4f8ff" stroke-width="2.4"/><path d="M34 14 C 30 10, 24 9, 20 11" stroke="#d7e64b" stroke-width="2.4" stroke-linecap="round"/><circle cx="35" cy="13" r="2.4" fill="#ef6a5a"/></svg></span>
+        <span><small>NASA Space Apps · CDMX 2026 · Equipo ORBITAL</small><b>Taller · Aterrizar el reto</b></span>
+      </div>
+      <div class="eyebrow r" style="--d:.15s">Plan de vuelo · ~90 min</div>
+      <h1 class="r" style="--d:.25s">Aterrizar el reto en un problema potente</h1>
+      <p class="lead r" style="--d:.36s">Una secuencia de cinco herramientas para convertir el reto de la NASA en un problema claro —centrado en una persona y conectado con un dato— y en una idea elegida para prototipar. Llénenla en equipo, paso a paso; se guarda sola y se sincroniza en Google.</p>
+      <div class="r" style="--d:.46s"><a class="ghostlink" href="empatia.html">🧠 Antes de definir, empaticen · Mapa de empatía (Katya E.) →</a></div>
+    </div>
+  </section>
+
+  <!-- PLAN 90 MIN -->
+  <section class="slide" id="plan" data-step="0">
+    <div class="sin">
+      <div class="eyebrow r" style="--d:.05s">Plan de vuelo · ~90 min</div>
+      <h2 class="title r" style="--d:.12s">Cinco herramientas, en orden</h2>
+      <div class="plan">
+        <a href="#p1" data-goto="p1" class="pop" style="--d:.2s"><div class="pn">1 · 30 min</div><div class="pt">Entender</div><div class="pm">Canvas del problema</div></a>
+        <a href="#p2" data-goto="p2" class="pop" style="--d:.28s"><div class="pn">2 · 15 min</div><div class="pt">Abrir</div><div class="pm">Siete "¿Cómo podríamos…?"</div></a>
+        <a href="#p3" data-goto="p3" class="pop" style="--d:.36s"><div class="pn">3 · 5 min</div><div class="pt">Afinar</div><div class="pm">Autorrevisión</div></a>
+        <a href="#p4" data-goto="p4" class="pop" style="--d:.44s"><div class="pn">4 · 10 min</div><div class="pt">Converger</div><div class="pm">Matriz de elección</div></a>
+        <a href="#p5" data-goto="p5" class="pop" style="--d:.52s"><div class="pn">5 · 25 min</div><div class="pt">Idear</div><div class="pm">Dato · Canal · Momento</div></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CÓMO USAR -->
+  <section class="slide" id="howto" data-step="0">
+    <div class="sin">
+      <div class="howbar r" style="--d:.1s">
+        <h3>⚙️ Cómo usar esta página</h3>
+        <p><b>Síganla en orden.</b> Cada paso explica qué hacer y trae sus campos para llenar en vivo durante la reunión.</p>
+        <p><b>Se guarda sola</b> en este navegador mientras escriben. Al terminar, usen <b>“Exportar”</b> o <b>“Copiar para Sheets”</b> (barra de arriba) para llevarse todo a una hoja de cálculo y usarlo como insumo al prototipar.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRAMPAS -->
+  <section class="slide" id="traps" data-step="0">
+    <div class="sin">
+      <div class="eyebrow r" style="--d:.05s">Antes de empezar</div>
+      <h2 class="title r" style="--d:.12s">Dos trampas por evitar</h2>
+      <div class="traps">
+        <div class="trap pop" style="--d:.22s"><div class="tt">Trampa 1 · no copiar el reto</div><p>El enunciado de la NASA es el punto de partida, no la respuesta. En el recuadro de Problema va una causa, no el reto repetido.</p></div>
+        <div class="trap pop" style="--d:.32s"><div class="tt">Trampa 2 · no empezar por los datos</div><p>“Tenemos este dataset, ¿qué hacemos?” lleva a una solución buscando problema. Primero la persona, luego el dato.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EQUIPO -->
+  <section class="slide" id="team" data-step="0">
+    <div class="sin">
+      <div class="eyebrow r" style="--d:.05s">Trabajo en equipo</div>
+      <h2 class="title r" style="--d:.12s">Tu nombre y tu equipo</h2>
+      <div id="syncbar" class="r" style="margin-top:6px;--d:.2s"></div>
+      <p class="sub r" style="margin-top:14px;font-size:.95rem;--d:.28s">Pon tu nombre y conéctate (⚙️) para llenarlo en equipo desde cualquier dispositivo y que todo caiga en el mismo Google Sheet. Sin conectar, funciona en este dispositivo.</p>
+      <div style="height:170px"></div>
+    </div>
+  </section>
+
+  <!-- ===================== PASO 1 ===================== -->
+  <section class="slide" id="p1" data-step="1">
+    <div class="sin">
+      <span class="chip r" style="--d:.05s">30 min · Entender el problema</span>
+      <h2 class="title r" style="--d:.12s"><span class="hl">1 ·</span> Canvas del problema</h2>
+      <div class="meta">
+        <div class="mcard pop" style="--d:.2s"><div class="lbl">Qué es</div><p>Un lienzo de siete recuadros que describe el problema desde varias caras: cuándo ocurre, a quién, qué lo causa, cuánto duele y qué se hace hoy.</p></div>
+        <div class="mcard pop" style="--d:.28s"><div class="lbl">Objetivo</div><p>Una definición del problema basada en evidencia, no en intuición. Una frase que los jueces entiendan en segundos.</p></div>
+        <div class="mcard key pop" style="--d:.36s"><div class="lbl">La clave</div><p>El recuadro de <b>Problema va al final</b>: es lo que menos se sabe al inicio y debe salir de los demás. Marquen cada nota como Dato o Supuesto — es la única forma de distinguir un canvas con evidencia de uno lleno de suposiciones.</p></div>
+        <div class="mcard err pop" style="--d:.44s"><div class="lbl">Error común</div><p>Copiar el enunciado del reto en el recuadro de Problema, o escribir una solución disfrazada (“no existe una app que…”).</p></div>
+      </div>
+      <div class="exrow r" style="--d:.5s"><button type="button" class="exbtn" data-ex="ex1">Ver ejemplo trabajado (riego · humedad del suelo / SMAP)</button></div>
+    </div>
+  </section>
+
+  <section class="slide" id="p1-how" data-step="1">
+    <div class="sin">
+      <div class="eyebrow r" style="--d:.05s">Paso 1 · Cómo llenarlo</div>
+      <div class="instr r" style="--d:.15s;margin-top:14px">Llenen los recuadros <b>en este orden</b> (Problema al final). En cada uno, marquen <b>D</b> si lo vieron o midieron (tiene fuente) o <b>S</b> si lo creen (supuesto). Los supuestos importantes son lo primero que conviene verificar.</div>
+    </div>
+  </section>
+
+  <div data-gen="canvas"></div>
+
+  <section class="slide" id="p1-test" data-step="1">
+    <div class="sin">
+      <div class="eyebrow r" style="--d:.05s">Paso 1 · Antes de pasar al siguiente</div>
+      <div class="mcard key bigcard r" style="--d:.15s;margin-top:16px"><div class="lbl">Prueba final del canvas</div><p>Si los jueces leen solo el recuadro de Problema, ¿entienden quién sufre, por qué y qué dato de la NASA lo cambia? Si no, el canvas todavía describe el reto y no el problema.</p></div>
+    </div>
+  </section>
+
+  <!-- ===================== PASO 2 ===================== -->
+  <section class="slide" id="p2" data-step="2">
+    <div class="sin">
+      <span class="chip r" style="--d:.05s">15 min · Abrir oportunidades</span>
+      <h2 class="title r" style="--d:.12s"><span class="hl">2 ·</span> Siete “¿Cómo podríamos…?”</h2>
+      <div class="meta">
+        <div class="mcard pop" style="--d:.2s"><div class="lbl">Qué es</div><p>Convertir cada parte del problema en una pregunta abierta que invita a idear.</p></div>
+        <div class="mcard pop" style="--d:.28s"><div class="lbl">Objetivo</div><p>Abrir varias puertas de entrada al mismo problema antes de elegir una. Opciones realmente distintas, no la misma pregunta con otras palabras.</p></div>
+        <div class="mcard key pop" style="--d:.36s"><div class="lbl">La clave</div><p>Una buena pregunta “¿Cómo podríamos…?” nace de una <b>tensión</b>: la distancia entre cómo están las cosas hoy y cómo podrían estar. Cada fila trae un arranque que fuerza esa tensión.</p></div>
+        <div class="mcard err pop" style="--d:.44s"><div class="lbl">Error común</div><p>Meter la solución dentro de la pregunta (“¿cómo podríamos hacer una app que…?”).</p></div>
+      </div>
+      <div class="exrow r" style="--d:.5s"><button type="button" class="exbtn" data-ex="ex2">Ver ejemplo trabajado (las 7 preguntas del caso de riego)</button></div>
+    </div>
+  </section>
+
+  <section class="slide" id="p2-how" data-step="2">
+    <div class="sin">
+      <div class="eyebrow r" style="--d:.05s">Paso 2 · Cómo llenarlo</div>
+      <div class="formula r" style="--d:.15s;margin-top:14px">Fórmula base: ¿Cómo podríamos <em>[verbo]</em> para que <em>[cliente]</em> pueda <em>[lograr algo]</em> en/cuando <em>[contexto]</em>, a pesar de <em>[limitación]</em>?</div>
+      <div class="instr r" style="--d:.25s">Escriban <b>una pregunta por cada recuadro</b> del canvas. Usen el arranque de cada fila para no quedarse en una descripción.</div>
+    </div>
+  </section>
+
+  <div data-gen="hmw"></div>
+
+  <!-- ===================== PASO 3 ===================== -->
+  <section class="slide" id="p3" data-step="3">
+    <div class="sin">
+      <span class="chip r" style="--d:.05s">5 min · Afinar</span>
+      <h2 class="title r" style="--d:.12s"><span class="hl">3 ·</span> Autorrevisión</h2>
+      <div class="meta">
+        <div class="mcard pop" style="--d:.2s"><div class="lbl">Qué es</div><p>Tres preguntas de control para revisar cada “¿Cómo podríamos…?” sin ayuda externa.</p></div>
+        <div class="mcard pop" style="--d:.28s"><div class="lbl">Objetivo</div><p>Detectar por sí mismos si una pregunta está mal calibrada: demasiado amplia, demasiado estrecha, o sin tensión.</p></div>
+        <div class="mcard key pop" style="--d:.36s"><div class="lbl">La clave</div><p>Una pregunta bien calibrada está en un punto medio: si es muy amplia, no orienta; si es muy estrecha, ya trae la solución y no deja idear.</p></div>
+        <div class="mcard err pop" style="--d:.44s"><div class="lbl">Señal</div><p>Si las siete preguntas se parecen demasiado entre sí, casi siempre el recuadro de Problema describe un síntoma y no una causa: regresen a él.</p></div>
+      </div>
+      <div class="exrow r" style="--d:.5s"><button type="button" class="exbtn" data-ex="ex3">Ver ejemplo de calibración</button></div>
+    </div>
+  </section>
+
+  <section class="slide" id="p3-how" data-step="3">
+    <div class="sin">
+      <div class="eyebrow r" style="--d:.05s">Paso 3 · Cómo llenarlo</div>
+      <div class="instr r" style="--d:.15s;margin-top:14px">Pasen cada pregunta por las tres casillas. La tercera es la que confirma que está bien: <b>si en un minuto se les ocurren tres ideas distintas, está calibrada.</b></div>
+    </div>
+  </section>
+
+  <div data-gen="autorev"></div>
+
+  <!-- ===================== PASO 4 ===================== -->
+  <section class="slide" id="p4" data-step="4">
+    <div class="sin">
+      <span class="chip r" style="--d:.05s">10 min · Converger y decidir</span>
+      <h2 class="title r" style="--d:.12s"><span class="hl">4 ·</span> Matriz de elección</h2>
+      <div class="meta">
+        <div class="mcard pop" style="--d:.2s"><div class="lbl">Qué es</div><p>Una tabla para calificar las preguntas que pasaron la autorrevisión con dos criterios y elegir una.</p></div>
+        <div class="mcard pop" style="--d:.28s"><div class="lbl">Objetivo</div><p>Decidir rápido y con argumentos, no por quién habla más fuerte, y asegurar que lo elegido se pueda construir a tiempo.</p></div>
+        <div class="mcard key pop" style="--d:.36s"><div class="lbl">La clave</div><p>Los dos criterios son las dos restricciones reales del evento. <b>Conectar con un dato de la NASA</b> hace que el proyecto pertenezca al reto; <b>poder prototiparlo en un día</b> hace que llegue a la presentación.</p></div>
+        <div class="mcard pop" style="--d:.44s"><div class="lbl">Los que no ganan</div><p>No se tiran: sirven como argumentos en el pitch para mostrar que entendieron el problema desde varios ángulos.</p></div>
+      </div>
+      <div class="exrow r" style="--d:.5s"><button type="button" class="exbtn" data-ex="ex4">Ver ejemplo</button></div>
+    </div>
+  </section>
+
+  <section class="slide" id="p4-matrix" data-step="4">
+    <div class="sin">
+      <div class="eyebrow r" style="--d:.05s">Paso 4 · Califiquen y elijan</div>
+      <p class="sub r" style="--d:.12s;margin-top:10px;color:var(--mute)">Califiquen cada pregunta del 1 al 3 en los dos criterios. El <b style="color:var(--white)">total</b> se suma solo. Marquen <b style="color:var(--white)">“Elegir”</b> en la de mayor suma: con esa van a idear y prototipar.</p>
+      <div class="matrix r" style="--d:.2s">
+        <table>
+          <thead><tr>
+            <th style="width:46%">Pregunta “¿Cómo podríamos…?”</th>
+            <th>¿Conecta con un dato de la NASA? (1–3)</th>
+            <th>¿Se puede prototipar en un día? (1–3)</th>
+            <th style="text-align:center">Total</th>
+            <th></th>
+          </tr></thead>
+          <tbody id="matrix"></tbody>
+        </table>
+      </div>
+      <div class="exrow r" style="--d:.28s"><button type="button" class="exbtn" data-ex="ex4">Ver ejemplo</button></div>
+    </div>
+  </section>
+
+  <!-- ===================== PASO 5 ===================== -->
+  <section class="slide" id="p5" data-step="5">
+    <div class="sin">
+      <span class="chip r" style="--d:.05s">25 min · Idear</span>
+      <h2 class="title r" style="--d:.12s"><span class="hl">5 ·</span> Dato · Canal · Momento</h2>
+      <div class="meta">
+        <div class="mcard pop" style="--d:.2s"><div class="lbl">Qué es</div><p>Una ideación en tres rondas que combina escritura individual en silencio con una caja de combinaciones. Adapta dos técnicas: <em>brainwriting</em> y caja morfológica.</p></div>
+        <div class="mcard pop" style="--d:.28s"><div class="lbl">Objetivo</div><p>Generar muchas ideas para la pregunta elegida, todas ancladas en un dato de la NASA y en el momento real del problema.</p></div>
+        <div class="mcard key pop" style="--d:.36s"><div class="lbl">La clave</div><p>Casi toda solución de un hackathon de datos responde a tres preguntas: <b>qué dato</b>, <b>cómo le llega</b> a la persona y <b>en qué momento</b>. Combinar opciones de esas columnas produce ideas que nadie habría propuesto solo. Las columnas salen del canvas.</p></div>
+        <div class="mcard err pop" style="--d:.44s"><div class="lbl">Error común</div><p>Discutir o descartar ideas mientras se generan. En las tres rondas todo se anota; se juzga solo al final.</p></div>
+      </div>
+      <div class="exrow r" style="--d:.5s"><button type="button" class="exbtn" data-ex="ex5">Ver ejemplo de la caja de combinaciones</button></div>
+    </div>
+  </section>
+
+  <section class="slide" id="p5-r1" data-step="5">
+    <div class="sin">
+      <div class="chosenq r" style="--d:.05s"><div class="lbl">Pregunta elegida (del paso 4)</div><div class="txt empty chosenHMW">Marca “Elegir” en una pregunta del paso 4 y aparecerá aquí.</div></div>
+      <div class="rh r" style="--d:.1s"><span class="rnum">Ronda 1</span><h3>En silencio</h3><span class="rtime">5 min</span></div>
+      <p class="rd r" style="--d:.16s">Cada persona escribe <b>sola, al menos cinco ideas</b> para la pregunta elegida, una por renglón. Nadie comenta todavía.</p>
+      <div class="idealist r" id="r1list" style="--d:.22s"></div>
+    </div>
+  </section>
+
+  <section class="slide" id="p5-r2" data-step="5">
+    <div class="sin">
+      <div class="chosenq r" style="--d:.05s"><div class="lbl">Pregunta elegida (del paso 4)</div><div class="txt empty chosenHMW">Marca “Elegir” en una pregunta del paso 4 y aparecerá aquí.</div></div>
+      <div class="rh r" style="--d:.1s"><span class="rnum">Ronda 2</span><h3>Combinar</h3><span class="rtime">10 min</span></div>
+      <p class="rd r" style="--d:.16s">Llenen la caja con <b>tres a cinco opciones por columna</b>. Cada combinación —una opción de cada columna— es una idea. Las columnas salen del canvas.</p>
+      <div class="combobox r" style="--d:.22s">
+        <div class="combocol dato"><h5>Dato de la NASA</h5><div class="src">Sale de Contexto y Problema</div><div id="colDato"></div></div>
+        <div class="combocol canal"><h5>Cómo le llega a la persona</h5><div class="src">Sale de Clientes y Alternativas</div><div id="colCanal"></div></div>
+        <div class="combocol mom"><h5>En qué momento</h5><div class="src">Sale de Contexto</div><div id="colMom"></div></div>
+      </div>
+      <div class="exrow r" style="--d:.3s"><button type="button" class="exbtn" data-ex="ex5">Ver ejemplo de la caja de combinaciones</button></div>
+    </div>
+  </section>
+
+  <section class="slide" id="p5-r3" data-step="5">
+    <div class="sin">
+      <div class="chosenq r" style="--d:.05s"><div class="lbl">Pregunta elegida (del paso 4)</div><div class="txt empty chosenHMW">Marca “Elegir” en una pregunta del paso 4 y aparecerá aquí.</div></div>
+      <div class="rh r" style="--d:.1s"><span class="rnum">Ronda 3</span><h3>Construir sobre</h3><span class="rtime">5 min</span></div>
+      <p class="rd r" style="--d:.16s">Cada quien toma una idea de otra persona y la mejora con <b>“sí, y además…”</b>.</p>
+      <div id="r3list" class="r" style="--d:.22s"></div>
+    </div>
+  </section>
+
+  <section class="slide" id="p5-pick" data-step="5">
+    <div class="sin">
+      <div class="chosenq r" style="--d:.05s"><div class="lbl">Pregunta elegida (del paso 4)</div><div class="txt empty chosenHMW">Marca “Elegir” en una pregunta del paso 4 y aparecerá aquí.</div></div>
+      <div class="rh r" style="--d:.1s"><span class="rnum">Elegir</span><h3>La idea finalista</h3><span class="rtime">5 min</span></div>
+      <p class="rd r" style="--d:.16s">Cada persona vota por tres ideas. Entre las más votadas, quédense con la que <b>puedan demostrar en un prototipo de un día</b>.</p>
+      <div class="pickgrid r" style="--d:.22s">
+        <div><div class="lb">Idea con la que seguimos</div><textarea data-k="final_idea" placeholder="La combinación / idea elegida para prototipar…"></textarea></div>
+        <div><div class="lb">¿Por qué se puede prototipar en un día?</div><textarea data-k="final_why" placeholder="Qué es lo mínimo que mostraríamos en la demo…"></textarea></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CIERRE -->
+  <section class="slide" id="done">
+    <div class="sin">
+      <div class="howbar r" style="--d:.1s">
+        <h3>✅ Al terminar</h3>
+        <p>Tienen un <b>problema claro</b>, siete puertas de entrada, una <b>pregunta elegida con argumentos</b> y una <b>idea para prototipar</b>. Exporten todo a Sheets y úsenlo como insumo directo para empezar a prototipar.</p>
+        <div class="btnrow">
+          <button type="button" id="copyBtn2" class="pickbtn">⧉ Copiar para Sheets</button>
+          <button type="button" id="csvBtn2" class="pickbtn" style="background:var(--lime);color:#071428;border-color:var(--lime)">↓ Exportar CSV</button>
+          <button type="button" id="resetBtn" class="pickbtn" style="border-color:rgba(239,106,90,.4);color:var(--crit)">↺ Reiniciar</button>
+          <a class="pickbtn" href="insights.html" style="text-decoration:none">📊 Ver Insights</a>
+          <a class="pickbtn" href="riesgo.html" style="text-decoration:none">⚠️ Siguiente: evaluación de riesgos</a>
+        </div>
+      </div>
+      <div class="credit r" style="--d:.25s">
+        <span class="logo-ring"><svg viewBox="0 0 48 48" fill="none"><circle cx="22" cy="26" r="16" stroke="#9cc1f2" stroke-width="2.4"/><path d="M34 14 C 30 10, 24 9, 20 11" stroke="#d7e64b" stroke-width="2.4" stroke-linecap="round"/><circle cx="35" cy="13" r="2.4" fill="#ef6a5a"/></svg></span>
+        ORBITAL · Taller para aterrizar el reto — 🌮 Tacos de Asada<br/>
+        NASA Space Apps Challenge CDMX 2026 · Método adaptado del kit "Plan de vuelo"
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- EJEMPLOS (se abren en una ventana sobre la diapositiva) -->
+<div class="exsrc" id="ex1" data-title="Ejemplo trabajado (riego · humedad del suelo / SMAP)">
+  <div class="exbody">
+    <p style="margin-bottom:10px">Caso ficticio, como referencia del nivel de detalle:</p>
+    <table><tbody>
+      <tr><td class="exrc">Contexto</td><td>Inicio de la temporada de lluvias. El productor decide sembrar tras las primeras lluvias, sin saber si el suelo retuvo humedad suficiente.</td><td><span class="extag d">D</span></td></tr>
+      <tr><td class="exrc">Clientes</td><td>Pequeños productores de temporal (sin riego) que siembran maíz en parcelas propias. Decide y paga la misma persona.</td><td><span class="extag d">D</span></td></tr>
+      <tr><td class="exrc">Alternativas</td><td>Experiencia propia, consejo de vecinos, calendario tradicional, pronóstico del clima en TV o celular.</td><td><span class="extag d">D</span></td></tr>
+      <tr><td class="exrc">Desventajas</td><td>El pronóstico habla de lluvia, no de humedad en el suelo. Las herramientas satelitales existen, pero son técnicas, en inglés y a escala regional.</td><td><span class="extag d">D</span></td></tr>
+      <tr><td class="exrc">Impacto emocional</td><td>Sensación de apuesta: si siembra muy pronto y el suelo se seca, pierde semilla y trabajo. Frustración de que “el clima ya no es como antes”.</td><td><span class="extag s">S</span></td></tr>
+      <tr><td class="exrc">Impacto cuantificable</td><td>Costo de resembrar por hectárea (semilla + jornales) × hectáreas que se resiembran por temporada. Falta el dato: buscarlo en fuentes agrícolas oficiales.</td><td><span class="extag s">S</span></td></tr>
+      <tr><td class="exrc">Problema</td><td>Los productores de temporal no pueden decidir con confianza cuándo sembrar porque solo ven la lluvia y no la humedad del suelo, aunque la NASA ya la mide desde satélite.</td><td><span class="extag d">D</span>/<span class="extag s">S</span></td></tr>
+    </tbody></table>
+  </div>
+</div>
+<div class="exsrc" id="ex2" data-title="Ejemplo trabajado (las 7 preguntas del caso de riego)">
+  <div class="exbody">
+    <table><tbody>
+      <tr><td class="exrc">Contexto</td><td>¿Cómo podríamos anticipar el momento de riesgo para que el productor decida días antes y no el mismo día?</td></tr>
+      <tr><td class="exrc">Clientes</td><td>¿Cómo podríamos combinar lo que el productor ya sabe de su tierra con lo que el satélite mide?</td></tr>
+      <tr><td class="exrc">Alternativas</td><td>¿Cómo podríamos aprovechar los canales por los que hoy se informan, como vecinos o WhatsApp, para que el dato llegue por ahí?</td></tr>
+      <tr><td class="exrc">Desventajas</td><td>¿Cómo podríamos ofrecer la información que ya existe, pero a escala de parcela y en español?</td></tr>
+      <tr><td class="exrc">Impacto emocional</td><td>¿Cómo podríamos hacer que sembrar se sienta como una decisión informada y no como una apuesta?</td></tr>
+      <tr><td class="exrc">Impacto cuantificable</td><td>¿Cómo podríamos reducir las hectáreas que se resiembran por haber sembrado con el suelo demasiado seco?</td></tr>
+      <tr><td class="exrc">Problema</td><td>¿Cómo podríamos hacer que los datos de humedad del suelo lleguen al productor en un formato que entienda sin conocimientos técnicos?</td></tr>
+    </tbody></table>
+  </div>
+</div>
+<div class="exsrc" id="ex3" data-title="Ejemplo de calibración">
+  <div class="exbody">
+    <p>“¿Cómo podríamos mejorar la agricultura?” → <b>demasiado amplia</b> (sirve para cualquier reto): agreguen cliente y contexto.</p>
+    <p style="margin-top:8px">“¿Cómo podríamos hacer una app con mapa de calor?” → <b>demasiado estrecha</b> (ya dice qué construir): quiten la solución y quédense con el “para qué”.</p>
+    <p style="margin-top:8px">“¿Cómo podríamos hacer que la humedad del suelo llegue al productor sin tecnicismos?” → <b>bien calibrada</b> (salen tres ideas en un minuto).</p>
+  </div>
+</div>
+<div class="exsrc" id="ex4" data-title="Ejemplo">
+  <div class="exbody"><p>En el caso de riego, la pregunta de <b>Problema</b> (“que los datos de humedad lleguen al productor sin tecnicismos”) y la de <b>Alternativas</b> obtienen el total más alto: conectan directo con un dato satelital y se pueden demostrar con un prototipo sencillo de mensajes.</p></div>
+</div>
+<div class="exsrc" id="ex5" data-title="Ejemplo de la caja de combinaciones">
+  <div class="exbody">
+    <table><tbody>
+      <tr><td class="exrc">Dato</td><td>Humedad del suelo actual · Pronóstico de humedad a 7 días · Histórico de humedad por zona</td></tr>
+      <tr><td class="exrc">Canal</td><td>Mensaje de WhatsApp · Aviso en radio comunitaria · Tablero en la cooperativa</td></tr>
+      <tr><td class="exrc">Momento</td><td>Después de las primeras lluvias · Una semana antes de sembrar · Al planear la temporada</td></tr>
+    </tbody></table>
+    <p style="margin-top:10px"><b>Una combinación:</b> humedad del suelo actual + WhatsApp + después de las primeras lluvias → un mensaje que, tras la primera lluvia, dice si conviene sembrar o esperar unos días.</p>
+  </div>
+</div>
+
+<div class="modal" id="exmodal" role="dialog" aria-modal="true" aria-labelledby="exttl">
+  <div class="mbox">
+    <button type="button" class="mclose" id="exclose" aria-label="Cerrar">✕</button>
+    <h3 id="exttl"></h3>
+    <div id="exbody"></div>
+  </div>
+</div>
+
+<div class="hud">
+  <button id="prev" aria-label="Anterior"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <span class="counter"><b id="cur">01</b> / <span id="total">00</span></span>
+  <button id="next" aria-label="Siguiente"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <button id="sendBtn" type="button" style="width:auto;padding:0 16px;height:44px;font-family:Archivo,sans-serif;font-weight:800;font-size:.78rem;letter-spacing:.02em;color:#071428;background:var(--lime);border:none;border-radius:12px;cursor:pointer">Enviar mis respuestas</button>
+  <button id="fs" aria-label="Pantalla completa"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 9V5a1 1 0 011-1h4M20 9V5a1 1 0 00-1-1h-4M4 15v4a1 1 0 001 1h4M20 15v4a1 1 0 01-1 1h-4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</div>
+<div class="hint-key" id="keyhint"><kbd>←</kbd><kbd>→</kbd> navega · <kbd>Esc</kbd> sale del campo · <kbd>F</kbd> pantalla completa</div>
+
+<script src="sync.js"></script>
+<script>
+/* ---------- data model ---------- */
+var CANVAS = [
+  {k:'contexto', n:1, name:'Contexto', q:'¿Cuándo ocurre el problema?', prompts:[
+    'Reescriban con sus palabras, en una frase, la parte del reto de la NASA que les interesa.',
+    '¿En qué lugar y momento concreto se vuelve un problema para alguien en la Tierra o en el espacio?',
+    '¿Qué evento físico o ambiental lo dispara, y qué dato de la NASA lo registra?',
+    '¿Cuándo <em>no</em> ocurre, aunque todo lo demás sea igual?']},
+  {k:'clientes', n:2, name:'Clientes', q:'¿Quién lo tiene más seguido?', prompts:[
+    'Fuera del equipo y de los jueces, ¿quién toma una decisión peor por no tener esta información?',
+    '¿Es un científico, un gobierno local, una comunidad, un estudiante? Escojan uno solo.',
+    '¿Quién lo padece y quién decide o paga la solución? ¿Son la misma persona?',
+    '¿Ese cliente tiene acceso real a lo que van a construir: internet, idioma, nivel técnico?']},
+  {k:'alternativas', n:3, name:'Alternativas', q:'¿Qué hacen hoy para resolverlo?', prompts:[
+    '¿Qué herramientas de la NASA u otras agencias ya muestran estos datos?',
+    '¿Cómo decide hoy la persona sin esos datos: experiencia, vecinos, avisos oficiales, redes sociales?',
+    '¿Hay quien simplemente no hace nada y lo tolera?']},
+  {k:'desventajas', n:4, name:'Desventajas de las alternativas', q:'¿Qué falla en lo que usan hoy?', prompts:[
+    '¿Por qué esas herramientas no le sirven a <em>su</em> cliente? ¿Son muy técnicas, están en inglés, llegan tarde, son demasiado generales?',
+    '¿En qué situaciones deja de funcionar lo que usa hoy?',
+    '¿Esas desventajas bastan para que cambie de hábito, o solo son incómodas?']},
+  {k:'emocional', n:5, name:'Impacto emocional', q:'¿Cómo se siente la persona?', prompts:[
+    '¿Qué siente cuando la decisión le sale mal: incertidumbre, impotencia, sensación de que la información “no es para ella”?',
+    '¿Qué teme que pase después?',
+    '¿Hay una nota, testimonio o publicación real que lo muestre, o lo estamos imaginando?']},
+  {k:'cuantificable', n:6, name:'Impacto cuantificable', q:'¿Qué se puede medir? (con unidades)', prompts:[
+    '¿Qué pierde la persona cada vez que ocurre: tiempo, dinero, cosechas, salud, oportunidades?',
+    '¿Qué pueden medir con los propios datos de la NASA? Hectáreas, personas expuestas, días de anticipación, grados, toneladas.',
+    '¿Cuántas veces al año ocurre y a cuántas personas o lugares alcanza?',
+    'Si no tienen el número exacto, ¿cuál es una estimación defendible y de dónde sale?']},
+  {k:'problema', n:7, name:'Problema (causa raíz)', q:'¿Cuál es la causa raíz? — llénenlo al final', prompts:[
+    '¿Los datos existen pero nadie los usa? ¿Por qué: son difíciles de encontrar, de leer, llegan tarde, están en otra escala?',
+    'Pregunten “¿por qué?” hasta que la respuesta deje de ser un síntoma.',
+    'Completen la frase: <em>[Cliente] no puede [decidir o hacer X] porque [causa], aunque la NASA ya tiene [dato].</em>',
+    '¿Lo que escribieron es un problema o el nombre de su app disfrazado?']}
+];
+var HMW_START = {
+  contexto:'¿Cómo podríamos cambiar cuándo o dónde pasa esto?',
+  clientes:'¿Cómo podríamos usar lo que ellos ya saben o hacen?',
+  alternativas:'¿Cómo podríamos construir sobre lo que ya funciona?',
+  desventajas:'¿Cómo podríamos resolver lo que lo existente hace mal?',
+  emocional:'¿Cómo podríamos cambiar este sentimiento por otro?',
+  cuantificable:'¿Cómo podríamos mover este número, y en qué dirección?',
+  problema:'¿Cómo podríamos eliminar la causa, no el síntoma?'
+};
+var AR_Q = [
+  {t:'¿Sirve para cualquier reto?', help:'Si sí → demasiado amplia. Agreguen cliente y contexto.'},
+  {t:'¿Ya dice qué van a construir?', help:'Si sí → demasiado estrecha. Quiten la solución y quédense con el “para qué”.'},
+  {t:'¿Se les ocurren tres ideas distintas en un minuto?', help:'Si sí → está bien calibrada.'}
+];
+
+/* ---------- render: diapositivas por recuadro / pregunta / revisión ---------- */
+function el(h){var d=document.createElement('div');d.innerHTML=h.trim();return d.firstChild;}
+function gen(name, html){
+  var ph=document.querySelector('[data-gen="'+name+'"]');
+  ph.insertAdjacentHTML('beforebegin', html); ph.remove();
+}
+
+/* Paso 1 · un recuadro por diapositiva */
+gen('canvas', CANVAS.map(function(f){
+  var li=f.prompts.map(function(p){return '<li>'+p+'</li>'}).join('');
+  return '<section class="slide" id="c-'+f.k+'" data-step="1"><div class="sin">'+
+    '<div class="eyebrow r" style="--d:.05s">Paso 1 · Canvas del problema · Recuadro '+f.n+' de 7</div>'+
+    '<div class="fgrid">'+
+      '<div class="r" style="--d:.12s">'+
+        '<div class="fhead"><span class="fn">'+f.n+'</span><h2 class="title sm">'+f.name+'</h2></div>'+
+        '<div class="fq">'+f.q+'</div>'+
+        '<ul class="prompts">'+li+'</ul>'+
+      '</div>'+
+      '<div class="r" style="--d:.2s">'+
+        '<textarea class="tall" data-k="c_'+f.k+'" placeholder="Lo que encontramos…"></textarea>'+
+        '<div class="ds"><label><input type="radio" name="ds_'+f.k+'" data-k="ds_'+f.k+'" value="D"><span class="d">Dato</span></label>'+
+        '<label><input type="radio" name="ds_'+f.k+'" data-k="ds_'+f.k+'" value="S"><span class="s">Supuesto</span></label>'+
+        '<span class="dshelp">Dato = lo vimos/medimos · Supuesto = lo creemos</span></div>'+
+        '<div class="exrow"><button type="button" class="exbtn" data-ex="ex1">Ver ejemplo trabajado (riego · humedad del suelo / SMAP)</button></div>'+
+      '</div>'+
+    '</div></div></section>';
+}).join(''));
+
+/* Paso 2 · una pregunta por diapositiva */
+gen('hmw', CANVAS.map(function(f){
+  return '<section class="slide" id="h-'+f.k+'" data-step="2"><div class="sin">'+
+    '<div class="eyebrow r" style="--d:.05s">Paso 2 · “¿Cómo podríamos…?” · Pregunta '+f.n+' de 7</div>'+
+    '<div class="fhead r" style="--d:.1s;margin-top:12px"><span class="fn">'+f.n+'</span><h2 class="title sm">'+f.name+'</h2></div>'+
+    '<div class="povbox r" style="--d:.16s">Empiecen con: <em>'+HMW_START[f.k]+'</em></div>'+
+    '<div class="r" style="--d:.22s"><textarea class="tall" data-k="hmw_'+f.k+'" placeholder="Su “¿Cómo podríamos…?” para '+f.name.toLowerCase()+'…"></textarea></div>'+
+    '<div class="exrow r" style="--d:.28s"><button type="button" class="exbtn" data-ex="ex2">Ver ejemplo trabajado (las 7 preguntas del caso de riego)</button></div>'+
+  '</div></section>';
+}).join(''));
+
+/* Paso 3 · una revisión por diapositiva */
+gen('autorev', CANVAS.map(function(f){
+  var checks=AR_Q.map(function(q,i){
+    return '<label class="chk"><input type="checkbox" data-k="ar'+(i+1)+'_'+f.k+'" data-ar="'+f.k+'"><span><b>'+q.t+'</b> — '+q.help+'</span></label>';
+  }).join('');
+  return '<section class="slide" id="a-'+f.k+'" data-step="3"><div class="sin">'+
+    '<div class="eyebrow r" style="--d:.05s">Paso 3 · Autorrevisión · Pregunta '+f.n+' de 7</div>'+
+    '<div class="fhead r" style="--d:.1s;margin-top:12px"><span class="fn">'+f.n+'</span><h2 class="title sm">'+f.name+'</h2></div>'+
+    '<div class="hecho r" style="--d:.16s" data-hmwecho="'+f.k+'">—</div>'+
+    '<div class="checks r" style="--d:.22s">'+checks+'</div>'+
+    '<div class="arfoot"><span class="verdict none" id="verd_'+f.k+'">Sin revisar</span>'+
+    '<button type="button" class="editlink" data-goto="h-'+f.k+'">✎ Editar esta pregunta (paso 2)</button></div>'+
+    '<div class="exrow"><button type="button" class="exbtn" data-ex="ex3">Ver ejemplo de calibración</button></div>'+
+  '</div></section>';
+}).join(''));
+
+/* Paso 4 · matriz */
+var mx=document.getElementById('matrix');
+CANVAS.forEach(function(f){
+  function opts(){return '<option value="0">–</option><option value="1">1</option><option value="2">2</option><option value="3">3</option>';}
+  mx.insertAdjacentHTML('beforeend',
+   '<tr>'+
+    '<td class="mhmw"><span class="rcname">'+f.name+'</span><span data-mhmw="'+f.k+'">—</span></td>'+
+    '<td data-l="¿Conecta con un dato de la NASA? (1–3)"><select data-k="m1_'+f.k+'" data-m="'+f.k+'">'+opts()+'</select></td>'+
+    '<td data-l="¿Se puede prototipar en un día? (1–3)"><select data-k="m2_'+f.k+'" data-m="'+f.k+'">'+opts()+'</select></td>'+
+    '<td class="total" data-l="Total" id="tot_'+f.k+'">0</td>'+
+    '<td class="pickcell"><button type="button" class="pickbtn" data-pick="'+f.k+'">Elegir</button></td>'+
+   '</tr>');
+});
+
+/* Paso 5 · listas */
+var r1=document.getElementById('r1list');
+for(var i=1;i<=8;i++){
+  r1.appendChild(el('<div class="idearow"><span class="num">'+i+'</span><input type="text" data-k="r1_'+i+'" placeholder="Idea '+i+'…"></div>'));
+}
+['Dato','Canal','Mom'].forEach(function(col){
+  var box=document.getElementById('col'+col);
+  for(var j=1;j<=5;j++){ box.appendChild(el('<div class="col-in"><input type="text" data-k="co_'+col.toLowerCase()+'_'+j+'" placeholder="Opción '+j+'"></div>')); }
+});
+var r3=document.getElementById('r3list');
+for(var k=1;k<=3;k++){
+  r3.appendChild(el('<div class="r3row"><div><div class="lb">Idea de base</div><input type="text" data-k="r3base_'+k+'" placeholder="Idea de otra persona…"></div><div><div class="lb">Sí, y además…</div><input type="text" data-k="r3add_'+k+'" placeholder="Cómo la mejoran…"></div></div>'));
+}
+
+/* ---------- state: collect / restore / autosave ---------- */
+var KEY='aterrizar_orbital_v1';
+function collect(){
+  var m={};
+  document.querySelectorAll('[data-k]').forEach(function(elm){
+    var k=elm.getAttribute('data-k');
+    if(elm.type==='checkbox'){ m[k]=elm.checked; }
+    else if(elm.type==='radio'){ if(elm.checked) m[k]=elm.value; if(!(k in m)) m[k]=m[k]||''; }
+    else { m[k]=elm.value; }
+  });
+  m.elegida = window._elegida||'';
+  return m;
+}
+function restore(m){
+  if(!m) return;
+  document.querySelectorAll('[data-k]').forEach(function(elm){
+    var k=elm.getAttribute('data-k'); if(!(k in m)) return;
+    if(elm.type==='checkbox'){ elm.checked=!!m[k]; }
+    else if(elm.type==='radio'){ elm.checked=(elm.value===m[k]); }
+    else { elm.value=m[k]||''; }
+  });
+  if(m.elegida){ setPick(m.elegida,true); }
+}
+var saveT;
+function save(){
+  try{ localStorage.setItem(KEY, JSON.stringify(collect())); showSaved(); }catch(e){}
+}
+function queueSave(){ clearTimeout(saveT); saveT=setTimeout(save,450); }
+var savedMsg=document.getElementById('savedMsg'), savedT;
+function showSaved(){ savedMsg.classList.add('show'); clearTimeout(savedT); savedT=setTimeout(function(){savedMsg.classList.remove('show')},1400); }
+
+/* ---------- live sync (entre pasos) ---------- */
+function syncHMW(){
+  CANVAS.forEach(function(f){
+    var v=(document.querySelector('[data-k="hmw_'+f.k+'"]')||{}).value||'';
+    var txt=v.trim()||'—';
+    var echo=document.querySelector('[data-hmwecho="'+f.k+'"]');
+    if(echo){ echo.textContent=v.trim()||'Todavía no escriben esta pregunta. Usen “✎ Editar esta pregunta” para ir al paso 2.'; echo.classList.toggle('empty',!v.trim()); }
+    var mh=document.querySelector('[data-mhmw="'+f.k+'"]'); if(mh) mh.textContent=txt;
+  });
+  syncChosen();
+}
+function syncTotals(){
+  CANVAS.forEach(function(f){
+    var a=+(document.querySelector('[data-k="m1_'+f.k+'"]')||{}).value||0;
+    var b=+(document.querySelector('[data-k="m2_'+f.k+'"]')||{}).value||0;
+    var t=document.getElementById('tot_'+f.k); if(t) t.textContent=(a+b);
+  });
+}
+function syncVerdict(ar){
+  var c1=document.querySelector('[data-k="ar1_'+ar+'"]').checked;
+  var c2=document.querySelector('[data-k="ar2_'+ar+'"]').checked;
+  var c3=document.querySelector('[data-k="ar3_'+ar+'"]').checked;
+  var v=document.getElementById('verd_'+ar); if(!v) return;
+  v.className='verdict';
+  if(c3 && !c1 && !c2){ v.classList.add('good'); v.textContent='Bien calibrada ✓'; }
+  else if(c1||c2){ v.classList.add('warn'); v.textContent=(c1&&c2)?'Ajustar: amplia y estrecha':(c1?'Ajustar: muy amplia':'Ajustar: muy estrecha'); }
+  else { v.classList.add('none'); v.textContent='Sin revisar'; }
+}
+function setPick(k,on){
+  document.querySelectorAll('[data-pick]').forEach(function(b){ b.classList.remove('on'); b.textContent='Elegir'; });
+  if(on){
+    var b=document.querySelector('[data-pick="'+k+'"]'); if(b){ b.classList.add('on'); b.textContent='Elegida ✓'; }
+    window._elegida=k;
+  } else { window._elegida=''; }
+  syncChosen();
+}
+function syncChosen(){
+  var boxes=document.querySelectorAll('.chosenHMW'); if(!boxes.length) return;
+  var k=window._elegida, cls='txt empty', msg='Marca “Elegir” en una pregunta del paso 4 y aparecerá aquí.';
+  if(k){
+    var v=(document.querySelector('[data-k="hmw_'+k+'"]')||{}).value||'';
+    var f=CANVAS.filter(function(x){return x.k===k})[0];
+    if(v.trim()){ cls='txt'; msg=v.trim(); }
+    else { msg='Escribe la pregunta "'+(f?f.name:'')+'" en el paso 2 para verla aquí.'; }
+  }
+  boxes.forEach(function(b){ b.className=cls+' chosenHMW'; b.textContent=msg; });
+}
+
+/* ---------- events ---------- */
+document.addEventListener('input', function(e){
+  if(e.target.matches('[data-k]')){
+    queueSave();
+    if(e.target.getAttribute('data-k').indexOf('hmw_')===0) syncHMW();
+    if(e.target.getAttribute('data-m')) syncTotals();
+  }
+});
+document.addEventListener('change', function(e){
+  if(e.target.matches('[data-k]')){
+    queueSave();
+    if(e.target.getAttribute('data-ar')) syncVerdict(e.target.getAttribute('data-ar'));
+    if(e.target.getAttribute('data-m')) syncTotals();
+    /* suelta el foco para que las flechas vuelvan a cambiar de diapositiva */
+    if(e.target.type==='checkbox'||e.target.type==='radio'||e.target.tagName==='SELECT'){ e.target.blur(); }
+  }
+});
+document.addEventListener('click', function(e){
+  var b=e.target.closest('[data-pick]');
+  if(b){ var k=b.getAttribute('data-pick'); setPick(k, !b.classList.contains('on')); queueSave(); b.blur(); }
+});
+
+/* ---------- export ---------- */
+function buildRows(){
+  var m=collect(); var rows=[['Sección','Campo','Valor','D/S']];
+  rows.push(['Paso 1 · Canvas','','','']);
+  CANVAS.forEach(function(f){ rows.push(['Canvas', f.name, m['c_'+f.k]||'', m['ds_'+f.k]||'']); });
+  rows.push(['Paso 2 · ¿Cómo podríamos?','','','']);
+  CANVAS.forEach(function(f){ rows.push(['¿Cómo podríamos?', f.name, m['hmw_'+f.k]||'','']); });
+  rows.push(['Paso 3 · Autorrevisión','','','']);
+  CANVAS.forEach(function(f){
+    var v=[m['ar1_'+f.k]?'amplia':'', m['ar2_'+f.k]?'estrecha':'', m['ar3_'+f.k]?'3 ideas en 1 min':''].filter(Boolean).join('; ');
+    rows.push(['Autorrevisión', f.name, v||'sin revisar','']);
+  });
+  rows.push(['Paso 4 · Matriz','','','']);
+  CANVAS.forEach(function(f){
+    var a=+m['m1_'+f.k]||0,b=+m['m2_'+f.k]||0;
+    rows.push(['Matriz', f.name, 'dato='+a+' prototipo='+b+' total='+(a+b)+(m.elegida===f.k?' · ELEGIDA':''),'']);
+  });
+  rows.push(['Paso 5 · Ideación','','','']);
+  rows.push(['Ideación','Pregunta elegida', (m.elegida?(m['hmw_'+m.elegida]||''):''),'']);
+  for(var i=1;i<=8;i++){ if(m['r1_'+i]) rows.push(['Ronda 1 · ideas','Idea '+i, m['r1_'+i],'']); }
+  ['dato','canal','mom'].forEach(function(c){ for(var j=1;j<=5;j++){ if(m['co_'+c+'_'+j]) rows.push(['Ronda 2 · '+c, 'Opción '+j, m['co_'+c+'_'+j],'']); } });
+  for(var k=1;k<=3;k++){ if(m['r3base_'+k]||m['r3add_'+k]) rows.push(['Ronda 3', m['r3base_'+k]||'', 'sí y además: '+(m['r3add_'+k]||''),'']); }
+  rows.push(['Elegir','Idea finalista', m['final_idea']||'','']);
+  rows.push(['Elegir','Por qué 1 día', m['final_why']||'','']);
+  return rows;
+}
+function csvEsc(s){ s=(s==null?'':String(s)); return /[",\n]/.test(s)? '"'+s.replace(/"/g,'""')+'"' : s; }
+function exportCSV(){
+  var rows=buildRows().map(function(r){return r.map(csvEsc).join(',')}).join('\r\n');
+  var blob=new Blob(['﻿'+rows],{type:'text/csv;charset=utf-8'});
+  var a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='aterrizar-orbital.csv'; document.body.appendChild(a); a.click(); a.remove();
+}
+function copyTSV(btn){
+  var rows=buildRows().map(function(r){return r.map(function(s){return String(s==null?'':s).replace(/[\t\n\r]+/g,' ')}).join('\t')}).join('\n');
+  function done(ok){ var t=btn.innerHTML; btn.textContent= ok?'Copiado ✓':'Copia manual'; setTimeout(function(){btn.innerHTML=t},1500); }
+  if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(rows).then(function(){done(true)},function(){done(false)}); }
+  else { try{ var ta=document.createElement('textarea'); ta.value=rows; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); done(true);}catch(e){done(false);} }
+}
+document.getElementById('csvBtn').onclick=exportCSV;
+document.getElementById('csvBtn2').onclick=exportCSV;
+document.getElementById('copyBtn').onclick=function(){copyTSV(this)};
+document.getElementById('copyBtn2').onclick=function(){copyTSV(this)};
+document.getElementById('resetBtn').onclick=function(){
+  var msg='¿Borrar todo lo escrito en este navegador? No se puede deshacer.';
+  if(window.Sync&&Sync.isConnected()) msg+='\n\nOjo: están conectados al Google Sheet del equipo. Lo que ya está en la hoja se volverá a cargar; para empezar de cero también hay que borrar esas filas en el Sheet.';
+  if(confirm(msg)){
+    try{localStorage.removeItem(KEY)}catch(e){}; location.reload();
+  }
+};
+
+/* ---------- ejemplos en ventana ---------- */
+var exModal=document.getElementById('exmodal');
+function openEx(id){
+  var src=document.getElementById(id); if(!src) return;
+  document.getElementById('exttl').textContent=src.getAttribute('data-title')||'Ejemplo';
+  document.getElementById('exbody').innerHTML=src.innerHTML;
+  exModal.classList.add('open');
+  document.getElementById('exclose').focus();
+}
+function closeEx(){ exModal.classList.remove('open'); }
+document.getElementById('exclose').addEventListener('click', closeEx);
+exModal.addEventListener('click', function(e){ if(e.target===exModal) closeEx(); });
+document.addEventListener('click', function(e){
+  var b=e.target.closest('[data-ex]'); if(b){ openEx(b.getAttribute('data-ex')); }
+});
+
+/* ---------- navegación de la presentación ---------- */
+var slides=[].slice.call(document.querySelectorAll('.slide'));
+var N=slides.length, idx=0;
+var prog=document.getElementById('prog'), cur=document.getElementById('cur');
+var prevB=document.getElementById('prev'), nextB=document.getElementById('next');
+var tchips=[].slice.call(document.querySelectorAll('.tchip'));
+document.getElementById('total').textContent=String(N).padStart(2,'0');
+function pad(n){return String(n+1).padStart(2,'0')}
+function indexOfId(id){ for(var q=0;q<N;q++){ if(slides[q].id===id) return q; } return -1; }
+function go(n, noHash){
+  n=Math.max(0,Math.min(N-1,n));
+  if(n===idx && slides[idx].classList.contains('active')) return;
+  slides[idx].classList.remove('active');
+  idx=n;
+  slides[idx].classList.add('active');
+  slides[idx].scrollTop=0;
+  prog.style.width=((idx)/(N-1)*100)+'%';
+  cur.textContent=pad(idx);
+  prevB.disabled=idx===0; nextB.disabled=idx===N-1;
+  var st=slides[idx].getAttribute('data-step');
+  tchips.forEach(function(c){ c.classList.toggle('on', c.getAttribute('data-step')===st && st!==null); });
+  if(!noHash){ try{ history.replaceState(null,'','#'+slides[idx].id); }catch(e){} }
+}
+function next(){go(idx+1)} function prev(){go(idx-1)}
+nextB.addEventListener('click', function(){ next(); this.blur(); });
+prevB.addEventListener('click', function(){ prev(); this.blur(); });
+document.addEventListener('click', function(e){
+  var g=e.target.closest('[data-goto]');
+  if(g){ e.preventDefault(); var t=indexOfId(g.getAttribute('data-goto')); if(t>=0) go(t); g.blur&&g.blur(); }
+});
+var kh=document.getElementById('keyhint');
+function typing(t){
+  if(!t||!t.tagName) return false;
+  var tag=t.tagName;
+  return tag==='TEXTAREA'||tag==='SELECT'||t.isContentEditable||
+         (tag==='INPUT' && t.type!=='button' && t.type!=='submit');
+}
+document.addEventListener('keydown', function(e){
+  if(exModal.classList.contains('open')){ if(e.key==='Escape') closeEx(); return; }
+  if(e.ctrlKey||e.metaKey||e.altKey) return;
+  if(typing(e.target)){ if(e.key==='Escape'){ e.target.blur(); kh.classList.remove('gone'); } return; }
+  var onBtn=e.target&&(e.target.tagName==='BUTTON'||e.target.tagName==='A');
+  if(e.key==='ArrowRight'||e.key==='PageDown'||(e.key===' '&&!e.shiftKey&&!onBtn)){e.preventDefault();next();kh.classList.add('gone')}
+  else if(e.key==='ArrowLeft'||e.key==='PageUp'||(e.key===' '&&e.shiftKey&&!onBtn)){e.preventDefault();prev();kh.classList.add('gone')}
+  else if(e.key==='Home'){go(0)} else if(e.key==='End'){go(N-1)}
+  else if(e.key==='f'||e.key==='F'){toggleFs()}
+});
+/* deslizar en pantallas táctiles (no sobre campos, tabla ni ventanas) */
+var tx=0, ty=0, tOk=false;
+document.getElementById('deck').addEventListener('touchstart',function(e){
+  tOk=!(e.target.closest('input,textarea,select,.matrix,button'));
+  tx=e.changedTouches[0].clientX; ty=e.changedTouches[0].clientY;
+},{passive:true});
+document.getElementById('deck').addEventListener('touchend',function(e){
+  if(!tOk) return;
+  var dx=e.changedTouches[0].clientX-tx, dy=e.changedTouches[0].clientY-ty;
+  if(Math.abs(dx)>60 && Math.abs(dx)>Math.abs(dy)){ dx<0?next():prev(); kh.classList.add('gone'); }
+},{passive:true});
+window.addEventListener('hashchange', function(){ var t=indexOfId((location.hash||'').slice(1)); if(t>=0&&t!==idx) go(t,true); });
+function toggleFs(){
+  if(!document.fullscreenElement){ (document.documentElement.requestFullscreen||function(){}).call(document.documentElement); }
+  else { (document.exitFullscreen||function(){}).call(document); }
+}
+document.getElementById('fs').addEventListener('click', function(){ toggleFs(); this.blur(); });
+
+/* ---------- init ---------- */
+(function(){
+  var raw; try{ raw=localStorage.getItem(KEY); }catch(e){}
+  if(raw){ try{ restore(JSON.parse(raw)); }catch(e){} }
+  syncHMW(); syncTotals(); CANVAS.forEach(function(f){syncVerdict(f.k)}); syncChosen();
+  var start=indexOfId((location.hash||'').slice(1));
+  go(start>=0?start:0, true);
+})();
+
+/* ---------- live sync con Google Sheets · CADA PERSONA SU PROPIA RESPUESTA ----------
+   Todos los campos se guardan con el nombre de quien escribe (clave~~persona).
+   Cada quien ve y edita SOLO lo suyo: nadie pisa a nadie, aunque llenen al mismo
+   tiempo. El botón "Enviar mis respuestas" sube todo y refresca el Sheet al instante. */
+(function(){
+  if(!window.Sync) return;
+  var barEl=document.getElementById('syncbar'); if(barEl) Sync.mountBar(barEl);
+  var TOOL='aterrizar', SEP='~~', pushTimers={}, firstPull=true, lastLocal={};
+  function slug(n){ return (String(n||'').toLowerCase().replace(/[^a-z0-9]+/g,'')).slice(0,24) || 'anon'; }
+  function me(){ return slug(Sync.getName()); }
+  function sk(baseKey){ return baseKey+SEP+me(); }            /* todo es por persona */
+  function touch(k){ lastLocal[k]=Date.now(); }
+  function val(t){ return t.type==='checkbox' ? (t.checked?'true':'false') : t.value; }
+  function pushNow(key,value){ if(Sync.isConnected()) Sync.post({op:'set',tool:TOOL,key:key,value:value}).catch(function(){}); }
+  function pushDeb(key,value){ if(!Sync.isConnected()) return; clearTimeout(pushTimers[key]); pushTimers[key]=setTimeout(function(){pushNow(key,value)},600); }
+  document.addEventListener('input', function(e){ var t=e.target; if(t.matches&&t.matches('[data-k]')){ var k=sk(t.getAttribute('data-k')); touch(k); pushDeb(k, val(t)); } });
+  document.addEventListener('change', function(e){ var t=e.target; if(t.matches&&t.matches('[data-k]')){ var k=sk(t.getAttribute('data-k')); touch(k); pushNow(k, val(t)); } });
+  document.addEventListener('click', function(e){ var b=e.target.closest&&e.target.closest('[data-pick]'); if(b){ var k=sk('elegida'); touch(k); setTimeout(function(){ pushNow(k, window._elegida||''); },0); } });
+
+  function applyServerValue(key,value){
+    if(lastLocal[key] && Date.now()-lastLocal[key]<10000) return; /* mi edición reciente: ya va al Sheet */
+    var base=key, si=key.indexOf(SEP);
+    if(si>=0){ if(key.slice(si+SEP.length)!==me()) return; base=key.slice(0,si); } /* de otra persona: no la pongo en mi pantalla */
+    if(base==='elegida'){ if((window._elegida||'')!==value) setPick(value, !!value); return; }
+    var els=document.querySelectorAll('[data-k="'+base+'"]'); if(!els.length) return;
+    var e0=els[0];
+    if(e0.type==='radio'){ [].forEach.call(els,function(r){ r.checked=(r.value===value); }); return; }
+    if(e0.type==='checkbox'){ var b=(value==='true'); if(e0.checked!==b){ e0.checked=b; if(e0.getAttribute('data-ar')) syncVerdict(e0.getAttribute('data-ar')); } return; }
+    if(e0===document.activeElement) return;
+    if(e0.value===value) return;
+    e0.value=value;
+    if(base.indexOf('hmw_')===0) syncHMW();
+    if(e0.getAttribute('data-m')) syncTotals();
+  }
+  function myItems(){
+    var m=collect(), items=[];
+    for(var k in m){ if(!m.hasOwnProperty(k)) continue; var v=m[k]; if(v===false||v===''||v==null) continue; items.push({key:sk(k), value:(v===true?'true':String(v))}); }
+    return items;
+  }
+  function seedLocal(){ var items=myItems(); if(items.length) Sync.post({op:'bulkset',tool:TOOL,items:items}).catch(function(){}); }
+  function pull(){
+    if(!Sync.isConnected()) return;
+    Sync.read(TOOL).then(function(j){
+      if(!j||!j.ok||!j.rows) return;
+      var has=j.rows.length>0;
+      j.rows.forEach(function(r){ if(r.key!=null&&r.key!=='') applyServerValue(String(r.key), r.value==null?'':String(r.value)); });
+      if(has){ try{ localStorage.setItem(KEY, JSON.stringify(collect())); }catch(e){} }
+      if(firstPull){ firstPull=false; if(!has) seedLocal(); }
+    }).catch(function(){});
+  }
+
+  /* ---- botón Enviar: sube TODO lo mío y refresca el Sheet de inmediato ---- */
+  var sendBtn=document.getElementById('sendBtn'), sendT;
+  function sendLabel(txt,bg){ if(!sendBtn) return; sendBtn.textContent=txt; if(bg) sendBtn.style.background=bg; }
+  function enviar(){
+    if(!Sync.isConnected() || !Sync.getName()){ sendLabel('Pon tu nombre arriba ⚙️','#f2c14e'); clearTimeout(sendT); sendT=setTimeout(function(){sendLabel('Enviar mis respuestas','var(--lime)')},2200); return; }
+    var items=myItems(); items.push({key:sk('_enviado'), value:new Date().toLocaleString('es-MX')});
+    sendLabel('Enviando…','#9cc1f2');
+    Sync.post({op:'bulkset',tool:TOOL,items:items})
+      .then(function(){ return Sync.post({op:'views'}); })  /* reconstruye las pestañas legibles YA */
+      .then(function(){ sendLabel('Enviado ✓','#4ccb8f'); clearTimeout(sendT); sendT=setTimeout(function(){sendLabel('Enviar mis respuestas','var(--lime)')},2200); })
+      .catch(function(){ sendLabel('Error, reintenta','#ef6a5a'); clearTimeout(sendT); sendT=setTimeout(function(){sendLabel('Enviar mis respuestas','var(--lime)')},2200); });
+  }
+  if(sendBtn) sendBtn.addEventListener('click', function(){ enviar(); this.blur(); });
+
+  Sync.onContext(function(){ firstPull=true; pull(); });
+  setInterval(pull, 8000);
+})();
+</script>
+</body>
+</html>

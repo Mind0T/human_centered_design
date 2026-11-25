@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Human-Centered Design · Kit de herramientas</title>
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png">
+<link rel="shortcut icon" href="favicon.ico">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="description" content="Kit de herramientas de Diseño Centrado en el Humano: empatizar, aterrizar problemas, evaluar riesgos y presentar resultados. Plataforma reutilizable para cualquier proyecto, hackatón o emprendimiento." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;800;900&family=Overpass:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --navy-900:#071428;
+    --navy-800:#0a1a33;
+    --navy-700:#0d2244;
+    --navy-600:#102a55;
+    --royal:#1e52c8;
+    --royal-bright:#2a66e6;
+    --blue-soft:#4e8fe6;
+    --blue-pale:#9cc1f2;
+    --lime:#d7e64b;
+    --lime-dim:#aeb93a;
+    --white:#f4f8ff;
+    --mute:#a9bbd6;
+    --line:rgba(156,193,242,.16);
+    --card:rgba(18,38,74,.6);
+    --ok:#4ccb8f;
+    --warn:#f2c14e;
+    --crit:#ef6a5a;
+    --maxw:1180px;
+    --r:18px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:"Overpass",system-ui,sans-serif;
+    background:var(--navy-900);
+    color:var(--white);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  h1,h2,h3,.display{font-family:"Archivo",sans-serif;letter-spacing:-.01em}
+  a{color:inherit}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+  .eyebrow{
+    font-family:"Archivo",sans-serif;font-weight:800;text-transform:uppercase;
+    letter-spacing:.14em;font-size:.74rem;color:var(--lime);
+    display:inline-flex;align-items:center;gap:10px;
+  }
+  .eyebrow::before{content:"";width:26px;height:2px;background:var(--lime);display:inline-block}
+  section{position:relative;padding:72px 0}
+  .divline{height:1px;background:var(--line);max-width:var(--maxw);margin:0 auto}
+
+  /* radar rings background motif */
+  .rings{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+  .rings span{position:absolute;border-radius:50%;border:1px solid rgba(120,160,230,.10)}
+  .inner{position:relative;z-index:1}
+
+  /* ---------- STICKY ANCHOR NAV ---------- */
+  .topnav{
+    position:sticky;top:0;z-index:40;
+    background:rgba(7,20,40,.82);backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .topnav .tin{display:flex;align-items:center;gap:8px;padding:11px 24px;max-width:var(--maxw);margin:0 auto;overflow-x:auto;scrollbar-width:none}
+  .topnav .tin::-webkit-scrollbar{display:none}
+  .topnav .nbrand{display:flex;align-items:center;gap:10px;flex:0 0 auto;margin-right:auto}
+  .topnav .nbrand .logo-ring{width:30px;height:30px}
+  .topnav .nbrand b{font-family:"Archivo";font-weight:900;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase}
+  .nlink{flex:0 0 auto;font-family:"Archivo";font-weight:800;font-size:.76rem;color:var(--mute);text-decoration:none;padding:7px 13px;border-radius:999px;border:1px solid transparent;white-space:nowrap;transition:.2s}
+  .nlink:hover{color:var(--white);border-color:var(--line)}
+  .nlink.prime{color:#071428;background:var(--lime);border-color:var(--lime)}
+  .nlink.prime:hover{color:#071428;filter:brightness(1.05)}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    background:
+      radial-gradient(1100px 680px at 82% 18%, rgba(30,82,200,.42), transparent 60%),
+      radial-gradient(900px 600px at 10% 90%, rgba(20,50,130,.35), transparent 60%),
+      linear-gradient(180deg,var(--navy-800),var(--navy-900));
+    padding:0;
+  }
+  .hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:40px;align-items:center;min-height:80vh;padding:80px 0 64px}
+  .brandmark{display:flex;align-items:center;gap:14px;margin-bottom:30px}
+  .logo-ring{width:46px;height:46px;position:relative;flex:0 0 auto}
+  .logo-ring svg{width:100%;height:100%}
+  .brandmark .bt{font-family:"Archivo";font-weight:900;line-height:.98;text-transform:uppercase}
+  .brandmark .bt small{display:block;font-size:.58rem;letter-spacing:.3em;color:var(--mute);font-weight:700}
+  .brandmark .bt b{font-size:1.02rem;letter-spacing:.04em}
+  .hero h1{font-weight:900;font-size:clamp(2.7rem,6.4vw,5rem);line-height:.94;margin:14px 0 8px}
+  .hero h1 .stroke{color:transparent;-webkit-text-stroke:2px var(--blue-soft)}
+  .hero .tag{font-family:"Archivo";font-weight:700;color:var(--blue-soft);font-size:clamp(1.05rem,2vw,1.45rem);margin-bottom:24px}
+  .hero p.lead{color:var(--mute);max-width:52ch;font-size:1.06rem;margin-bottom:28px}
+  .meta-row{display:flex;flex-wrap:wrap;gap:10px}
+  .chip{
+    border:1px solid var(--line);background:rgba(10,26,51,.5);border-radius:999px;
+    padding:8px 15px;font-size:.82rem;color:var(--blue-pale);display:inline-flex;gap:8px;align-items:center;
+  }
+  .chip b{color:var(--white);font-weight:600}
+  .cta-row{margin-top:28px;display:flex;flex-wrap:wrap;gap:12px}
+  .cta{display:inline-flex;align-items:center;gap:10px;font-family:'Archivo',sans-serif;font-weight:800;font-size:.95rem;padding:14px 22px;border-radius:12px;text-decoration:none;transition:.2s}
+  .cta.prime{background:var(--lime);color:#071428;box-shadow:0 8px 24px rgba(215,230,75,.25)}
+  .cta.ghost{background:transparent;color:var(--blue-pale);border:1px solid rgba(156,193,242,.4)}
+  .cta.ghost:hover{border-color:var(--blue-soft);color:var(--white)}
+  .cta svg{width:18px;height:18px}
+
+  /* hero planet */
+  .planet-wrap{position:relative;display:flex;align-items:center;justify-content:center;min-height:360px}
+  .planet{
+    width:min(360px,74%);aspect-ratio:1;border-radius:50%;
+    background:
+      radial-gradient(120px 120px at 32% 30%, rgba(90,150,240,.9), transparent 60%),
+      radial-gradient(circle at 60% 65%, #1b3f8f, #0c1f49 70%);
+    box-shadow:inset -30px -20px 70px rgba(0,0,0,.55), 0 0 90px rgba(30,90,220,.35);
+    position:relative;overflow:hidden;
+  }
+  .planet::after{
+    content:"";position:absolute;inset:0;border-radius:50%;
+    background:
+      radial-gradient(28px 16px at 40% 42%, rgba(12,30,70,.9),transparent 70%),
+      radial-gradient(44px 24px at 62% 60%, rgba(12,30,70,.85),transparent 72%),
+      radial-gradient(20px 14px at 52% 30%, rgba(12,30,70,.8),transparent 70%);
+  }
+  .orbit{position:absolute;border:1px solid rgba(120,160,230,.18);border-radius:50%}
+
+  /* ---------- generic section head ---------- */
+  .shead{max-width:72ch;margin-bottom:40px}
+  .shead h2{font-size:clamp(1.9rem,4vw,2.9rem);font-weight:900;line-height:1.02;margin:12px 0 14px}
+  .shead p{color:var(--mute);font-size:1.02rem}
+  .numtag{font-family:"Archivo";font-weight:900;color:var(--lime);font-size:1.4rem}
+
+  /* ---------- METHODOLOGY NESTED LAYERS ---------- */
+  .layers{display:grid;grid-template-columns:1.1fr .9fr;gap:34px;align-items:center}
+  .layerlist{display:flex;flex-direction:column;gap:12px}
+  .layer{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;border-left:3px solid var(--lc,var(--blue-soft));transition:.2s}
+  .layer:hover{border-color:var(--lc,var(--blue-soft));transform:translateX(4px)}
+  .layer .lk{font-family:"Archivo";font-weight:900;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--lc,var(--blue-soft));margin-bottom:4px}
+  .layer h4{font-size:1.08rem;font-weight:800;margin-bottom:4px}
+  .layer p{color:var(--mute);font-size:.92rem;margin:0}
+  /* concentric diagram */
+  .concentric{display:flex;align-items:center;justify-content:center;min-height:320px;position:relative}
+  .ring-d{position:absolute;border-radius:50%;display:flex;align-items:flex-start;justify-content:center;padding-top:10px;font-family:"Archivo";font-weight:800;font-size:.68rem;letter-spacing:.06em;text-transform:uppercase}
+  .ring-d.r1{width:320px;height:320px;border:1.5px solid rgba(78,143,230,.5);color:var(--blue-soft)}
+  .ring-d.r2{width:238px;height:238px;border:1.5px solid rgba(42,102,230,.55);color:var(--royal-bright)}
+  .ring-d.r3{width:160px;height:160px;border:1.5px solid rgba(156,193,242,.6);color:var(--blue-pale)}
+  .ring-d.core{width:92px;height:92px;border:1.5px solid var(--lime);background:radial-gradient(circle,rgba(215,230,75,.14),transparent 70%);color:var(--lime);align-items:center;padding-top:0;text-align:center;line-height:1.15}
+
+  /* ---------- TOOL CATEGORY CARDS ---------- */
+  .cat-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:8px}
+  .cat-head .ck{font-family:"Archivo";font-weight:900;color:var(--lime);font-size:.9rem;letter-spacing:.08em;text-transform:uppercase}
+  .toolgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:26px}
+  .tool{
+    display:flex;flex-direction:column;gap:0;
+    background:var(--card);border:1px solid var(--line);border-radius:var(--r);
+    padding:22px;text-decoration:none;color:inherit;position:relative;overflow:hidden;transition:.2s;
+  }
+  .tool::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--tc,var(--blue-soft));opacity:.9}
+  .tool:hover{border-color:var(--tc,var(--blue-soft));transform:translateY(-3px);box-shadow:0 14px 34px rgba(0,0,0,.35)}
+  .tool .ic{font-size:1.7rem;margin-bottom:12px}
+  .tool h4{font-size:1.1rem;font-weight:800;margin-bottom:7px;display:flex;align-items:center;gap:8px}
+  .tool p{color:var(--mute);font-size:.9rem;margin-bottom:14px;flex:1}
+  .tool .foot{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-family:"Archivo";font-weight:800;font-size:.68rem;letter-spacing:.04em;text-transform:uppercase}
+  .badge{display:inline-flex;align-items:center;gap:5px;padding:4px 9px;border-radius:999px;font-size:.66rem}
+  .b-data{background:rgba(76,203,143,.14);color:var(--ok)}
+  .b-info{background:rgba(78,143,230,.16);color:var(--blue-soft)}
+  .b-result{background:rgba(215,230,75,.14);color:var(--lime)}
+  .b-soon{background:rgba(169,187,214,.12);color:var(--mute)}
+  .tool .go{margin-left:auto;color:var(--tc,var(--blue-soft));display:inline-flex}
+  .tool.soon{opacity:.72;cursor:default}
+  .tool.soon:hover{transform:none;border-color:var(--line);box-shadow:none}
+
+  /* placeholder add-card */
+  .tool.add{align-items:flex-start;justify-content:center;border-style:dashed;background:rgba(18,38,74,.3)}
+  .tool.add .ic{opacity:.6}
+  .tool.add h4{color:var(--mute)}
+
+  /* example banner */
+  .exbanner{display:flex;gap:14px;align-items:flex-start;background:linear-gradient(90deg,rgba(30,82,200,.18),transparent);border:1px solid var(--line);border-left:3px solid var(--blue-soft);border-radius:0 14px 14px 0;padding:16px 20px;margin-top:8px}
+  .exbanner .xt{font-family:"Archivo";font-weight:900;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--blue-soft);flex:0 0 auto;padding-top:2px}
+  .exbanner p{margin:0;color:var(--mute);font-size:.92rem}
+  .exbanner b{color:var(--white)}
+
+  footer{padding:50px 0;text-align:center;color:var(--mute);font-size:.82rem;border-top:1px solid var(--line)}
+  footer .logo-ring{width:38px;height:38px;margin:0 auto 14px}
+  footer .edit{margin-top:10px;font-size:.76rem;color:var(--lime-dim)}
+
+  @media(max-width:900px){
+    .hero-grid{grid-template-columns:1fr;gap:10px;padding:56px 0 44px;min-height:auto}
+    .planet-wrap{min-height:230px;order:-1}
+    .layers{grid-template-columns:1fr;gap:24px}
+    .concentric{min-height:300px;order:-1}
+    .toolgrid{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= STICKY NAV ================= -->
+<nav class="topnav">
+  <div class="tin">
+    <span class="nbrand">
+      <span class="logo-ring">
+        <svg viewBox="0 0 48 48" fill="none">
+          <circle cx="22" cy="26" r="16" stroke="#f4f8ff" stroke-width="2.4"/>
+          <path d="M34 14 C 30 10, 24 9, 20 11" stroke="#d7e64b" stroke-width="2.4" stroke-linecap="round"/>
+          <circle cx="35" cy="13" r="2.4" fill="#ef6a5a"/>
+        </svg>
+      </span>
+      <b>HCD&nbsp;Kit</b>
+    </span>
+    <a class="nlink" href="#metodologia">Metodología</a>
+    <a class="nlink" href="#herramientas">Herramientas</a>
+    <a class="nlink prime" href="proyecto.html">Descripción del proyecto →</a>
+  </div>
+</nav>
+
+<!-- ================= HERO ================= -->
+<header class="hero">
+  <div class="rings">
+    <span style="width:700px;height:700px;top:-120px;right:-160px"></span>
+    <span style="width:1000px;height:1000px;top:-260px;right:-300px"></span>
+    <span style="width:1320px;height:1320px;top:-420px;right:-440px"></span>
+  </div>
+  <div class="wrap inner">
+    <div class="hero-grid">
+      <div>
+        <div class="brandmark">
+          <span class="logo-ring">
+            <svg viewBox="0 0 48 48" fill="none">
+              <circle cx="22" cy="26" r="16" stroke="#f4f8ff" stroke-width="2.4"/>
+              <path d="M34 14 C 30 10, 24 9, 20 11" stroke="#d7e64b" stroke-width="2.4" stroke-linecap="round"/>
+              <circle cx="35" cy="13" r="2.4" fill="#ef6a5a"/>
+            </svg>
+          </span>
+          <span class="bt">
+            <small>[ Marca del proyecto · editable ]</small>
+            <b>HUMAN-CENTERED DESIGN KIT</b>
+          </span>
+        </div>
+
+        <div class="eyebrow">Diseño centrado en el humano</div>
+        <h1>Diseña<br><span class="stroke">para la persona</span></h1>
+        <div class="tag">Aterriza el problema antes de construir la solución</div>
+        <p class="lead">Un centro de apoyo para generar soluciones de forma más eficaz — y, a la vez, una plataforma para aprender diseño centrado en el humano, diseño de experiencias, de interfaces y <em style="color:var(--blue-soft);font-style:normal">design thinking</em>. Herramientas que se estudian y se usan: cada una explica su método y te deja capturar datos reales con tu equipo.</p>
+
+        <div class="meta-row">
+          <span class="chip">🧭 <b>Empatizar</b> → Definir</span>
+          <span class="chip">🧪 <b>Herramientas</b> + enseñanza</span>
+          <span class="chip">🤝 <b>Colaborativo</b> en vivo</span>
+        </div>
+
+        <div class="cta-row">
+          <a class="cta prime" href="#herramientas">
+            Ver las herramientas
+            <svg viewBox="0 0 24 24" fill="none"><path d="M4 12h16M14 6l6 6-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <a class="cta ghost" href="#metodologia">
+            ¿Qué es el HCD?
+          </a>
+        </div>
+      </div>
+
+      <div class="planet-wrap">
+        <div class="orbit" style="width:120%;height:120%"></div>
+        <div class="orbit" style="width:145%;height:145%"></div>
+        <div class="planet"></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ================= 01 METODOLOGÍA ================= -->
+<section id="metodologia">
+  <div class="rings"><span style="width:900px;height:900px;top:-200px;left:-300px"></span></div>
+  <div class="wrap inner">
+    <div class="shead">
+      <span class="numtag">01</span>
+      <div class="eyebrow" style="margin-top:8px">La metodología</div>
+      <h2>Del humano hacia la interfaz, no al revés</h2>
+      <p>El <b style="color:var(--white)">diseño centrado en el humano</b> es el marco más amplio: parte de entender a las personas reales —sus necesidades, contextos y limitaciones— antes de decidir qué construir. De ahí se desprenden capas cada vez más concretas, hasta llegar al pixel. Esta plataforma recorre ese camino con herramientas para cada etapa.</p>
+    </div>
+
+    <div class="layers">
+      <div class="layerlist">
+        <div class="layer" style="--lc:var(--blue-soft)">
+          <div class="lk">Marco general</div>
+          <h4>Diseño centrado en el humano (HCD)</h4>
+          <p>Resolver desde las necesidades reales de las personas, no desde la tecnología disponible. El punto de partida de todo.</p>
+        </div>
+        <div class="layer" style="--lc:var(--royal-bright)">
+          <div class="lk">Se concreta en</div>
+          <h4>Diseño centrado en el usuario (UCD)</h4>
+          <p>El usuario específico de un producto en el centro de cada decisión, validando con él en cada iteración.</p>
+        </div>
+        <div class="layer" style="--lc:var(--blue-pale)">
+          <div class="lk">Se vive como</div>
+          <h4>Diseño de experiencias &amp; de interfaces</h4>
+          <p>Cómo se siente y cómo se ve: el recorrido completo (UX) y la capa visual e interactiva (UI) que lo hacen tangible.</p>
+        </div>
+        <div class="layer" style="--lc:var(--lime)">
+          <div class="lk">El motor que lo recorre</div>
+          <h4>Design thinking &amp; procesos</h4>
+          <p>Empatizar → Definir → Idear → Prototipar → Testear. El proceso iterativo que conecta todas las capas.</p>
+        </div>
+      </div>
+
+      <div class="concentric" aria-hidden="true">
+        <div class="ring-d r1">HCD</div>
+        <div class="ring-d r2">UCD</div>
+        <div class="ring-d r3">UX · UI</div>
+        <div class="ring-d core">Design<br>Thinking</div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="divline"></div>
+
+<!-- ================= 02 HERRAMIENTAS ================= -->
+<section id="herramientas">
+  <div class="wrap inner">
+    <div class="shead">
+      <span class="numtag">02</span>
+      <div class="eyebrow" style="margin-top:8px">Categoría 1 · Herramientas y enseñanza</div>
+      <h2>Estudia el método y genera los datos</h2>
+      <p>Cada herramienta es una presentación que <b style="color:var(--white)">explica el tema</b> y, a la vez, te deja <b style="color:var(--white)">capturar información real</b> con tu equipo. Las marcadas como colaborativas sincronizan lo que todos escriben a una hoja de cálculo; las informativas son solo de consulta.</p>
+    </div>
+
+    <div class="toolgrid">
+      <!-- Herramienta de datos -->
+      <a class="tool" href="empatia.html" style="--tc:var(--royal-bright)">
+        <div class="ic">🧠</div>
+        <h4>Mapa de empatía</h4>
+        <p>Ponte en los zapatos de tu usuario en seis zonas (dice, piensa, hace, siente, dolores, ganancias) y deriva una necesidad. Captura y votación en equipo.</p>
+        <div class="foot"><span class="badge b-data">● Colaborativo</span><span class="go"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12h16M14 6l6 6-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+      </a>
+
+      <!-- Herramienta de datos -->
+      <a class="tool" href="aterrizar.html" style="--tc:var(--royal-bright)">
+        <div class="ic">🧭</div>
+        <h4>Aterrizar el reto</h4>
+        <p>Taller paso a paso para convertir un reto amplio en un problema potente y una idea para prototipar. Canvas, ¿Cómo podríamos…?, autorrevisión e ideación.</p>
+        <div class="foot"><span class="badge b-data">● Colaborativo</span><span class="go"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12h16M14 6l6 6-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+      </a>
+
+      <!-- Herramienta de datos -->
+      <a class="tool" href="riesgo.html" style="--tc:var(--royal-bright)">
+        <div class="ic">⚠️</div>
+        <h4>Riesgo y monitoreo</h4>
+        <p>Escalera del riesgo, grado de peligrosidad y de riesgo, indicadores adelantados/rezagados, jerarquía de controles y cédulas llenables en equipo.</p>
+        <div class="foot"><span class="badge b-data">● Colaborativo</span><span class="go"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12h16M14 6l6 6-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+      </a>
+
+      <!-- Informativa -->
+      <a class="tool" href="manual-pitch.html" style="--tc:var(--blue-soft)">
+        <div class="ic">🎤</div>
+        <h4>Manual de pitch</h4>
+        <p>Las piezas de un pitch ganador, los criterios de los jueces, el formato de entrega y los checklists de ensayo y envío. Solo consulta.</p>
+        <div class="foot"><span class="badge b-info">Informativa</span><span class="go"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12h16M14 6l6 6-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+      </a>
+
+      <!-- Informativa (ejemplo NASA) -->
+      <a class="tool" href="investigacion.html" style="--tc:var(--blue-soft)">
+        <div class="ic">🔬</div>
+        <h4>Investigación <span style="font-size:.6rem;font-family:'Archivo';color:var(--blue-pale);border:1px solid var(--line);border-radius:6px;padding:2px 6px;letter-spacing:.04em">EJEMPLO</span></h4>
+        <p>Cómo documentar el marco y las fuentes de un reto. Ejemplo real: la investigación del equipo para el reto de salud de astronautas de la NASA.</p>
+        <div class="foot"><span class="badge b-info">Informativa</span><span class="go"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12h16M14 6l6 6-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+      </a>
+
+      <!-- Informativa (ejemplo NASA) -->
+      <a class="tool" href="reto.html" style="--tc:var(--blue-soft)">
+        <div class="ic">🎯</div>
+        <h4>Análisis del reto <span style="font-size:.6rem;font-family:'Archivo';color:var(--blue-pale);border:1px solid var(--line);border-radius:6px;padding:2px 6px;letter-spacing:.04em">EJEMPLO</span></h4>
+        <p>Cómo desglosar los objetivos y lineamientos de un reto. Ejemplo real: el análisis del reto de monitoreo de salud para astronautas (NASA Space Apps).</p>
+        <div class="foot"><span class="badge b-info">Informativa</span><span class="go"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12h16M14 6l6 6-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+      </a>
+
+      <!-- Placeholder para nuevas -->
+      <div class="tool add" style="--tc:var(--mute)">
+        <div class="ic">➕</div>
+        <h4>Más herramientas</h4>
+        <p>Journey map, card sorting, árbol de decisiones, pruebas de usabilidad… Ve agregando aquí las que aprendas en tu formación.</p>
+        <div class="foot"><span class="badge b-soon">Por añadir</span></div>
+      </div>
+    </div>
+
+    <div class="exbanner" style="margin-top:26px">
+      <span class="xt">Ejemplo</span>
+      <p>Las herramientas y datos de ejemplo que verás dentro provienen de un <b>reto real</b>: la propuesta <b>ORBITAL</b> para el reto <em style="color:var(--blue-soft);font-style:normal">Health Monitoring Software for Astronauts</em> de NASA Space Apps CDMX 2026. Sirven como muestra de cómo se llena cada herramienta; al clonar esta plataforma para un proyecto nuevo, sustituyes ese contenido por el tuyo.</p>
+    </div>
+  </div>
+</section>
+<div class="divline"></div>
+
+<!-- ================= 03 DESCRIPCIÓN + RESULTADOS ================= -->
+<section id="resultados">
+  <div class="rings"><span style="width:1000px;height:1000px;top:-250px;right:-350px"></span></div>
+  <div class="wrap inner">
+    <div class="shead">
+      <span class="numtag">03</span>
+      <div class="eyebrow" style="margin-top:8px">Categoría 2 · Descripción del proyecto</div>
+      <h2>Y cuando el proyecto toma forma…</h2>
+      <p>La segunda categoría concentra la <b style="color:var(--white)">descripción de tu proyecto</b> y sus <b style="color:var(--white)">resultados</b>: la presentación de insights que retoma los datos generados por las herramientas, el pitch final para jurado o stakeholders, y el enlace al repositorio de tu prototipo.</p>
+    </div>
+
+    <div class="toolgrid">
+      <a class="tool" href="proyecto.html" style="--tc:var(--lime)">
+        <div class="ic">📄</div>
+        <h4>Descripción del proyecto</h4>
+        <p>La portada de tu proyecto: qué es, el problema, la solución y el equipo — más los botones hacia todos los resultados. Plantilla lista para rellenar.</p>
+        <div class="foot"><span class="badge b-result">Página central</span><span class="go"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12h16M14 6l6 6-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+      </a>
+
+      <a class="tool" href="insights.html" style="--tc:var(--lime)">
+        <div class="ic">📊</div>
+        <h4>Insights</h4>
+        <p>Presentación de hallazgos que retoma automáticamente lo capturado en empatía, aterrizar y riesgo, con trazabilidad de decisiones y borrador de requerimientos.</p>
+        <div class="foot"><span class="badge b-result">Resultado</span><span class="go"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12h16M14 6l6 6-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+      </a>
+
+      <a class="tool" href="pitch-jurado.html" style="--tc:var(--lime)">
+        <div class="ic">🎬</div>
+        <h4>Pitch final</h4>
+        <p>Presentación a pantalla completa para jurado, stakeholders o inversionistas, con la identidad visual del producto. La defensa última del proyecto.</p>
+        <div class="foot"><span class="badge b-result">Resultado</span><span class="go"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12h16M14 6l6 6-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="logo-ring">
+    <svg viewBox="0 0 48 48" fill="none"><circle cx="22" cy="26" r="16" stroke="#9cc1f2" stroke-width="2.4"/><path d="M34 14 C 30 10, 24 9, 20 11" stroke="#d7e64b" stroke-width="2.4" stroke-linecap="round"/><circle cx="35" cy="13" r="2.4" fill="#ef6a5a"/></svg>
+  </div>
+  Human-Centered Design Kit — plataforma reutilizable de diseño centrado en el humano<br/>
+  Herramienta para aterrizar problemas, detectar necesidades y presentar resultados.
+  <div class="edit">[ Edita marca, textos y ejemplos al clonar este machote para un proyecto nuevo ]</div>
+</footer>
+
+</body>
+</html>

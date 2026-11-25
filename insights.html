@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ORBITAL · Insights</title>
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png">
+<link rel="shortcut icon" href="favicon.ico">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="description" content="Insights de ORBITAL: lo que encontramos al aterrizar el problema y al evaluar los riesgos, con trazabilidad de decisiones y borrador de requerimientos. NASA Space Apps CDMX 2026." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;800;900&family=Overpass:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --navy-900:#071428;--navy-800:#0a1a33;--navy-700:#0d2244;--navy-600:#102a55;
+    --royal:#1e52c8;--royal-bright:#2a66e6;--blue-soft:#4e8fe6;--blue-pale:#9cc1f2;
+    --lime:#d7e64b;--white:#f4f8ff;--mute:#a9bbd6;--line:rgba(156,193,242,.16);
+    --card:rgba(18,38,74,.6);--ok:#4ccb8f;--warn:#f2c14e;--crit:#ef6a5a;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:"Overpass",system-ui,sans-serif;background:var(--navy-900);color:var(--white);line-height:1.55;-webkit-font-smoothing:antialiased;overflow:hidden}
+  h1,h2,h3,h4{font-family:"Archivo",sans-serif;letter-spacing:-.01em}
+  a{color:var(--blue-soft)}
+  .deck{position:fixed;inset:0;background:radial-gradient(1200px 760px at 82% 12%, rgba(30,82,200,.32), transparent 60%),radial-gradient(900px 640px at 6% 96%, rgba(20,50,130,.3), transparent 60%),linear-gradient(180deg,var(--navy-800),var(--navy-900))}
+  .slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-start;padding:clamp(70px,10vh,96px) clamp(22px,6vw,96px) clamp(88px,12vh,110px);opacity:0;visibility:hidden;transform:scale(.985);transition:opacity .45s ease,transform .55s cubic-bezier(.2,.7,.2,1),visibility .45s;overflow-y:auto}
+  .slide.active{opacity:1;visibility:visible;transform:none;z-index:2}
+  .sin{width:100%;max-width:1120px;margin:auto}
+  .r{opacity:0;transform:translateY(22px);transition:opacity .55s cubic-bezier(.2,.7,.2,1),transform .55s cubic-bezier(.2,.7,.2,1)}
+  .slide.active .r{opacity:1;transform:none;transition-delay:var(--d,0s)}
+  .rings{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+  .rings span{position:absolute;border-radius:50%;border:1px solid rgba(120,160,230,.10)}
+  .eyebrow{font-family:"Archivo";font-weight:800;text-transform:uppercase;letter-spacing:.14em;font-size:clamp(.66rem,1.1vw,.76rem);color:var(--lime);display:inline-flex;align-items:center;gap:10px}
+  .eyebrow::before{content:"";width:26px;height:2px;background:var(--lime);display:inline-block}
+  h2.title{font-size:clamp(1.7rem,4.2vw,3rem);font-weight:900;line-height:1.03;margin:8px 0 12px}
+  .sub{color:var(--mute);font-size:clamp(.98rem,1.6vw,1.12rem);max-width:74ch}
+  .sub b{color:var(--white)}
+  .hl{color:var(--lime)}
+  .tag{display:inline-block;font-family:"Archivo";font-weight:800;font-size:.66rem;letter-spacing:.06em;text-transform:uppercase;padding:3px 9px;border-radius:999px;white-space:nowrap}
+  .t-ok{background:rgba(76,203,143,.15);color:var(--ok)} .t-warn{background:rgba(242,193,78,.15);color:var(--warn)} .t-crit{background:rgba(239,106,90,.16);color:var(--crit)} .t-mute{background:rgba(156,193,242,.1);color:var(--mute)} .t-lime{background:rgba(215,230,75,.15);color:var(--lime)}
+  .g2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:16px}
+  .g2.cvgrid{grid-template-columns:1fr 2fr}
+  .g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px}
+  .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:clamp(14px,2vw,20px)}
+  .card h4{font-size:clamp(.98rem,1.5vw,1.1rem);font-weight:800;margin-bottom:6px}
+  .card p,.card li{color:var(--mute);font-size:clamp(.86rem,1.3vw,.96rem)}
+  .card p b{color:var(--white)}
+  .kk{font-family:"Archivo";font-weight:800;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--c,var(--blue-soft))}
+  .big{font-family:"Archivo";font-weight:900;font-size:clamp(1.9rem,4vw,2.8rem);line-height:1}
+  .statement{background:linear-gradient(135deg,var(--navy-600),var(--navy-700));border:1px solid var(--line);border-left:5px solid var(--lime);border-radius:16px;padding:clamp(18px,2.8vw,30px) clamp(20px,3vw,34px);font-family:"Archivo";font-weight:600;font-size:clamp(1.15rem,2.5vw,1.8rem);line-height:1.3;margin-top:16px}
+  .statement small{display:block;font-family:"Overpass";font-weight:400;color:var(--mute);font-size:.9rem;margin-top:8px}
+  .empty{color:var(--mute);font-style:italic;font-size:.92rem}
+  .pend{color:var(--warn);font-style:italic}
+  .btn{cursor:pointer;font-family:"Archivo";font-weight:800;font-size:.85rem;border-radius:11px;padding:10px 16px;border:1px solid var(--line);background:rgba(10,26,51,.6);color:var(--white);transition:.2s;display:inline-flex;align-items:center;gap:8px;text-decoration:none}
+  .btn:hover{border-color:var(--lime);color:var(--lime)}
+  .btn.prime{background:var(--lime);color:#071428;border-color:var(--lime)}
+  .btnrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+  .brandmark{display:flex;align-items:center;gap:14px;margin-bottom:26px}
+  .logo-ring{width:48px;height:48px;flex:0 0 auto}
+  .brandmark small{display:block;font-size:.6rem;letter-spacing:.3em;color:var(--mute);font-weight:700;font-family:"Archivo"}
+  .brandmark b{font-size:1rem;letter-spacing:.04em;font-family:"Archivo";font-weight:900;text-transform:uppercase}
+  .hero h1{font-weight:900;font-size:clamp(2.6rem,8vw,5.6rem);line-height:.95;margin:12px 0 18px}
+  .hero .lead{color:var(--blue-pale);font-size:clamp(1.02rem,2vw,1.3rem);max-width:62ch}
+  .status{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:20px;background:rgba(10,26,51,.6);border:1px solid var(--line);border-radius:14px;padding:12px 14px;font-size:.88rem;color:var(--mute)}
+  .status b{color:var(--white)}
+  .dot{width:9px;height:9px;border-radius:50%;display:inline-block;background:#7f8ca3}
+  .dot.ok{background:var(--ok);box-shadow:0 0 8px rgba(76,203,143,.6)} .dot.demo{background:var(--lime)} .dot.loc{background:var(--warn)}
+  .seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+  .seg button{cursor:pointer;font-family:"Archivo";font-weight:800;font-size:.76rem;background:transparent;border:none;color:var(--mute);padding:8px 14px}
+  .seg button.on{background:var(--lime);color:#071428}
+  .meter{height:8px;border-radius:999px;background:rgba(156,193,242,.12);overflow:hidden;margin-top:8px}
+  .meter i{display:block;height:100%;border-radius:999px;background:var(--lime)}
+  .kpi .big{font-size:clamp(1.6rem,3vw,2.2rem)}
+  .kpi .lbl{color:var(--mute);font-size:.8rem;margin-top:4px}
+  .canvasgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}
+  .cbox{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;border-top:3px solid var(--c,var(--line))}
+  .cbox h5{font-family:"Archivo";font-weight:800;font-size:.86rem;display:flex;justify-content:space-between;gap:6px;align-items:center}
+  .cbox p{color:var(--mute);font-size:.84rem;margin-top:6px}
+  .cbox.wide{grid-column:span 2}
+  .donutwrap{display:flex;gap:16px;align-items:center}
+  .legend{display:flex;flex-wrap:wrap;gap:12px;font-size:.8rem;color:var(--mute);margin-top:6px}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .sw{width:12px;height:12px;border-radius:3px;display:inline-block}
+  .zones{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+  .zone{background:var(--card);border:1px solid var(--line);border-top:3px solid var(--c);border-radius:14px;padding:12px 14px}
+  .zone h5{font-family:"Archivo";font-weight:800;font-size:.9rem;margin-bottom:6px}
+  .note{display:flex;gap:8px;align-items:flex-start;font-size:.86rem;color:var(--blue-pale);margin-bottom:6px}
+  .note .v{flex:0 0 auto;font-family:"Archivo";font-weight:800;font-size:.72rem;color:#071428;background:var(--lime);border-radius:999px;padding:1px 7px}
+  .hmwlist{display:grid;gap:8px;margin-top:14px}
+  .hmw{display:grid;grid-template-columns:190px 1fr auto;gap:12px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 14px;font-size:.92rem}
+  .hmw .rc{font-family:"Archivo";font-weight:800;font-size:.8rem;color:var(--blue-pale)}
+  .hmw.chosen{border-color:var(--lime);background:linear-gradient(90deg,rgba(215,230,75,.12),var(--card))}
+  .chart svg{width:100%;height:auto;display:block}
+  .funnel{display:grid;grid-template-columns:1fr 1.4fr 1.2fr;gap:14px;margin-top:14px;align-items:stretch}
+  .combo{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;font-size:.8rem}
+  .combo div{background:rgba(7,20,40,.5);border:1px solid var(--line);border-radius:8px;padding:6px 8px;color:var(--blue-pale)}
+  .combo .h{font-family:"Archivo";font-weight:800;font-size:.7rem;color:var(--c);background:none;border:none;padding:0 2px}
+  .tbl{width:100%;border-collapse:collapse;font-size:clamp(.8rem,1.2vw,.9rem)}
+  .tbl th,.tbl td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+  .tbl th{font-family:"Archivo";font-weight:800;font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;color:var(--blue-soft);background:rgba(10,26,51,.7)}
+  .tbl td{color:var(--blue-pale)}
+  .tblwrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;margin-top:14px}
+  .rmatrix{display:grid;grid-template-columns:auto repeat(3,1fr);gap:5px;font-family:"Archivo";font-size:.78rem;margin-top:8px}
+  .rmatrix>div{padding:8px 6px;border-radius:8px;text-align:center;font-weight:700;min-height:70px;display:flex;flex-direction:column;align-items:center;gap:6px}
+  .rmatrix .hd{background:#0b1730;color:var(--mute);min-height:auto;justify-content:center}
+  .rmatrix .sv{background:var(--royal);color:var(--white);justify-content:center}
+  .rmatrix .c-bajo{background:rgba(156,193,242,.25);color:#dfe9fb} .rmatrix .c-medio{background:rgba(215,230,75,.72);color:#071428} .rmatrix .c-alto{background:rgba(239,106,90,.85);color:#071428}
+  .pin{display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;border-radius:7px;background:#071428;color:var(--lime);font-size:.74rem;font-weight:900;padding:0 6px;margin:1px}
+  .pins{display:flex;flex-wrap:wrap;justify-content:center}
+  .pyr{display:grid;gap:7px;margin-top:10px}
+  .plevel{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;border-radius:999px;padding:9px 18px;font-family:"Archivo";font-weight:800;font-size:.9rem}
+  .plevel .n{font-size:.76rem;opacity:.75}
+  .plevel .c{background:rgba(7,20,40,.8);color:var(--lime);border-radius:999px;padding:2px 10px;font-size:.78rem}
+  .pl1{background:#0b1430;border:1px solid var(--line)} .pl2{background:#1446d8;margin:0 18px} .pl3{background:#2aa1f0;color:#071428;margin:0 36px} .pl4{background:#d7e64b;color:#071428;margin:0 54px} .pl5{background:#ef7d65;color:#071428;margin:0 72px}
+  .lists{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:14px}
+  .lists ul{list-style:none;display:grid;gap:8px;margin-top:8px}
+  .lists li{background:rgba(7,20,40,.5);border:1px solid var(--line);border-radius:10px;padding:8px 11px;font-size:.88rem;color:var(--blue-pale)}
+  .spark{display:grid;gap:10px;margin-top:14px}
+  .sprow{display:grid;grid-template-columns:90px 1fr auto;gap:12px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+  .sprow .code{font-family:"Archivo";font-weight:900}
+  .sprow svg{width:100%;height:44px}
+  .tucei{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}
+  .tucei .card.wide{grid-column:1/-1}
+  .letter{font-family:"Archivo";font-weight:900;font-size:2rem;line-height:1;color:var(--c)}
+  .chain{display:grid;grid-template-columns:repeat(6,1fr);gap:0;margin-top:18px;align-items:stretch}
+  .link{position:relative;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 12px 14px;margin-right:18px}
+  .link:not(:last-child)::after{content:"→";position:absolute;right:-18px;top:50%;transform:translateY(-50%);color:var(--lime);font-family:"Archivo";font-weight:900;width:18px;text-align:center}
+  .link .kk{font-size:.62rem}
+  .link p{color:var(--white);font-size:.86rem;margin-top:6px}
+  .link small{display:block;color:var(--mute);font-size:.72rem;margin-top:6px}
+  .doc{background:#f4f6fb;color:#16213a;border-radius:16px;padding:22px 26px;margin-top:14px;max-height:56vh;overflow:auto;font-size:.9rem}
+  .doc h1{font-size:1.35rem;color:#0b1324;margin-bottom:6px}
+  .doc h2{font-size:1.05rem;color:#1e52c8;margin:16px 0 6px}
+  .doc ul{margin:4px 0 4px 18px}
+  .doc li{margin:3px 0}
+  .doc em{color:#8a5a00;font-style:italic}
+  .doc table{border-collapse:collapse;width:100%;margin-top:6px;font-size:.84rem}
+  .doc td,.doc th{border:1px solid #c8d0e2;padding:5px 7px;text-align:left;vertical-align:top}
+  .doc th{background:#dfe4ee}
+  .pre{background:rgba(7,20,40,.7);border:1px solid var(--line);border-radius:14px;padding:16px;margin-top:14px;max-height:52vh;overflow:auto;white-space:pre-wrap;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.8rem;color:var(--blue-pale)}
+  .flow{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:10px;align-items:center;margin-top:16px}
+  .flow .arrow{color:var(--lime);font-family:"Archivo";font-weight:900;font-size:1.4rem}
+  .prog{position:fixed;top:0;left:0;height:3px;background:var(--lime);width:0;z-index:40;transition:width .4s ease;box-shadow:0 0 12px rgba(215,230,75,.5)}
+  .tbar{position:fixed;top:0;left:0;right:0;z-index:35;background:rgba(7,20,40,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .tin{padding:9px 16px;display:flex;align-items:center;gap:6px;overflow-x:auto;scrollbar-width:none}
+  .tin::-webkit-scrollbar{display:none}
+  .tchip{flex:0 0 auto;font-family:"Archivo";font-weight:800;font-size:.72rem;color:var(--mute);background:transparent;cursor:pointer;padding:7px 11px;border-radius:999px;border:1px solid var(--line);white-space:nowrap}
+  .tchip:hover{color:var(--white);border-color:var(--blue-soft)}
+  .tchip.on{color:#071428;background:var(--lime);border-color:var(--lime)}
+  .tin .sp{flex:1 0 8px}
+  .srcpill{flex:0 0 auto;display:inline-flex;align-items:center;gap:7px;font-family:"Archivo";font-weight:800;font-size:.72rem;color:var(--mute);border:1px solid var(--line);border-radius:999px;padding:6px 11px;white-space:nowrap}
+  .tin .tb{flex:0 0 auto;font-family:"Archivo";font-weight:800;font-size:.72rem;cursor:pointer;border-radius:10px;padding:8px 11px;border:1px solid var(--line);background:rgba(10,26,51,.6);color:var(--white)}
+  .tin .tb:hover{border-color:var(--lime);color:var(--lime)}
+  .hud{position:fixed;bottom:18px;right:20px;display:flex;align-items:center;gap:10px;z-index:30}
+  .hud button{width:44px;height:44px;border-radius:12px;border:1px solid var(--line);background:rgba(10,26,51,.85);color:var(--white);cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .hud button:hover{border-color:var(--lime);color:var(--lime)}
+  .hud button:disabled{opacity:.3;cursor:default}
+  .counter{font-family:"Archivo";font-weight:800;font-size:.82rem;color:var(--mute);letter-spacing:.08em;padding:0 6px;min-width:62px;text-align:center}
+  .counter b{color:var(--lime)}
+  .hint-key{position:fixed;bottom:20px;left:20px;z-index:30;color:var(--mute);font-size:.72rem;font-family:"Archivo";font-weight:700;letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;gap:8px;background:rgba(7,20,40,.9);border:1px solid var(--line);border-radius:12px;padding:7px 11px}
+  .hint-key kbd{background:rgba(10,26,51,.8);border:1px solid var(--line);border-radius:6px;padding:2px 7px;font-family:"Archivo";font-size:.72rem}
+  .hint-key.gone{opacity:0;transition:opacity .6s;pointer-events:none}
+  .toast{position:fixed;left:50%;bottom:80px;transform:translateX(-50%) translateY(20px);background:var(--lime);color:#071428;font-family:"Archivo";font-weight:800;font-size:.86rem;padding:11px 18px;border-radius:12px;opacity:0;transition:.3s;z-index:70;pointer-events:none}
+  .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+  @media(max-width:900px){
+    .g4,.canvasgrid,.tucei{grid-template-columns:1fr 1fr}
+    .g2,.g2.cvgrid,.g3,.zones,.funnel,.lists,.flow{grid-template-columns:1fr}
+    .flow .arrow{transform:rotate(90deg);justify-self:center}
+    .chain{grid-template-columns:1fr}
+    .link{margin:0 0 18px 0}
+    .link:not(:last-child)::after{content:"↓";right:auto;left:50%;top:auto;bottom:-18px;transform:translateX(-50%)}
+    .hmw{grid-template-columns:1fr}
+    .pl2,.pl3,.pl4,.pl5{margin:0}
+    .hint-key{display:none}
+    .slide{padding:66px 18px 92px}
+  }
+  @media(max-width:560px){ .g4,.canvasgrid,.tucei{grid-template-columns:1fr} .cbox.wide{grid-column:auto} .srcpill .tl{display:none} }
+</style>
+</head>
+<body>
+<div class="prog" id="prog"></div>
+<nav class="tbar"><div class="tin">
+  <button type="button" class="tchip" data-goto="portada" data-step="0">Inicio</button>
+  <button type="button" class="tchip" data-goto="s-resumen" data-step="R">Resumen</button>
+  <button type="button" class="tchip" data-goto="s-problema" data-step="A">Aterrizar</button>
+  <button type="button" class="tchip" data-goto="s-peligros" data-step="B">Riesgos</button>
+  <button type="button" class="tchip" data-goto="s-traza" data-step="C">Decisiones</button>
+  <button type="button" class="tchip" data-goto="s-req" data-step="D">Requerimientos</button>
+  <button type="button" class="tchip" data-goto="s-base" data-step="E">La base</button>
+  <span class="sp"></span>
+  <span class="srcpill" id="srcPill"><i class="dot"></i><span class="tl" id="srcTxt">Cargando…</span></span>
+  <button type="button" class="tb" id="btnReload" title="Volver a leer las bases">↻</button>
+</div></nav>
+
+<div class="deck" id="deck">
+
+<section class="slide active" id="portada">
+  <div class="rings"><span style="width:620px;height:620px;top:-120px;right:-160px"></span><span style="width:940px;height:940px;top:-260px;right:-320px"></span></div>
+  <div class="sin hero" style="position:relative;z-index:1">
+    <div class="brandmark r"><span class="logo-ring"><svg viewBox="0 0 48 48" fill="none"><circle cx="22" cy="26" r="16" stroke="#f4f8ff" stroke-width="2.4"/><path d="M34 14 C 30 10, 24 9, 20 11" stroke="#d7e64b" stroke-width="2.4" stroke-linecap="round"/><circle cx="35" cy="13" r="2.4" fill="#ef6a5a"/></svg></span><span><small>NASA Space Apps · CDMX 2026 · Equipo ORBITAL</small><b>Insights</b></span></div>
+    <div class="eyebrow r" style="--d:.1s">Aterrizar el problema + evaluación de riesgos</div>
+    <h1 class="r" style="--d:.2s">Lo que encontramos</h1>
+    <p class="lead r" style="--d:.3s">Esta presentación se arma sola con lo que el equipo escribió en <b>Aterrizar el reto</b>, el <b>mapa de empatía</b> y la <b>evaluación de riesgos</b>. Muestra los insights, cómo tomamos cada decisión y la materia prima de nuestra hoja de requerimientos.</p>
+    <div class="status r" style="--d:.4s"><i class="dot" id="stDot"></i><span id="stTxt">Leyendo las bases…</span><span style="flex:1"></span>
+      <div class="seg" role="group" aria-label="Fuente de datos"><button type="button" data-mode="team" class="on">Datos del equipo</button><button type="button" data-mode="demo">Demostración</button></div>
+    </div>
+    <div class="btnrow r" style="--d:.5s"><a class="btn" href="aterrizar.html">🧭 Aterrizar el reto</a><a class="btn" href="riesgo.html">⚠️ Evaluación de riesgos</a><a class="btn" href="empatia.html">🧠 Mapa de empatía</a><a class="btn" href="proyecto.html">← Proyecto</a></div>
+  </div>
+</section>
+
+<section class="slide" id="s-resumen" data-step="R">
+  <div class="sin">
+    <div class="eyebrow r">Resumen</div>
+    <h2 class="title r" style="--d:.06s">¿Qué tan completo está el trabajo?</h2>
+    <p class="sub r" style="--d:.1s">Cada barra es una herramienta. Lo que falta aparece en amarillo en las siguientes diapositivas como <span class="pend">pendiente</span>.</p>
+    <div class="g4 r" style="--d:.14s" id="kpis"></div>
+  </div>
+</section>
+
+<!-- ================= ATERRIZAR ================= -->
+<section class="slide" id="s-problema" data-step="A">
+  <div class="sin">
+    <div class="eyebrow r">Insight 1 · El problema</div>
+    <h2 class="title r" style="--d:.06s">La causa raíz que encontramos</h2>
+    <div class="statement r" style="--d:.12s" id="problemStmt"></div>
+    <div class="g3 r" style="--d:.18s" id="problemCards"></div>
+  </div>
+</section>
+
+<section class="slide" id="s-canvas" data-step="A">
+  <div class="sin">
+    <div class="eyebrow r">Insight 2 · Evidencia</div>
+    <h2 class="title r" style="--d:.06s">¿Cuánto del canvas es dato y cuánto supuesto?</h2>
+    <div class="g2 cvgrid r" style="--d:.12s;align-items:start">
+      <div class="card"><div class="donutwrap"><svg id="donut" viewBox="0 0 120 120" width="130" height="130"></svg><div id="donutTxt"></div></div><div class="legend"><span><i class="sw" style="background:#4ccb8f"></i>Dato</span><span><i class="sw" style="background:#f2c14e"></i>Supuesto</span><span><i class="sw" style="background:rgba(156,193,242,.25)"></i>Sin llenar</span></div><div id="supList" style="margin-top:12px"></div></div>
+      <div class="canvasgrid" id="canvasGrid" style="margin-top:0"></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="s-empatia" data-step="A">
+  <div class="sin">
+    <div class="eyebrow r">Insight 3 · La persona</div>
+    <h2 class="title r" style="--d:.06s">La voz de Katya E. (mapa de empatía)</h2>
+    <div class="statement r" style="--d:.1s;border-left-color:var(--blue-soft)" id="povStmt"></div>
+    <div class="zones r" style="--d:.16s" id="zones"></div>
+  </div>
+</section>
+
+<section class="slide" id="s-hmw" data-step="A">
+  <div class="sin">
+    <div class="eyebrow r">Insight 4 · Oportunidades</div>
+    <h2 class="title r" style="--d:.06s">Siete puertas de entrada al problema</h2>
+    <p class="sub r" style="--d:.1s" id="hmwSub"></p>
+    <div class="hmwlist r" style="--d:.14s" id="hmwList"></div>
+  </div>
+</section>
+
+<section class="slide" id="s-matriz" data-step="A">
+  <div class="sin">
+    <div class="eyebrow r">Insight 5 · Decisión</div>
+    <h2 class="title r" style="--d:.06s">Por qué elegimos esta pregunta</h2>
+    <p class="sub r" style="--d:.1s">Cada pregunta se calificó del 1 al 3 en las dos restricciones reales del evento: <b>conectar con un dato de la NASA</b> y <b>poder prototiparla en un día</b>.</p>
+    <div class="card chart r" style="--d:.14s;margin-top:14px"><svg id="hmwChart" viewBox="0 0 760 312"></svg><div class="legend"><span><i class="sw" style="background:#4e8fe6"></i>¿Dato NASA?</span><span><i class="sw" style="background:#2aa1f0"></i>¿Prototipo en 1 día?</span><span><i class="sw" style="background:#d7e64b"></i>Pregunta elegida</span></div></div>
+  </div>
+</section>
+
+<section class="slide" id="s-ideas" data-step="A">
+  <div class="sin">
+    <div class="eyebrow r">Insight 6 · De muchas ideas a una</div>
+    <h2 class="title r" style="--d:.06s">La idea que vamos a prototipar</h2>
+    <div class="funnel r" style="--d:.12s">
+      <div class="card"><div class="kk">Ronda 1 · en silencio</div><div class="big" id="nIdeas">0</div><p>ideas individuales</p><div id="ideaList" style="margin-top:8px"></div></div>
+      <div class="card"><div class="kk">Ronda 2 · Dato · Canal · Momento</div><div class="combo" id="combo" style="margin-top:8px"></div><p style="margin-top:8px" id="comboN"></p></div>
+      <div class="card" style="border-color:rgba(215,230,75,.45)"><div class="kk" style="--c:var(--lime)">Elegir · idea finalista</div><p style="color:var(--white);font-family:Archivo;font-weight:700;font-size:1.1rem;margin-top:8px" id="finalIdea"></p><p style="margin-top:8px" id="finalWhy"></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= RIESGOS ================= -->
+<section class="slide" id="s-peligros" data-step="B">
+  <div class="sin">
+    <div class="eyebrow r">Insight 7 · Peligros</div>
+    <h2 class="title r" style="--d:.06s">Lo que puede salir mal en la tarea</h2>
+    <p class="sub r" style="--d:.1s" id="tareaTxt"></p>
+    <div class="tblwrap r" style="--d:.14s"><table class="tbl"><thead><tr><th>#</th><th>Peligro</th><th>Amenaza</th><th>¿Quién es vulnerable?</th><th>Daño posible</th><th>Nivel</th></tr></thead><tbody id="pelRows"></tbody></table></div>
+  </div>
+</section>
+
+<section class="slide" id="s-rmatriz" data-step="B">
+  <div class="sin">
+    <div class="eyebrow r">Insight 8 · Priorizar</div>
+    <h2 class="title r" style="--d:.06s">Matriz de riesgo y controles elegidos</h2>
+    <div class="g2 r" style="--d:.12s;align-items:start">
+      <div class="card"><div class="kk">Probabilidad × severidad</div><div class="rmatrix" id="rMatrix"></div><div id="rLegend" style="margin-top:10px"></div></div>
+      <div class="card"><div class="kk">Jerarquía de controles usada</div><div class="pyr" id="pyr"></div><div id="prioList" style="margin-top:12px"></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="s-eventos" data-step="B">
+  <div class="sin">
+    <div class="eyebrow r">Insight 9 · Valorar</div>
+    <h2 class="title r" style="--d:.06s">Grado de peligrosidad y grado de riesgo</h2>
+    <p class="sub r" style="--d:.1s" id="evSub"></p>
+    <div class="g2 r" style="--d:.14s;align-items:start">
+      <div class="card chart"><div class="kk">GP = C × E × P (William Fine)</div><svg id="gpChart" viewBox="0 0 520 260"></svg></div>
+      <div class="card chart"><div class="kk">GR = medido ÷ límite (NASA)</div><svg id="grChart" viewBox="0 0 520 260"></svg></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="s-indicadores" data-step="B">
+  <div class="sin">
+    <div class="eyebrow r">Insight 10 · Medir antes del daño</div>
+    <h2 class="title r" style="--d:.06s">Avisos que llegan antes y daños que llegan tarde</h2>
+    <div class="lists r" style="--d:.12s">
+      <div class="card" style="border-top:3px solid var(--warn)"><div class="kk" style="--c:var(--warn)">Indicadores adelantados · lo que ORBITAL debe vigilar</div><ul id="leadList"></ul></div>
+      <div class="card" style="border-top:3px solid var(--crit)"><div class="kk" style="--c:var(--crit)">Indicadores rezagados · lo que confirma el daño</div><ul id="lagList"></ul></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="s-autorreporte" data-step="B">
+  <div class="sin">
+    <div class="eyebrow r">Insight 11 · Línea base personal</div>
+    <h2 class="title r" style="--d:.06s">Autorreportes contra la línea base de cada persona</h2>
+    <p class="sub r" style="--d:.1s">Suma de fatiga + dolor + ánimo + sueño (4 a 20; 5 es lo peor en cada escala). La línea punteada es su propio promedio.</p>
+    <div class="spark r" style="--d:.14s" id="spark"></div>
+  </div>
+</section>
+
+<section class="slide" id="s-sistema" data-step="B">
+  <div class="sin">
+    <div class="eyebrow r">Insight 12 · El sistema</div>
+    <h2 class="title r" style="--d:.06s">Lienzo del sistema (T, U, C, E, I)</h2>
+    <div class="tucei r" style="--d:.12s" id="tucei"></div>
+  </div>
+</section>
+
+<!-- ================= DECISIONES Y REQUERIMIENTOS ================= -->
+<section class="slide" id="s-traza" data-step="C">
+  <div class="sin">
+    <div class="eyebrow r">Para los mentores</div>
+    <h2 class="title r" style="--d:.06s">Cómo tomamos cada decisión</h2>
+    <p class="sub r" style="--d:.1s">Cada eslabón sale del anterior y tiene su fuente. Así justificamos por qué ORBITAL es lo que es.</p>
+    <div class="chain r" style="--d:.14s" id="chain"></div>
+  </div>
+</section>
+
+<section class="slide" id="s-req" data-step="D">
+  <div class="sin">
+    <div class="eyebrow r">Materia prima</div>
+    <h2 class="title r" style="--d:.06s">Borrador de hoja de requerimientos</h2>
+    <p class="sub r" style="--d:.1s">Generado con lo que escribió el equipo. Lo <em style="color:var(--warn)">pendiente</em> indica qué falta llenar y dónde. Cópienlo a un documento y edítenlo.</p>
+    <div class="btnrow r" style="--d:.12s"><button type="button" class="btn prime" id="btnCopyReq">⧉ Copiar en Markdown</button><button type="button" class="btn" id="btnDlReq">↓ Descargar .md</button></div>
+    <div class="doc r" style="--d:.16s" id="reqDoc"></div>
+  </div>
+</section>
+
+<section class="slide" id="s-prompt" data-step="D">
+  <div class="sin">
+    <div class="eyebrow r">Siguiente paso</div>
+    <h2 class="title r" style="--d:.06s">Prompt base para backend y frontend</h2>
+    <p class="sub r" style="--d:.1s">Incluye la hoja de requerimientos completa. Pégalo en tu asistente de IA y ajústalo antes de pedir código.</p>
+    <div class="btnrow r" style="--d:.12s"><button type="button" class="btn prime" id="btnCopyPrompt">⧉ Copiar prompt</button></div>
+    <div class="pre r" style="--d:.16s" id="promptBox"></div>
+  </div>
+</section>
+
+<section class="slide" id="s-base" data-step="E">
+  <div class="sin">
+    <div class="eyebrow r">Para el equipo</div>
+    <h2 class="title r" style="--d:.06s">Cómo está organizada la base de datos</h2>
+    <div class="flow r" style="--d:.1s">
+      <div class="card"><h4>1 · Las páginas</h4><p>aterrizar, empatía y riesgo envían cada campo apenas lo escriben.</p></div><div class="arrow">→</div>
+      <div class="card"><h4>2 · Pestaña “Datos”</h4><p>Almacén crudo: <b>una fila por campo</b> (o por nota, evento o autorreporte). Lo usan las páginas; no está hecho para leerse.</p></div><div class="arrow">→</div>
+      <div class="card"><h4>3 · Pestañas legibles</h4><p>0 · LEEME, 1 · Aterrizar, 2 · Empatía, 3–5 · Riesgo, 6 · Insumos requerimientos. Se reconstruyen solas.</p></div>
+    </div>
+    <div class="g2 r" style="--d:.16s">
+      <div class="card"><div class="kk">Estado del backend</div><p id="beState" style="margin-top:6px"></p></div>
+      <div class="card"><div class="kk">Reglas de oro</div><ul style="margin:6px 0 0 18px"><li>Editen desde las páginas, no en las pestañas legibles: se sobrescriben.</li><li>No borren ni renombren “Datos”.</li><li>Todos con el mismo equipo (tacos-de-asada) para ver lo mismo.</li></ul></div>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<div class="hud">
+  <button id="prev" aria-label="Anterior"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <span class="counter"><b id="cur">01</b> / <span id="total">00</span></span>
+  <button id="next" aria-label="Siguiente"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <button id="fs" aria-label="Pantalla completa"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 9V5a1 1 0 011-1h4M20 9V5a1 1 0 00-1-1h-4M4 15v4a1 1 0 001 1h4M20 15v4a1 1 0 01-1 1h-4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</div>
+<div class="hint-key" id="keyhint"><kbd>←</kbd><kbd>→</kbd> navega · <kbd>F</kbd> pantalla completa</div>
+<div class="toast" id="toast"></div>
+
+<script src="sync.js"></script>
+<script>
+/* =================== CATÁLOGOS =================== */
+var CANVAS=[['contexto','Contexto'],['clientes','Clientes'],['alternativas','Alternativas'],['desventajas','Desventajas de las alternativas'],['emocional','Impacto emocional'],['cuantificable','Impacto cuantificable'],['problema','Problema (causa raíz)']];
+var ZONES=[['dice','Dice','#4e8fe6'],['piensa','Piensa','#9cc1f2'],['hace','Hace','#2aa1f0'],['siente','Siente','#d7e64b'],['dolores','Dolores','#ef6a5a'],['ganancias','Ganancias','#4ccb8f']];
+var CONTROLS=['','Eliminar el peligro','Sustituirlo','Controles de ingeniería','Controles administrativos','Equipo de protección'];
+var PROBS=['Baja','Media','Alta'], SEVS=['Grave','Moderada','Leve'];
+var MATRIX={Grave:['medio','alto','alto'],Moderada:['bajo','medio','alto'],Leve:['bajo','bajo','medio']};
+function sevFromC(c){return c>=15?'Grave':(c>=5?'Moderada':'Leve');}
+function probFromP(p){return p>=6?2:(p>=3?1:0);}
+function gpBand(gp){ return gp>200?{c:'#ef6a5a',t:'Corrección inmediata'}:(gp>85?{c:'#f2c14e',t:'Actuación urgente'}:{c:'#4ccb8f',t:'Eliminar sin demora'}); }
+function grBand(gr){ return gr>=1?{c:'#ef6a5a',t:'Excede el límite'}:(gr>=0.5?{c:'#f2c14e',t:'Vigilar'}:{c:'#4ccb8f',t:'Dentro del límite'}); }
+
+/* =================== DEMOSTRACIÓN =================== */
+var DEMO = {
+  at:{c_contexto:'Durante el tránsito a Marte, con ~20 min de retraso por mensaje, cuando aparece un síntoma nuevo (p. ej., dolor en el pecho) en el turno nocturno.',ds_contexto:'D',
+    c_clientes:'Katya E., tripulante que debe decidir sola si un síntoma es urgente.',ds_clientes:'D',
+    c_alternativas:'Checklists médicos, consulta diferida con Tierra y sensores que muestran números crudos.',ds_alternativas:'D',
+    c_desventajas:'Números sin contexto ni línea base personal; la respuesta de Tierra llega tarde; demasiadas alarmas.',ds_desventajas:'D',
+    c_emocional:'Incertidumbre y miedo a alarmar a Tierra por nada.',ds_emocional:'S',
+    c_cuantificable:'Minutos hasta decidir; falsas alarmas por semana; horas de sueño perdidas.',ds_cuantificable:'S',
+    c_problema:'Katya no puede decidir a tiempo si un síntoma es grave porque sus datos no se comparan con su propia línea base, aunque la NASA ya define límites y protocolos.',ds_problema:'S',
+    hmw_contexto:'¿Cómo podríamos avisar antes de que el síntoma llegue al turno nocturno?',hmw_clientes:'¿Cómo podríamos usar lo que Katya ya sabe de su cuerpo?',hmw_alternativas:'¿Cómo podríamos construir sobre los checklists médicos que ya usa?',hmw_desventajas:'¿Cómo podríamos dar contexto a cada número sin depender de Tierra?',hmw_emocional:'¿Cómo podríamos cambiar la incertidumbre por confianza para decidir?',hmw_cuantificable:'¿Cómo podríamos reducir los minutos que tarda en decidir?',hmw_problema:'¿Cómo podríamos comparar cada lectura con la línea base de Katya para que sepa si es grave?',
+    ar3_problema:'true',ar3_desventajas:'true',ar3_contexto:'true',ar1_emocional:'true',ar2_alternativas:'true',ar3_cuantificable:'true',
+    m1_problema:'3',m2_problema:'3',m1_desventajas:'2',m2_desventajas:'3',m1_contexto:'3',m2_contexto:'2',m1_cuantificable:'2',m2_cuantificable:'2',m1_emocional:'1',m2_emocional:'2',m1_clientes:'1',m2_clientes:'2',m1_alternativas:'1',m2_alternativas:'3',elegida:'problema',
+    r1_1:'Semáforo de síntomas contra la línea base',r1_2:'Autorreporte de 1 minuto al despertar',r1_3:'Alerta solo cuando 2 señales cambian juntas',r1_4:'Árbol de decisión de triaje',r1_5:'Resumen diario para el control de misión',r1_6:'Modo “no me siento bien” con un botón',
+    co_dato_1:'Frecuencia cardíaca en reposo',co_dato_2:'Horas de sueño',co_dato_3:'CO₂ del módulo',co_canal_1:'Panel de triaje en la tablet',co_canal_2:'Aviso háptico en la pulsera',co_canal_3:'Resumen diferido a Tierra',co_mom_1:'Al despertar',co_mom_2:'Al aparecer un síntoma',co_mom_3:'Antes del turno nocturno',
+    r3base_1:'Semáforo de síntomas',r3add_1:'Sí, y además sugiere el siguiente paso del protocolo',
+    final_idea:'Panel de triaje que compara FC, sueño y CO₂ contra la línea base de Katya y sugiere el siguiente paso del protocolo.',final_why:'Con 7 soles de datos simulados basta una pantalla de triaje y un autorreporte de 1 minuto.'},
+  escenario:'A Katya le empieza a doler el pecho durante el turno nocturno. Nadie a bordo es médico y Houston está a ~20 min; el estrés crónico también causa dolor de pecho, así que no sabe si es grave.',
+  pov:'Katya necesita saber, sola y a tiempo, si un síntoma es grave, porque la ayuda de Tierra tarda ~20 minutos y un número crudo no le dice nada.',
+  notes:[{zone:'dice',value:'“¿Esto es normal o debería preocuparme?”',votes:4},{zone:'piensa',value:'“No quiero alarmar a Tierra por nada.”',votes:5},{zone:'hace',value:'Minimiza molestias para no hacer drama.',votes:3},{zone:'siente',value:'Incertidumbre y aislamiento.',votes:4},{zone:'dolores',value:'Un número crudo sin contexto le genera ansiedad.',votes:6},{zone:'dolores',value:'Demasiadas alarmas: ya no sabe cuál importa.',votes:3},{zone:'ganancias',value:'Confianza para decidir sola y a tiempo.',votes:5}],
+  ce:{equipo:'Tacos de Asada',c1_tarea:'Turno nocturno de soporte vital en el módulo de descanso',
+    c1_r1_pel:'CO₂ acumulado en el módulo cerrado',c1_r1_ame:'Falla la ventilación de soporte vital durante el turno nocturno',c1_r1_vul:'Tripulante de guardia: fatigado, con privación de sueño y baja atención',c1_r1_dan:'Síncope, dolor de cabeza severo y afectación motriz',
+    c1_r2_pel:'Alarmas repetidas (fatiga de alarmas)',c1_r2_ame:'Se silencian sin revisar la causa cuando suenan muchas veces de noche',c1_r2_vul:'Quien vigila solo y cansado',c1_r2_dan:'Una alarma real ignorada',
+    c1_r3_pel:'Ruido y vibración del ventilador 2',c1_r3_ame:'Se vuelve constante cuando el ventilador se degrada',c1_r3_vul:'Toda la tripulación',c1_r3_dan:'Sueño fragmentado y fatiga',
+    c1_r4_pel:'Filtros de CO₂ saturados',c1_r4_ame:'No hay repuesto a la mano',c1_r4_vul:'Toda la tripulación',c1_r4_dan:'Soporte vital degradado',
+    c1_r5_pel:'Ciclo de luz alterado (sol de 24 h 39 min)',c1_r5_ame:'Turnos nocturnos rotativos',c1_r5_vul:'Quien cambia de turno',c1_r5_dan:'Tiempo de reacción más lento',
+    c2_p_1:'2',c2_s_1:'Grave',c2_p_2:'2',c2_s_2:'Moderada',c2_p_3:'1',c2_s_3:'Moderada',c2_p_4:'1',c2_s_4:'Grave',c2_p_5:'1',c2_s_5:'Leve',
+    c2_pr1_pel:'CO₂ acumulado en el módulo cerrado',c2_pr1_ctrl:'2',c2_pr1_why:'Sustituir filtros y reactivar la redundancia de ventilación.',
+    c2_pr2_pel:'Alarmas repetidas (fatiga de alarmas)',c2_pr2_ctrl:'3',c2_pr2_why:'Pocas alarmas bien jerarquizadas en ORBITAL.',
+    c2_pr3_pel:'Filtros de CO₂ saturados',c2_pr3_ctrl:'4',c2_pr3_why:'Calendario de cambio de filtros visible en el panel.',
+    c4_T:'Vigilar el soporte vital de noche, responder alarmas y cambiar filtros; atención sostenida durante horas.',c4_U:'Con privación de sueño, dolor de cabeza leve y respiración agitada.',c4_C:'Sensores de CO₂ y ventilación; ORBITAL muestra la tendencia contra el límite NASA y contra la línea base.',c4_E:'Hábitat confinado en Marte, ~20 min de retraso, sin ayuda inmediata.',c4_I:'Si la ventilación falla mientras el tripulante está fatigado, la alarma se silencia y nadie puede intervenir a tiempo: el sistema debe avisar antes, con pocas alarmas.'},
+  events:[
+    {title:'CO₂ acumulado en el módulo de descanso',when:'Sol 5',type:'rezagado',pel:'CO₂ en el módulo cerrado',ame:'Falla la ventilación nocturna',vul:'Tripulante fatigado',rie:'Alta probabilidad de ignorar una alarma',dan:'Síncope y dolor de cabeza severo',C:15,E:6,P:6,GP:540,grVar:'CO₂ en el módulo',grReal:4300,grLim:3950,grUnit:'ppm',GR:4300/3950,ctrl:[2,3],ctrlDesc:'Sustituir filtros y reactivar la ventilación redundante'},
+    {title:'Alarma del ventilador 2 silenciada',when:'Sol 4',type:'adelantado',pel:'Ruido del ventilador 2',ame:'Alarma repetida en la noche',vul:'Operador saturado',rie:'Probable que se ignore la causa',dan:'',C:5,E:6,P:3,GP:90,grVar:'CO₂ en el módulo',grReal:3700,grLim:3950,grUnit:'ppm',GR:3700/3950,ctrl:[3,4],ctrlDesc:'Jerarquizar alarmas; no silenciar sin revisar'},
+    {title:'Sueño por debajo de 6 h dos noches seguidas',when:'Sol 3',type:'adelantado',pel:'Privación de sueño',ame:'Turno nocturno + ruido',vul:'Tripulante de guardia',rie:'Atención baja en vigilancia',dan:'',C:5,E:6,P:1,GP:30,ctrl:[4],ctrlDesc:'Rotar la guardia; turnos de máximo 8 h'},
+    {title:'CO₂ y alarma silenciada en la estación remota',when:'Viernes',type:'rezagado',pel:'CO₂ interior en aumento',ame:'Falla el ventilador 2',vul:'Sueño de 7.2 a 5.4 h',rie:'Exposición prolongada',dan:'Dos personas con dolor de cabeza',C:5,E:6,P:6,GP:180,grVar:'CO₂ en el módulo',grReal:1900,grLim:3950,grUnit:'ppm',GR:1900/3950,ctrl:[2,3,4],ctrlDesc:'Cambiar filtro, reparar ventilador, no silenciar alarmas'}],
+  reports:[{code:'T-02',date:'Sol 1',ts:1,v:{fat:2,dol:1,ani:2,sue:2},near:''},{code:'T-02',date:'Sol 2',ts:2,v:{fat:2,dol:1,ani:2,sue:3},near:''},{code:'T-02',date:'Sol 3',ts:3,v:{fat:3,dol:2,ani:3,sue:4},near:'Casi no escuché la alarma del ventilador 2'},{code:'T-02',date:'Sol 5',ts:5,v:{fat:5,dol:4,ani:4,sue:5},near:'Me mareé al levantarme'},
+    {code:'T-04',date:'Sol 1',ts:1,v:{fat:1,dol:1,ani:2,sue:2},near:''},{code:'T-04',date:'Sol 3',ts:3,v:{fat:2,dol:1,ani:2,sue:2},near:''},{code:'T-04',date:'Sol 5',ts:5,v:{fat:2,dol:2,ani:2,sue:3},near:''}]
+};
+
+/* =================== UTILIDADES =================== */
+function $(s,r){return (r||document).querySelector(s);} function $$(s,r){return [].slice.call((r||document).querySelectorAll(s));}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function fmt(n,d){ if(n==null||n===''||isNaN(n)) return '—'; return Number(n).toLocaleString('es-MX',{maximumFractionDigits:d==null?2:d,minimumFractionDigits:d==null?0:d}); }
+function lsGet(k,d){ try{ var v=localStorage.getItem(k); return v?JSON.parse(v):d; }catch(e){ return d; } }
+var toastT; function toast(m){ var t=$('#toast'); t.textContent=m; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(function(){t.classList.remove('on')},2000); }
+function pend(where){ return '<span class="pend">pendiente · '+esc(where)+'</span>'; }
+function val(m,k){ var v=m[k]; return v==null?'':String(v); }
+function truthy(v){ return v===true||v==='true'||v==='TRUE'; }
+
+/* =================== CARGA DE DATOS =================== */
+var MODE='team', D=null, SRC='', BEVER=null;
+function emptyData(){ return {at:{},ce:{},pov:'',escenario:'',notes:[],events:[],reports:[]}; }
+function fromLocal(){
+  var d=emptyData();
+  var a=lsGet('aterrizar_orbital_v1',{}); Object.keys(a).forEach(function(k){ d.at[k]=typeof a[k]==='boolean'?String(a[k]):a[k]; });
+  d.ce=lsGet('riesgo_cedulas_v1',{})||{};
+  var rs=lsGet('riesgo_orbital_v1',{events:{},reports:{}});
+  d.events=Object.keys(rs.events||{}).map(function(k){return rs.events[k]}); d.reports=Object.keys(rs.reports||{}).map(function(k){return rs.reports[k]});
+  d.notes=(lsGet('empatia_notes_v1',[])||[]).filter(function(n){return n.author!=='Ejemplo'}); d.pov=lsGet('empatia_pov_v1','')||''; d.escenario=lsGet('empatia_escenario_v1','')||'';
+  return d;
+}
+function fromServer(){
+  var tools=['aterrizar','riesgo_cedulas','empatia','riesgo'];
+  return Promise.all(tools.map(function(t){ return Sync.read(t).catch(function(){ return {ok:false}; }); })).then(function(res){
+    if(!res.some(function(r){return r&&r.ok})) throw new Error('sin respuesta');
+    var d=emptyData();
+    (res[0].rows||[]).forEach(function(r){ if(r.key) d.at[String(r.key)]=r.value==null?'':String(r.value); });
+    (res[1].rows||[]).forEach(function(r){ if(r.key) d.ce[String(r.key)]=r.value==null?'':String(r.value); });
+    (res[2].rows||[]).forEach(function(r){ if(r.id&&r.zone) d.notes.push({zone:String(r.zone),value:String(r.value||''),votes:Number(r.votes)||0,author:String(r.author||'')}); else if(r.key==='pov') d.pov=String(r.value||''); else if(r.key==='escenario') d.escenario=String(r.value||''); });
+    (res[3].rows||[]).forEach(function(r){ var o; try{o=JSON.parse(r.value)}catch(e){return} if(r.zone==='evento') d.events.push(o); if(r.zone==='autorreporte') d.reports.push(o); });
+    return d;
+  });
+}
+function setStatus(kind,txt){
+  var cls=kind==='ok'?'dot ok':kind==='demo'?'dot demo':kind==='loc'?'dot loc':'dot';
+  $('#stDot').className=cls; $('#stTxt').innerHTML=txt; $('#srcPill .dot').className=cls; $('#srcTxt').textContent=kind==='ok'?'Sheet del equipo':kind==='demo'?'Demostración':kind==='loc'?'Este dispositivo':'…';
+}
+function load(){
+  if(MODE==='demo'){ D=JSON.parse(JSON.stringify(DEMO)); SRC='demo'; setStatus('demo','<b>Datos de demostración</b> (ficticios) para enseñar cómo se ve. Cambia a “Datos del equipo” para ver lo real.'); renderAll(); return Promise.resolve(); }
+  setStatus('','Leyendo las bases…');
+  if(window.Sync&&Sync.isConnected()){
+    Sync.post({op:'ping'}).then(function(j){ BEVER=(j&&j.version)||1; renderBackend(); if(BEVER>=2) Sync.post({op:'views'}).catch(function(){}); }).catch(function(){ BEVER=0; renderBackend(); });
+    return fromServer().then(function(d){ D=d; SRC='team'; setStatus('ok','<b>Conectado al Sheet del equipo</b> · actualizado '+new Date().toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'})+'. Se refresca cada 30 s.'); renderAll(); })
+      .catch(function(){ D=fromLocal(); SRC='local'; setStatus('loc','No se pudo leer el Sheet; muestro <b>lo guardado en este dispositivo</b>.'); renderAll(); });
+  }
+  D=fromLocal(); SRC='local'; BEVER=null; renderBackend(); setStatus('loc','Sin conexión al Sheet: muestro <b>lo guardado en este dispositivo</b>.'); renderAll(); return Promise.resolve();
+}
+
+/* =================== RENDER =================== */
+var DS={};
+function derive(){
+  var at=D.at, ce=D.ce;
+  var canvas=CANVAS.map(function(c){ return {k:c[0],n:c[1],v:val(at,'c_'+c[0]),ds:val(at,'ds_'+c[0])}; });
+  var hmw=CANVAS.map(function(c){
+    var a1=truthy(at['ar1_'+c[0]]),a2=truthy(at['ar2_'+c[0]]),a3=truthy(at['ar3_'+c[0]]);
+    var ver=(a3&&!a1&&!a2)?'Bien calibrada':(a1&&a2?'Ajustar: amplia y estrecha':a1?'Ajustar: muy amplia':a2?'Ajustar: muy estrecha':'Sin revisar');
+    var m1=+val(at,'m1_'+c[0])||0,m2=+val(at,'m2_'+c[0])||0;
+    return {k:c[0],n:c[1],q:val(at,'hmw_'+c[0]),ver:ver,m1:m1,m2:m2,t:m1+m2,chosen:val(at,'elegida')===c[0]};
+  });
+  var ideas=[]; for(var i=1;i<=8;i++){ var x=val(at,'r1_'+i); if(x) ideas.push(x); }
+  var combo={dato:[],canal:[],mom:[]}; ['dato','canal','mom'].forEach(function(c){ for(var j=1;j<=5;j++){ var x=val(at,'co_'+c+'_'+j); if(x) combo[c].push(x);} });
+  var peligros=[]; for(var p=1;p<=6;p++){ var pel=val(ce,'c1_r'+p+'_pel'); if(!pel) continue; var pv=val(ce,'c2_p_'+p), sv=val(ce,'c2_s_'+p);
+    peligros.push({i:p,pel:pel,ame:val(ce,'c1_r'+p+'_ame'),vul:val(ce,'c1_r'+p+'_vul'),dan:val(ce,'c1_r'+p+'_dan'),p:pv,s:sv,lvl:(pv!==''&&sv&&MATRIX[sv])?MATRIX[sv][+pv]:''}); }
+  var prio=[]; for(var k=1;k<=3;k++){ var pp=val(ce,'c2_pr'+k+'_pel'); if(pp) prio.push({pel:pp,ctrl:+val(ce,'c2_pr'+k+'_ctrl')||0,why:val(ce,'c2_pr'+k+'_why')}); }
+  var events=(D.events||[]).filter(function(e){return e&&e.title}).sort(function(a,b){return (b.GP||0)-(a.GP||0)});
+  var notes=(D.notes||[]).slice().sort(function(a,b){return (b.votes||0)-(a.votes||0)});
+  var chosen=hmw.filter(function(h){return h.chosen})[0]||null;
+  DS={canvas:canvas,hmw:hmw,ideas:ideas,combo:combo,peligros:peligros,prio:prio,events:events,notes:notes,chosen:chosen,reports:(D.reports||[]).slice()};
+}
+function renderAll(){ derive(); renderKpis(); renderAterrizar(); renderRiesgo(); renderTraza(); renderReq(); renderBackend(); }
+
+function renderKpis(){
+  var c=DS.canvas.filter(function(x){return x.v}).length, h=DS.hmw.filter(function(x){return x.q}).length, rv=DS.hmw.filter(function(x){return x.ver!=='Sin revisar'}).length;
+  var ce=D.ce, tu=['T','U','C','E','I'].filter(function(x){return val(ce,'c4_'+x)}).length;
+  var K=[
+    ['Canvas del problema',c,7,'recuadros'],['¿Cómo podríamos…?',h,7,'preguntas'],['Autorrevisión',rv,7,'revisadas'],['Pregunta elegida',DS.chosen?1:0,1,DS.chosen?DS.chosen.n:'sin elegir'],
+    ['Ideas (ronda 1)',DS.ideas.length,5,'mínimo 5'],['Idea finalista',val(D.at,'final_idea')?1:0,1,val(D.at,'final_idea')?'definida':'pendiente'],['Mapa de empatía',DS.notes.length,6,'notas'],['Peligros (cédula 1)',DS.peligros.length,3,'mínimo 3'],
+    ['En la matriz (cédula 2)',DS.peligros.filter(function(p){return p.lvl}).length,Math.max(1,DS.peligros.length),'ubicados'],['Prioridades con control',DS.prio.filter(function(p){return p.ctrl}).length,3,'de 3'],['Eventos valorados',DS.events.length,2,'GP y GR'],['Lienzo del sistema',tu,5,'cajas T·U·C·E·I']
+  ];
+  $('#kpis').innerHTML=K.map(function(k){ var pct=Math.min(100,Math.round(k[1]/k[2]*100)); return '<div class="card kpi"><div class="kk">'+k[0]+'</div><div class="big" style="color:'+(pct>=100?'var(--lime)':pct>0?'var(--white)':'var(--mute)')+'">'+k[1]+'</div><div class="lbl">'+esc(k[3])+'</div><div class="meter"><i style="width:'+pct+'%;background:'+(pct>=100?'var(--lime)':'var(--blue-soft)')+'"></i></div></div>'; }).join('');
+}
+
+function renderAterrizar(){
+  var at=D.at, pr=DS.canvas[6];
+  $('#problemStmt').innerHTML=pr.v?esc(pr.v)+'<small>'+(pr.ds==='D'?'<span class="tag t-ok">Dato</span> con fuente':pr.ds==='S'?'<span class="tag t-warn">Supuesto</span> · conviene verificarlo':'Sin marcar como dato o supuesto')+' · recuadro “Problema” del canvas</small>':pend('recuadro Problema del canvas (Aterrizar · paso 1)');
+  $('#problemCards').innerHTML=[['Contexto · cuándo ocurre',DS.canvas[0]],['Clientes · a quién le pasa',DS.canvas[1]],['Impacto cuantificable',DS.canvas[5]]].map(function(x){ return '<div class="card"><div class="kk">'+x[0]+'</div><p style="margin-top:6px">'+(x[1].v?esc(x[1].v):pend('Aterrizar · paso 1'))+'</p></div>'; }).join('');
+  var nD=DS.canvas.filter(function(c){return c.v&&c.ds==='D'}).length, nS=DS.canvas.filter(function(c){return c.v&&c.ds==='S'}).length, nN=7-nD-nS;
+  $('#donut').innerHTML=donut([[nD,'#4ccb8f'],[nS,'#f2c14e'],[nN,'rgba(156,193,242,.25)']]);
+  $('#donutTxt').innerHTML='<div class="big">'+nD+'<span style="font-size:1rem;color:var(--mute)"> / 7</span></div><div style="color:var(--mute);font-size:.85rem">recuadros con dato</div>';
+  var sup=DS.canvas.filter(function(c){return c.v&&c.ds==='S'});
+  $('#supList').innerHTML=sup.length?'<div class="kk" style="--c:var(--warn)">Supuestos por verificar</div>'+sup.map(function(s){return '<div style="font-size:.86rem;color:var(--blue-pale);margin-top:4px">• '+esc(s.n)+'</div>';}).join(''):'<p class="empty">Sin supuestos marcados.</p>';
+  $('#canvasGrid').innerHTML=DS.canvas.map(function(c,i){ var col=c.ds==='D'?'#4ccb8f':c.ds==='S'?'#f2c14e':'rgba(156,193,242,.25)';
+    return '<div class="cbox'+(i===6?' wide':'')+'" style="--c:'+col+'"><h5>'+esc(c.n)+(c.ds?'<span class="tag '+(c.ds==='D'?'t-ok':'t-warn')+'">'+(c.ds==='D'?'Dato':'Supuesto')+'</span>':'')+'</h5><p>'+(c.v?esc(c.v):'<span class="pend">pendiente</span>')+'</p></div>'; }).join('');
+  var escTxt=D.escenario?'<div style="font-size:.84rem;color:var(--mute);font-family:Overpass;font-weight:400;margin-bottom:10px">🎬 <b style="color:var(--blue-pale)">Escenario:</b> '+esc(D.escenario)+'</div>':'';
+  $('#povStmt').innerHTML=escTxt+(D.pov?esc(D.pov)+'<small>Punto de vista (POV) del mapa de empatía</small>':pend('POV del mapa de empatía'));
+  $('#zones').innerHTML=ZONES.map(function(z){ var ns=DS.notes.filter(function(n){return n.zone===z[0]}).slice(0,3);
+    return '<div class="zone" style="--c:'+z[2]+'"><h5>'+z[1]+'</h5>'+(ns.length?ns.map(function(n){return '<div class="note"><span class="v">👍 '+(n.votes||0)+'</span><span>'+esc(n.value)+'</span></div>';}).join(''):'<p class="empty">Sin notas.</p>')+'</div>'; }).join('');
+  var cal=DS.hmw.filter(function(h){return h.ver==='Bien calibrada'}).length, wrote=DS.hmw.filter(function(h){return h.q}).length;
+  $('#hmwSub').innerHTML='<b>'+wrote+' de 7</b> preguntas escritas · <b>'+cal+'</b> bien calibradas en la autorrevisión.'+(DS.chosen?' La elegida está resaltada.':'');
+  $('#hmwList').innerHTML=DS.hmw.map(function(h){ var cls=h.ver==='Bien calibrada'?'t-ok':h.ver==='Sin revisar'?'t-mute':'t-warn';
+    return '<div class="hmw'+(h.chosen?' chosen':'')+'"><span class="rc">'+(h.chosen?'★ ':'')+esc(h.n)+'</span><span>'+(h.q?esc(h.q):'<span class="pend">pendiente</span>')+'</span><span class="tag '+cls+'">'+h.ver+'</span></div>'; }).join('');
+  $('#hmwChart').innerHTML=hmwChart(DS.hmw);
+  $('#nIdeas').textContent=DS.ideas.length;
+  $('#ideaList').innerHTML=DS.ideas.slice(0,8).map(function(x){return '<div style="font-size:.82rem;color:var(--blue-pale);margin-top:3px">• '+esc(x)+'</div>';}).join('')||'<p class="empty">Sin ideas.</p>';
+  var cb=DS.combo, rows=Math.max(cb.dato.length,cb.canal.length,cb.mom.length), h='<div class="h" style="--c:var(--lime)">Dato</div><div class="h" style="--c:var(--blue-soft)">Canal</div><div class="h" style="--c:var(--warn)">Momento</div>';
+  for(var r=0;r<rows;r++) h+='<div>'+esc(cb.dato[r]||'')+'</div><div>'+esc(cb.canal[r]||'')+'</div><div>'+esc(cb.mom[r]||'')+'</div>';
+  $('#combo').innerHTML=rows?h:'<p class="empty" style="grid-column:1/-1">Sin opciones.</p>';
+  var nComb=Math.max(1,cb.dato.length)*Math.max(1,cb.canal.length)*Math.max(1,cb.mom.length);
+  $('#comboN').innerHTML=rows?'<b style="color:var(--white)">'+(cb.dato.length*cb.canal.length*cb.mom.length||0)+'</b> combinaciones posibles':'';
+  $('#finalIdea').innerHTML=val(at,'final_idea')?esc(val(at,'final_idea')):pend('Aterrizar · Elegir');
+  $('#finalWhy').innerHTML=val(at,'final_why')?'<b style="color:var(--white)">Por qué cabe en un día:</b> '+esc(val(at,'final_why')):'';
+}
+
+function renderRiesgo(){
+  var ce=D.ce;
+  $('#tareaTxt').innerHTML='Tarea elegida: <b>'+(val(ce,'c1_tarea')?esc(val(ce,'c1_tarea')):'<span class="pend">pendiente · cédula 1</span>')+'</b>'+(val(ce,'equipo')?' · Equipo: <b>'+esc(val(ce,'equipo'))+'</b>':'');
+  $('#pelRows').innerHTML=DS.peligros.map(function(p){ var t=p.lvl==='alto'?'t-crit':p.lvl==='medio'?'t-warn':p.lvl==='bajo'?'t-mute':'';
+    return '<tr><td><b style="color:var(--white)">'+p.i+'</b></td><td style="color:var(--white)">'+esc(p.pel)+'</td><td>'+esc(p.ame)+'</td><td>'+esc(p.vul)+'</td><td>'+esc(p.dan)+'</td><td>'+(p.lvl?'<span class="tag '+t+'">'+p.lvl+'</span>':'<span class="pend">sin ubicar</span>')+'</td></tr>'; }).join('')||'<tr><td colspan="6" class="empty">'+pend('cédula 1 de la evaluación de riesgos')+'</td></tr>';
+  var cells={}; DS.peligros.forEach(function(p){ if(p.lvl){ var k=p.s+'|'+p.p; (cells[k]=cells[k]||[]).push(p.i); } });
+  var h='<div></div><div class="hd">Baja</div><div class="hd">Media</div><div class="hd">Alta</div>';
+  SEVS.forEach(function(s){ h+='<div class="sv">'+s+'</div>'; MATRIX[s].forEach(function(c,pi){ h+='<div class="c-'+c+'">'+c.charAt(0).toUpperCase()+c.slice(1)+'<span class="pins">'+(cells[s+'|'+pi]||[]).map(function(n){return '<span class="pin">'+n+'</span>';}).join('')+'</span></div>'; }); });
+  $('#rMatrix').innerHTML=h;
+  var altos=DS.peligros.filter(function(p){return p.lvl==='alto'});
+  $('#rLegend').innerHTML=altos.length?'<div class="kk" style="--c:var(--crit)">Se atienden primero (Alto)</div>'+altos.map(function(p){return '<div style="font-size:.86rem;color:var(--blue-pale);margin-top:4px"><span class="pin">'+p.i+'</span> '+esc(p.pel)+'</div>';}).join(''):'<p class="empty">Ningún peligro en Alto todavía.</p>';
+  var counts=[0,0,0,0,0,0]; DS.prio.forEach(function(p){ if(p.ctrl) counts[p.ctrl]++; }); DS.events.forEach(function(e){ (e.ctrl||[]).forEach(function(c){ counts[c]++; }); });
+  $('#pyr').innerHTML=[1,2,3,4,5].map(function(k){ return '<div class="plevel pl'+k+'"><span class="n">'+k+'</span><span>'+CONTROLS[k]+'</span><span class="c">'+counts[k]+'×</span></div>'; }).join('')+'<div style="display:flex;justify-content:space-between;font-family:Archivo;font-weight:800;font-size:.7rem;color:var(--mute)"><span>▲ Más eficaz</span><span>Menos eficaz ▼</span></div>';
+  $('#prioList').innerHTML=DS.prio.length?DS.prio.map(function(p,i){return '<div style="font-size:.86rem;color:var(--blue-pale);margin-top:6px"><b style="color:var(--white)">'+(i+1)+'. '+esc(p.pel)+'</b> → '+(p.ctrl?esc(CONTROLS[p.ctrl]):'<span class="pend">sin control</span>')+(p.why?' · '+esc(p.why):'')+'</div>';}).join(''):'<p class="empty">'+pend('cédula 2 · prioridades')+'</p>';
+  var crit=DS.events.filter(function(e){return (e.GP>200)||(e.GR>=1)}).length;
+  $('#evSub').innerHTML=DS.events.length?'<b>'+DS.events.length+'</b> eventos registrados · <b style="color:var(--crit)">'+crit+'</b> críticos (GP &gt; 200 o GR ≥ 1).':pend('panel de eventos de la evaluación de riesgos');
+  var nE=DS.events.length, nR=DS.events.filter(function(e){return e.GR!=null&&!isNaN(e.GR)}).length;
+  $('#gpChart').setAttribute('viewBox','0 0 520 '+(nE?Math.min(266,10+Math.min(38,230/nE)*nE+26):90));
+  $('#grChart').setAttribute('viewBox','0 0 520 '+(nR?Math.min(266,10+Math.min(38,230/nR)*nR+26):90));
+  $('#gpChart').innerHTML=gpChart(DS.events); $('#grChart').innerHTML=grChart(DS.events);
+  var leads=DS.events.filter(function(e){return e.type!=='rezagado'}).map(function(e){return '<b style="color:var(--white)">'+esc(e.title)+'</b>'+(e.when?' · '+esc(e.when):'');});
+  DS.reports.forEach(function(r){ if(r.near) leads.push('Casi-incidente ('+esc(r.code)+(r.date?', '+esc(r.date):'')+'): “'+esc(r.near)+'”'); });
+  leads.push('Escalas diarias de fatiga, dolor, ánimo y sueño contra la línea base personal');
+  $('#leadList').innerHTML=leads.map(function(x){return '<li>'+x+'</li>';}).join('');
+  var lags=DS.events.filter(function(e){return e.type==='rezagado'}).map(function(e){return '<b style="color:var(--white)">'+esc(e.title)+'</b>'+(e.dan?' · '+esc(e.dan):'');});
+  $('#lagList').innerHTML=lags.length?lags.map(function(x){return '<li>'+x+'</li>';}).join(''):'<li class="empty">Sin daños registrados (¡bien!) o aún sin eventos.</li>';
+  var by={}; DS.reports.slice().sort(function(a,b){return (a.ts||0)-(b.ts||0)}).forEach(function(r){ (by[r.code]=by[r.code]||[]).push(r); });
+  var codes=Object.keys(by);
+  $('#spark').innerHTML=codes.length?codes.map(function(c){ var arr=by[c].map(function(r){return (r.v.fat||0)+(r.v.dol||0)+(r.v.ani||0)+(r.v.sue||0)}); var base=arr.length>1?arr.slice(0,-1).reduce(function(a,b){return a+b},0)/(arr.length-1):arr[0]; var last=arr[arr.length-1], diff=last-base;
+    return '<div class="sprow"><span class="code">'+esc(c)+'</span>'+sparkline(arr,base)+'<span class="tag '+(diff>=2?'t-warn':'t-ok')+'">'+(diff>=2?'⚠ +'+fmt(diff,1)+' sobre su base':'en su línea base')+'</span></div>'; }).join(''):'<p class="empty">'+pend('cédula 3 · autorreportes')+'</p>';
+  var T=[['T','Tareas','#ef6a5a'],['U','Usuario','#4e8fe6'],['C','Automatización','#d7e64b'],['E','Entorno','#2aa1f0'],['I','Interacciones','#f4f8ff']];
+  $('#tucei').innerHTML=T.map(function(t){ return '<div class="card'+(t[0]==='I'?' wide':'')+'"><div class="letter" style="--c:'+t[2]+'">'+t[0]+'</div><h4>'+t[1]+'</h4><p>'+(val(ce,'c4_'+t[0])?esc(val(ce,'c4_'+t[0])):'<span class="pend">pendiente · cédula 4</span>')+'</p></div>'; }).join('');
+}
+
+function renderTraza(){
+  var at=D.at, ch=DS.chosen, alto=DS.peligros.filter(function(p){return p.lvl==='alto'})[0], pr=DS.prio[0], lead=DS.events.filter(function(e){return e.type!=='rezagado'})[0];
+  var L=[
+    ['Problema',val(at,'c_problema'),'Canvas · recuadro Problema'+(val(at,'ds_problema')==='D'?' (dato)':val(at,'ds_problema')==='S'?' (supuesto)':'')],
+    ['Pregunta elegida',ch?ch.q:'',ch?'Matriz: dato NASA '+ch.m1+' + prototipo '+ch.m2+' = '+ch.t+' de 6':'Aterrizar · paso 4'],
+    ['Idea a prototipar',val(at,'final_idea'),'Ideación · ronda 1 → 2 → 3 → votación'],
+    ['Peligro principal',alto?alto.pel:(DS.peligros[0]?DS.peligros[0].pel:''),alto?'Matriz de riesgo: nivel Alto':'Cédula 1 y 2'],
+    ['Control elegido',pr&&pr.ctrl?CONTROLS[pr.ctrl]+(pr.why?': '+pr.why:''):'','Jerarquía de controles · cédula 2'],
+    ['Lo que vigilamos',lead?lead.title:'Fatiga, dolor, ánimo y sueño vs. línea base',lead?'Indicador adelantado · panel de eventos':'Cédula 3 · autorreporte']
+  ];
+  $('#chain').innerHTML=L.map(function(l){ return '<div class="link"><div class="kk" style="--c:var(--lime)">'+l[0]+'</div><p>'+(l[1]?esc(l[1]):'<span class="pend">pendiente</span>')+'</p><small>'+esc(l[2])+'</small></div>'; }).join('');
+}
+
+/* ---- Hoja de requerimientos ---- */
+function reqMarkdown(){
+  var at=D.at, ce=D.ce, P=function(v,where){ return v?v:'_(pendiente: '+where+')_'; };
+  var date=new Date().toLocaleDateString('es-MX',{year:'numeric',month:'long',day:'numeric'});
+  var sup=DS.canvas.filter(function(c){return c.v&&c.ds==='S'}).map(function(c){return c.n});
+  var nD=DS.canvas.filter(function(c){return c.v&&c.ds==='D'}).length;
+  var topZ=function(z){ return DS.notes.filter(function(n){return n.zone===z}).slice(0,3).map(function(n){return n.value}); };
+  var ch=DS.chosen, altos=DS.peligros.filter(function(p){return p.lvl==='alto'});
+  var thr={}; DS.events.forEach(function(e){ if(e.grVar&&e.grLim) thr[e.grVar+' ≤ '+e.grLim+' '+(e.grUnit||'')]=1; });
+  var md=[], rf=0, nf=0, RF=function(t){ rf++; md.push('- **RF-'+String(rf).padStart(2,'0')+'** '+t); }, NF=function(t){ nf++; md.push('- **RNF-'+String(nf).padStart(2,'0')+'** '+t); };
+  md.push('# Hoja de requerimientos · ORBITAL (borrador)');
+  md.push('Equipo '+(val(ce,'equipo')||'Tacos de Asada')+' · NASA Space Apps CDMX 2026 · generado el '+date+' desde Insights'+(SRC==='demo'?' (DATOS DE DEMOSTRACIÓN)':'')+'.');
+  md.push('## 1. Problema');
+  md.push('- **Causa raíz:** '+P(val(at,'c_problema'),'Aterrizar · recuadro Problema'));
+  md.push('- **Cuándo ocurre:** '+P(val(at,'c_contexto'),'Aterrizar · Contexto'));
+  md.push('- **Impacto emocional:** '+P(val(at,'c_emocional'),'Aterrizar · Impacto emocional'));
+  md.push('- **Impacto cuantificable:** '+P(val(at,'c_cuantificable'),'Aterrizar · Impacto cuantificable'));
+  md.push('- **Evidencia:** '+nD+' de 7 recuadros con dato; supuestos por verificar: '+(sup.length?sup.join(', '):'ninguno marcado')+'.');
+  md.push('## 2. Usuario');
+  md.push('- **Usuario principal:** '+P(val(at,'c_clientes'),'Aterrizar · Clientes'));
+  md.push('- **Escenario empatizado:** '+P(D.escenario,'Mapa de empatía · escenario'));
+  md.push('- **Punto de vista (POV):** '+P(D.pov,'Mapa de empatía · POV'));
+  md.push('- **Dolores más votados:** '+(topZ('dolores').join(' · ')||'_(pendiente: Mapa de empatía)_'));
+  md.push('- **Ganancias más votadas:** '+(topZ('ganancias').join(' · ')||'_(pendiente: Mapa de empatía)_'));
+  md.push('- **Cuerpo y mente en la condición:** '+P(val(ce,'c4_U'),'Riesgo · cédula 4 · U'));
+  md.push('## 3. Alternativas actuales y brecha');
+  md.push('- **Qué usan hoy:** '+P(val(at,'c_alternativas'),'Aterrizar · Alternativas'));
+  md.push('- **Qué les falla:** '+P(val(at,'c_desventajas'),'Aterrizar · Desventajas'));
+  md.push('## 4. Objetivo y alcance del MVP');
+  md.push('- **Pregunta guía:** '+(ch&&ch.q?ch.q+' _(matriz: dato NASA '+ch.m1+', prototipo '+ch.m2+', total '+ch.t+'/6)_':'_(pendiente: Aterrizar · matriz de elección)_'));
+  md.push('- **Idea a prototipar:** '+P(val(at,'final_idea'),'Aterrizar · Elegir'));
+  md.push('- **Alcance de la demo:** '+P(val(at,'final_why'),'Aterrizar · ¿Por qué en un día?'));
+  md.push('## 5. Requerimientos funcionales');
+  DS.combo.dato.forEach(function(x){ RF('El sistema debe registrar y mostrar **'+x+'** comparado contra el límite de referencia y contra la línea base personal.'); });
+  DS.combo.canal.forEach(function(x){ RF('El sistema debe poder avisar por **'+x+'**.'); });
+  DS.combo.mom.forEach(function(x){ RF('El sistema debe apoyar el momento: **'+x+'**.'); });
+  if(val(ce,'c4_T')) RF('Debe apoyar estas tareas del usuario: '+val(ce,'c4_T'));
+  if(val(ce,'c4_C')) RF('Automatización esperada (software, hardware e interfaz): '+val(ce,'c4_C'));
+  RF('Autorreporte diario de un minuto: fatiga, dolor, ánimo y sueño (1–5, 5 es lo peor) + “¿algo estuvo a punto de salir mal?”, comparado contra la línea base de cada persona.');
+  RF('Calcular el grado de riesgo **GR = medido ÷ límite** para cada variable'+(Object.keys(thr).length?' (umbrales usados: '+Object.keys(thr).join('; ')+')':'')+'; GR ≥ 1 excede el límite, ≥ 0.5 vigilar.');
+  RF('Registrar eventos con la escalera del riesgo (peligro, amenaza, vulnerabilidad, riesgo, daño) y su grado de peligrosidad **GP = C × E × P** (William Fine).');
+  altos.forEach(function(p){ RF('Detectar a tiempo **'+p.pel+'**'+(p.ame?' cuando '+p.ame.charAt(0).toLowerCase()+p.ame.slice(1):'')+(p.dan?', antes de que cause: '+p.dan:'')+'.'); });
+  if(rf<=4&&!DS.combo.dato.length) md.push('- _(pendiente: llenar la ronda 2 de Aterrizar para derivar más requerimientos)_');
+  md.push('## 6. Riesgos y controles');
+  if(DS.prio.length) DS.prio.forEach(function(p,i){ md.push('- **Prioridad '+(i+1)+':** '+p.pel+' → '+(p.ctrl?CONTROLS[p.ctrl]:'_(sin control)_')+(p.why?' · '+p.why:'')); }); else md.push('- _(pendiente: Riesgo · cédula 2 · prioridades)_');
+  var leads=DS.events.filter(function(e){return e.type!=='rezagado'}).map(function(e){return e.title});
+  var lags=DS.events.filter(function(e){return e.type==='rezagado'}).map(function(e){return e.title+(e.dan?' ('+e.dan+')':'')});
+  md.push('- **Indicadores adelantados a vigilar:** '+(leads.length?leads.join(' · '):'fatiga, dolor, ánimo y sueño vs. línea base')+'.');
+  md.push('- **Indicadores rezagados a registrar:** '+(lags.length?lags.join(' · '):'_(sin eventos rezagados)_')+'.');
+  var nears=DS.reports.filter(function(r){return r.near}).map(function(r){return r.near});
+  if(nears.length) md.push('- **Casi-incidentes reportados:** '+nears.join(' · ')+'.');
+  md.push('## 7. Requerimientos no funcionales');
+  if(val(ce,'c4_E')) NF('Entorno de operación: '+val(ce,'c4_E'));
+  NF('Funcionar sin conexión con Tierra (retraso de ~20 min) y sincronizar cuando haya enlace.');
+  if(val(ce,'c4_I')) NF('Considerar interacciones y fallas en cadena: '+val(ce,'c4_I'));
+  NF('Pocas alarmas y bien jerarquizadas: solo lo crítico interrumpe; el exceso de avisos se termina ignorando.');
+  NF('Comparar contra la línea base personal, no solo contra un promedio.');
+  NF('Lectura simple para quien no es experto; lo urgente primero y siempre en el mismo lugar (disciplina, orden y limpieza).');
+  NF('Cumplir las 10 heurísticas de Nielsen (visibilidad, control, prevención, reconocimiento, minimalismo, recuperación…).');
+  NF('Apoyar turnos de vigilancia de máximo 8 h (la fatiga visual reduce la detección de alertas).');
+  md.push('## 8. Trazabilidad de decisiones');
+  md.push('| Decisión | Valor | Fuente |'); md.push('|---|---|---|');
+  [['Problema',val(at,'c_problema'),'Aterrizar · canvas'],['Pregunta elegida',ch?ch.q:'','Aterrizar · matriz ('+(ch?ch.t:0)+'/6)'],['Idea',val(at,'final_idea'),'Aterrizar · ideación'],['Peligro principal',altos[0]?altos[0].pel:'','Riesgo · matriz (Alto)'],['Control',DS.prio[0]&&DS.prio[0].ctrl?CONTROLS[DS.prio[0].ctrl]:'','Riesgo · jerarquía de controles']].forEach(function(r){ md.push('| '+r[0]+' | '+(r[1]?String(r[1]).replace(/\|/g,'/'):'_(pendiente)_')+' | '+r[2]+' |'); });
+  md.push('## 9. Supuestos y pendientes');
+  md.push('- Supuestos por validar: '+(sup.length?sup.join(', '):'ninguno marcado')+'.');
+  md.push('- Datos ficticios usados en el prototipo deben marcarse como tales en la demo.');
+  return md.join('\n');
+}
+function mdToHtml(md){
+  var out=[], inList=false, inTbl=false;
+  md.split('\n').forEach(function(line){
+    var l=esc(line).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/_\((.+?)\)_/g,'<em>($1)</em>');
+    if(/^\|---/.test(line)) return;
+    if(line.indexOf('|')===0){ if(inList){out.push('</ul>');inList=false;} var cells=l.split('|').slice(1,-1); if(!inTbl){ out.push('<table><tr>'+cells.map(function(c){return '<th>'+c.trim()+'</th>'}).join('')+'</tr>'); inTbl=true; } else out.push('<tr>'+cells.map(function(c){return '<td>'+c.trim()+'</td>'}).join('')+'</tr>'); return; }
+    if(inTbl){ out.push('</table>'); inTbl=false; }
+    if(line.indexOf('- ')===0){ if(!inList){out.push('<ul>');inList=true;} out.push('<li>'+l.slice(2)+'</li>'); return; }
+    if(inList){ out.push('</ul>'); inList=false; }
+    if(line.indexOf('## ')===0) out.push('<h2>'+l.slice(3)+'</h2>'); else if(line.indexOf('# ')===0) out.push('<h1>'+l.slice(2)+'</h1>'); else if(line.trim()) out.push('<p>'+l+'</p>');
+  });
+  if(inList) out.push('</ul>'); if(inTbl) out.push('</table>');
+  return out.join('');
+}
+var REQ='', PROMPT='';
+function renderReq(){
+  REQ=reqMarkdown(); $('#reqDoc').innerHTML=mdToHtml(REQ);
+  PROMPT='Actúa como un equipo senior de producto: arquitecto(a) de backend, desarrollador(a) frontend y diseñador(a) UX/UI con experiencia en software de monitoreo de salud para entornos confinados (NASA-STD-3001).\n\n'+
+    'Contexto: somos el equipo Tacos de Asada en el NASA Space Apps Challenge CDMX 2026, reto “Create Health Monitoring Software for Astronauts on Space Missions”. Nuestro proyecto se llama ORBITAL. Tenemos 48 horas y queremos un prototipo demostrable.\n\n'+
+    'Con base en la hoja de requerimientos de abajo (salió de nuestros talleres de “aterrizar el problema” y de evaluación de riesgos):\n'+
+    '1. Señala contradicciones, huecos o supuestos sin validar antes de diseñar.\n'+
+    '2. Propón el alcance mínimo del MVP que cabe en el tiempo del hackathon y qué dejamos fuera.\n'+
+    '3. Backend: arquitectura, modelo de datos (entidades y campos), endpoints o funciones, cálculo de GR (medido ÷ límite), GP (C × E × P) y comparación contra la línea base personal; manejo sin conexión.\n'+
+    '4. Frontend UX/UI: mapa de pantallas, flujo principal del usuario, jerarquía de información y de alarmas (pocas y bien jerarquizadas), y cómo se aplican las heurísticas de Nielsen.\n'+
+    '5. Datos de prueba ficticios para 7 días y cómo los mostramos en la demo.\n'+
+    '6. Plan de trabajo por horas para un equipo de 6 personas.\n'+
+    'Responde en español y por secciones. No inventes datos médicos: si algo requiere un valor de referencia, indícalo como pendiente de verificar.\n\n'+
+    '--- HOJA DE REQUERIMIENTOS ---\n'+REQ;
+  $('#promptBox').textContent=PROMPT;
+}
+function copy(text,btn){
+  function done(ok){ var t=btn.innerHTML; btn.textContent=ok?'Copiado ✓':'No se pudo copiar'; setTimeout(function(){btn.innerHTML=t},1500); }
+  if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(function(){done(true)},function(){done(false)});
+  else { try{ var ta=document.createElement('textarea'); ta.value=text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); done(true);}catch(e){done(false);} }
+}
+$('#btnCopyReq').addEventListener('click',function(){copy(REQ,this)});
+$('#btnCopyPrompt').addEventListener('click',function(){copy(PROMPT,this)});
+$('#btnDlReq').addEventListener('click',function(){ var b=new Blob([REQ],{type:'text/markdown;charset=utf-8'}); var a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='requerimientos-orbital.md'; document.body.appendChild(a); a.click(); a.remove(); });
+
+function renderBackend(){
+  var el=$('#beState'); if(!el) return;
+  if(MODE==='demo'){ el.innerHTML='Estás viendo la <b>demostración</b>: no se leyó la base.'; return; }
+  if(BEVER===null){ el.innerHTML='<b>Sin conexión al Sheet</b> en este dispositivo. Conéctate desde la barra de “Aterrizar” o “Riesgo” (tu nombre y ⚙️).'; return; }
+  if(BEVER===0){ el.innerHTML='No respondió el backend. Revisen la conexión.'; return; }
+  el.innerHTML=BEVER>=2?'<span class="tag t-ok">Backend v2</span> Conectado. Las <b>pestañas legibles</b> están activas y se acaban de actualizar en el Sheet.':'<span class="tag t-warn">Backend v1</span> Conectado y guardando todo en “Datos”. Las <b>pestañas legibles aún no están desplegadas</b>: hay que publicar el Code.gs v2 (ver backend-setup.md).';
+}
+
+/* ---- Gráficas SVG ---- */
+function donut(seg){ var tot=seg.reduce(function(a,s){return a+s[0]},0)||1, a0=-Math.PI/2, h='', R=50, r=32;
+  seg.forEach(function(s){ if(!s[0]) return; var a1=a0+2*Math.PI*s[0]/tot; if(s[0]===tot) a1=a0+2*Math.PI-0.0001; var large=(a1-a0)>Math.PI?1:0;
+    var p=function(a,rad){return (60+rad*Math.cos(a))+','+(60+rad*Math.sin(a))};
+    h+='<path d="M'+p(a0,R)+' A'+R+','+R+' 0 '+large+' 1 '+p(a1,R)+' L'+p(a1,r)+' A'+r+','+r+' 0 '+large+' 0 '+p(a0,r)+' Z" fill="'+s[1]+'"/>'; a0=a1; });
+  return h; }
+function hmwChart(hmw){ var W=760,L=200,T=8,rowH=40,max=6,h='';
+  [0,2,4,6].forEach(function(t){ var x=L+(W-L-30)*t/max; h+='<line x1="'+x+'" x2="'+x+'" y1="0" y2="'+(T+rowH*7)+'" stroke="rgba(156,193,242,.12)"/><text x="'+x+'" y="'+(T+rowH*7+16)+'" fill="#a9bbd6" font-size="11" text-anchor="middle" font-family="Overpass">'+t+'</text>'; });
+  hmw.forEach(function(q,i){ var y=T+i*rowH, w1=(W-L-30)*q.m1/max, w2=(W-L-30)*q.m2/max;
+    h+='<text x="'+(L-10)+'" y="'+(y+24)+'" fill="'+(q.chosen?'#d7e64b':'#f4f8ff')+'" font-size="12.5" text-anchor="end" font-family="Archivo" font-weight="'+(q.chosen?800:600)+'">'+(q.chosen?'★ ':'')+esc(q.n)+'</text>';
+    h+='<rect x="'+L+'" y="'+(y+8)+'" width="'+w1+'" height="24" rx="4" fill="'+(q.chosen?'#d7e64b':'#4e8fe6')+'"/><rect x="'+(L+w1)+'" y="'+(y+8)+'" width="'+w2+'" height="24" rx="4" fill="'+(q.chosen?'#b8c53a':'#2aa1f0')+'"/>';
+    h+='<text x="'+(L+w1+w2+8)+'" y="'+(y+25)+'" fill="#f4f8ff" font-size="12" font-family="Archivo" font-weight="800">'+(q.t||'—')+'</text>'; });
+  return h; }
+function gpChart(ev){ if(!ev.length) return '<text x="260" y="50" fill="#a9bbd6" font-size="13" text-anchor="middle" font-family="Overpass">Sin eventos todavía</text>';
+  var W=520,L=150,T=10,rowH=Math.min(38,(230)/ev.length),max=Math.max(600,Math.max.apply(null,ev.map(function(e){return e.GP||0}))*1.1),h='';
+  var x=function(v){return L+(W-L-20)*Math.min(v,max)/max};
+  [[85,'85'],[200,'200']].forEach(function(t){ h+='<line x1="'+x(t[0])+'" x2="'+x(t[0])+'" y1="0" y2="'+(T+rowH*ev.length)+'" stroke="rgba(244,248,255,.35)" stroke-dasharray="4 4"/><text x="'+x(t[0])+'" y="'+(T+rowH*ev.length+14)+'" fill="#a9bbd6" font-size="10.5" text-anchor="middle" font-family="Overpass">'+t[1]+'</text>'; });
+  ev.forEach(function(e,i){ var y=T+i*rowH, b=gpBand(e.GP||0);
+    h+='<text x="'+(L-8)+'" y="'+(y+rowH*.62)+'" fill="#f4f8ff" font-size="11" text-anchor="end" font-family="Overpass">'+esc(String(e.title).slice(0,22))+(String(e.title).length>22?'…':'')+'</text>';
+    h+='<rect x="'+L+'" y="'+(y+rowH*.18)+'" width="'+Math.max(2,x(e.GP||0)-L)+'" height="'+(rowH*.6)+'" rx="4" fill="'+b.c+'"/><text x="'+(x(e.GP||0)+6)+'" y="'+(y+rowH*.62)+'" fill="#f4f8ff" font-size="11" font-family="Archivo" font-weight="800">'+fmt(e.GP)+'</text>'; });
+  return h; }
+function grChart(ev){ var e2=ev.filter(function(e){return e.GR!=null&&!isNaN(e.GR)}); if(!e2.length) return '<text x="260" y="50" fill="#a9bbd6" font-size="13" text-anchor="middle" font-family="Overpass">Sin mediciones con límite</text>';
+  var W=520,L=150,T=10,rowH=Math.min(38,230/e2.length),max=Math.max(1.5,Math.max.apply(null,e2.map(function(e){return e.GR}))*1.1),h='';
+  var x=function(v){return L+(W-L-30)*Math.min(v,max)/max};
+  h+='<rect x="'+x(0.5)+'" y="0" width="'+(x(1)-x(0.5))+'" height="'+(T+rowH*e2.length)+'" fill="rgba(242,193,78,.08)"/><line x1="'+x(1)+'" x2="'+x(1)+'" y1="0" y2="'+(T+rowH*e2.length)+'" stroke="#ef6a5a" stroke-width="2" stroke-dasharray="6 4"/><text x="'+x(1)+'" y="'+(T+rowH*e2.length+14)+'" fill="#ef6a5a" font-size="10.5" text-anchor="middle" font-family="Archivo" font-weight="700">límite = 1</text><text x="'+x(0.5)+'" y="'+(T+rowH*e2.length+14)+'" fill="#a9bbd6" font-size="10.5" text-anchor="middle" font-family="Overpass">0.5</text>';
+  e2.forEach(function(e,i){ var y=T+i*rowH, b=grBand(e.GR);
+    h+='<text x="'+(L-8)+'" y="'+(y+rowH*.62)+'" fill="#f4f8ff" font-size="11" text-anchor="end" font-family="Overpass">'+esc(String(e.grVar||e.title).slice(0,22))+'</text>';
+    h+='<line x1="'+L+'" x2="'+x(e.GR)+'" y1="'+(y+rowH*.5)+'" y2="'+(y+rowH*.5)+'" stroke="rgba(156,193,242,.3)" stroke-width="2"/><circle cx="'+x(e.GR)+'" cy="'+(y+rowH*.5)+'" r="7" fill="'+b.c+'" stroke="#0a1a33" stroke-width="2"/><text x="'+(x(e.GR)+11)+'" y="'+(y+rowH*.62)+'" fill="#f4f8ff" font-size="11" font-family="Archivo" font-weight="800">'+fmt(e.GR,2)+'</text>'; });
+  return h; }
+function sparkline(arr,base){ var W=400,H=44,min=4,max=20,n=arr.length; var x=function(i){return n<2?W/2:8+(W-16)*i/(n-1)}, y=function(v){return 4+(H-8)*(1-(v-min)/(max-min))};
+  var h='<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none"><line x1="0" x2="'+W+'" y1="'+y(base)+'" y2="'+y(base)+'" stroke="rgba(244,248,255,.4)" stroke-dasharray="4 4"/>';
+  h+='<polyline fill="none" stroke="#d7e64b" stroke-width="2.5" points="'+arr.map(function(v,i){return x(i)+','+y(v)}).join(' ')+'"/>';
+  arr.forEach(function(v,i){ h+='<circle cx="'+x(i)+'" cy="'+y(v)+'" r="3.5" fill="'+(v-base>=2?'#f2c14e':'#d7e64b')+'"/>'; });
+  return h+'</svg>'; }
+
+/* =================== NAVEGACIÓN =================== */
+var slides=$$('.slide'), N=slides.length, idx=0, prog=$('#prog'), cur=$('#cur'), prevB=$('#prev'), nextB=$('#next'), tchips=$$('.tchip');
+$('#total').textContent=String(N).padStart(2,'0');
+function indexOfId(id){ for(var q=0;q<N;q++) if(slides[q].id===id) return q; return -1; }
+function go(n,noHash){ n=Math.max(0,Math.min(N-1,n)); if(n===idx&&slides[idx].classList.contains('active')) return;
+  slides[idx].classList.remove('active'); idx=n; slides[idx].classList.add('active'); slides[idx].scrollTop=0;
+  prog.style.width=(idx/(N-1)*100)+'%'; cur.textContent=String(idx+1).padStart(2,'0'); prevB.disabled=idx===0; nextB.disabled=idx===N-1;
+  var st=slides[idx].getAttribute('data-step'); tchips.forEach(function(c){ c.classList.toggle('on', st!==null&&c.getAttribute('data-step')===st); });
+  if(!noHash){ try{ history.replaceState(null,'','#'+slides[idx].id); }catch(e){} } }
+function next(){go(idx+1)} function prev(){go(idx-1)}
+nextB.addEventListener('click',function(){next();this.blur()}); prevB.addEventListener('click',function(){prev();this.blur()});
+document.addEventListener('click',function(e){ var g=e.target.closest('[data-goto]'); if(g){ e.preventDefault(); var t=indexOfId(g.getAttribute('data-goto')); if(t>=0) go(t); g.blur(); } });
+var kh=$('#keyhint');
+document.addEventListener('keydown',function(e){ if(e.ctrlKey||e.metaKey||e.altKey) return; var t=e.target; if(t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.tagName==='SELECT')) return;
+  var onBtn=t&&(t.tagName==='BUTTON'||t.tagName==='A');
+  if(e.key==='ArrowRight'||e.key==='PageDown'||(e.key===' '&&!e.shiftKey&&!onBtn)){e.preventDefault();next();kh.classList.add('gone')}
+  else if(e.key==='ArrowLeft'||e.key==='PageUp'||(e.key===' '&&e.shiftKey&&!onBtn)){e.preventDefault();prev();kh.classList.add('gone')}
+  else if(e.key==='Home') go(0); else if(e.key==='End') go(N-1); else if(e.key==='f'||e.key==='F') toggleFs(); });
+var tx=0,ty=0,tOk=false;
+$('#deck').addEventListener('touchstart',function(e){ tOk=!e.target.closest('button,a,.tblwrap,.doc,.pre'); tx=e.changedTouches[0].clientX; ty=e.changedTouches[0].clientY; },{passive:true});
+$('#deck').addEventListener('touchend',function(e){ if(!tOk) return; var dx=e.changedTouches[0].clientX-tx, dy=e.changedTouches[0].clientY-ty; if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)){ dx<0?next():prev(); } },{passive:true});
+function toggleFs(){ if(!document.fullscreenElement){ (document.documentElement.requestFullscreen||function(){}).call(document.documentElement); } else { (document.exitFullscreen||function(){}).call(document); } }
+$('#fs').addEventListener('click',function(){toggleFs();this.blur()});
+window.addEventListener('hashchange',function(){ var t=indexOfId((location.hash||'').slice(1)); if(t>=0&&t!==idx) go(t,true); });
+
+$$('[data-mode]').forEach(function(b){ b.addEventListener('click',function(){ MODE=b.getAttribute('data-mode'); $$('[data-mode]').forEach(function(x){x.classList.toggle('on',x===b)}); load(); toast(MODE==='demo'?'Mostrando datos de demostración':'Mostrando datos del equipo'); }); });
+$('#btnReload').addEventListener('click',function(){ load().then(function(){ toast('Bases actualizadas'); }); this.blur(); });
+
+/* =================== INIT =================== */
+(function(){ var t=indexOfId((location.hash||'').slice(1)); go(t>=0?t:0,true); })();
+if(/[?&]demo=1/.test(location.search)){ MODE='demo'; $$('[data-mode]').forEach(function(x){x.classList.toggle('on',x.getAttribute('data-mode')==='demo')}); }
+load();
+setInterval(function(){ if(MODE==='team'&&window.Sync&&Sync.isConnected()) fromServer().then(function(d){ D=d; renderAll(); }).catch(function(){}); },30000);
+</script>
+</body>
+</html>

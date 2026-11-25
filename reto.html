@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Análisis del Reto · Salud Espacial</title>
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png">
+<link rel="shortcut icon" href="favicon.ico">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="description" content="Objetivos, lineamientos y análisis del reto de monitoreo de salud para astronautas — NASA Space Apps CDMX 2026." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;800;900&family=Overpass:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --navy-900:#071428;--navy-800:#0a1a33;--navy-700:#0d2244;--navy-600:#102a55;
+    --royal:#1e52c8;--royal-bright:#2a66e6;--blue-soft:#4e8fe6;--blue-pale:#9cc1f2;
+    --lime:#d7e64b;--white:#f4f8ff;--mute:#a9bbd6;--line:rgba(156,193,242,.16);
+    --card:rgba(18,38,74,.6);--ok:#4ccb8f;--warn:#f2c14e;--crit:#ef6a5a;
+    --maxw:960px;--r:18px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:"Overpass",system-ui,sans-serif;background:var(--navy-900);color:var(--white);line-height:1.65;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  h1,h2,h3{font-family:"Archivo",sans-serif;letter-spacing:-.01em}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+  .eyebrow{font-family:"Archivo";font-weight:800;text-transform:uppercase;letter-spacing:.14em;font-size:.74rem;color:var(--lime);display:inline-flex;align-items:center;gap:10px}
+  .eyebrow::before{content:"";width:26px;height:2px;background:var(--lime);display:inline-block}
+  section{position:relative;padding:60px 0}
+  .divline{height:1px;background:var(--line);max-width:var(--maxw);margin:0 auto}
+  .rings{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+  .rings span{position:absolute;border-radius:50%;border:1px solid rgba(120,160,230,.10)}
+  .inner{position:relative;z-index:1}
+  .numtag{font-family:"Archivo";font-weight:900;color:var(--lime);font-size:1.4rem}
+  h2{font-size:clamp(1.7rem,3.6vw,2.4rem);font-weight:900;line-height:1.06;margin:10px 0 18px}
+  p{color:var(--mute);margin-bottom:14px;font-size:1.02rem}
+  p b,li b{color:var(--white);font-weight:600}
+
+  .topbar{position:sticky;top:0;z-index:10;background:rgba(7,20,40,.85);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .topbar .wrap{display:flex;align-items:center;justify-content:space-between;height:56px}
+  .back{color:var(--blue-pale);text-decoration:none;font-family:"Archivo";font-weight:700;font-size:.86rem;display:inline-flex;align-items:center;gap:8px}
+  .back:hover{color:var(--lime)}
+  .toc{display:flex;gap:16px;font-size:.8rem}
+  .toc a{color:var(--mute);text-decoration:none}
+  .toc a:hover{color:var(--white)}
+
+  .hero{background:
+      radial-gradient(900px 560px at 85% 10%, rgba(30,82,200,.42), transparent 60%),
+      linear-gradient(180deg,var(--navy-800),var(--navy-900));padding:80px 0 60px}
+  .hero h1{font-weight:900;font-size:clamp(2.3rem,5.6vw,4rem);line-height:.98;margin:16px 0 18px}
+  .hero h1 .hl{color:var(--lime)}
+  .hero .lead{color:var(--blue-pale);font-size:1.15rem;max-width:56ch}
+  .chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+  .chip{border:1px solid var(--line);background:rgba(10,26,51,.5);border-radius:999px;padding:7px 14px;font-size:.8rem;color:var(--blue-pale)}
+
+  .quote{background:linear-gradient(135deg,var(--navy-600),var(--navy-700));border:1px solid var(--line);border-left:4px solid var(--lime);border-radius:var(--r);padding:28px 30px;margin-bottom:22px}
+  .quote p{color:var(--white);font-size:1.08rem;margin:0}
+  .callout{background:rgba(242,193,78,.09);border:1px solid rgba(242,193,78,.35);border-left:4px solid var(--warn);border-radius:var(--r);padding:20px 24px;margin:6px 0 22px}
+  .callout p{color:var(--white);margin:0;font-size:1.06rem}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:24px;margin-bottom:16px}
+  .card h3{font-size:1.1rem;font-weight:800;margin-bottom:8px;display:flex;align-items:center;gap:10px}
+  .card p{margin:0;font-size:.97rem}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .feat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px}
+  .feat .ic{font-size:1.4rem;margin-bottom:8px}
+  .feat h4{font-family:"Archivo";font-weight:800;font-size:.98rem;margin-bottom:6px}
+  .feat p{font-size:.9rem;margin:0}
+  .sub{font-family:"Archivo";font-weight:800;text-transform:uppercase;letter-spacing:.1em;font-size:.74rem;color:var(--blue-soft);margin:26px 0 12px}
+  ul.clean{list-style:none;display:grid;gap:10px;margin-bottom:16px}
+  ul.clean li{padding-left:22px;position:relative;color:var(--mute)}
+  ul.clean li::before{content:"";position:absolute;left:4px;top:10px;width:7px;height:7px;border-radius:50%;background:var(--lime)}
+  .qs{display:grid;gap:10px}
+  .qs div{background:rgba(30,82,200,.15);border:1px solid var(--line);border-radius:12px;padding:13px 16px;color:var(--white);font-size:.95rem}
+  .src-note{font-size:.8rem;color:var(--mute);margin-top:8px;font-style:italic}
+
+  footer{padding:46px 0;text-align:center;color:var(--mute);font-size:.82rem;border-top:1px solid var(--line)}
+  footer a{color:var(--blue-pale)}
+
+  @media(max-width:760px){
+    .grid2,.grid3{grid-template-columns:1fr}
+    .toc{display:none}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap">
+    <a class="back" href="index.html">← Volver al HCD Kit</a>
+    <nav class="toc">
+      <a href="#objetivos">Objetivos</a>
+      <a href="#texto">Texto oficial</a>
+      <a href="#contexto">Contexto</a>
+      <a href="#mental">Salud mental</a>
+      <a href="#video">Video</a>
+      <a href="#gamificacion">Gamificación</a>
+    </nav>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="rings">
+    <span style="width:700px;height:700px;top:-160px;right:-200px"></span>
+    <span style="width:1000px;height:1000px;top:-300px;right:-340px"></span>
+  </div>
+  <div class="wrap inner">
+    <div class="eyebrow">Documento de análisis del reto</div>
+    <h1>Software de monitoreo de salud para <span class="hl">astronautas</span></h1>
+    <p class="lead">Objetivos, lineamientos y análisis completo del reto. Nuestro punto de referencia común antes de decidir qué construimos.</p>
+    <div class="chips">
+      <span class="chip">NASA Space Apps · CDMX 2026</span>
+      <span class="chip">Reto: Health Monitoring Software for Astronauts on Space Missions</span>
+    </div>
+  </div>
+</header>
+
+<!-- OBJETIVOS -->
+<section id="objetivos">
+  <div class="wrap inner">
+    <span class="numtag">00</span>
+    <div class="eyebrow" style="margin-top:8px">Objetivos oficiales</div>
+    <h2>Lo que nos pide el reto</h2>
+    <div class="quote"><p>Tu desafío es crear una <b>herramienta visual</b> que ayude a los astronautas a <b>evaluar su propia salud</b> durante las misiones espaciales y que brinde orientación sobre tratamientos y mejoras de salud.</p></div>
+    <p>Pueden recopilar datos del usuario mediante cualquier tipo de entrada — texto con teclado, clics del mouse o imágenes de cámara, por ejemplo. Se puede usar cualquier tipo de dato, siempre que represente un indicador de salud, como niveles de glucosa en mg/dL o imágenes de ultrasonido.</p>
+    <p>Pueden usar los recursos del <b>Human Research Program de la NASA</b> y los recursos públicos de otras agencias espaciales para entender cómo los peligros del vuelo espacial afectan la salud humana y decidir qué indicadores son útiles y cómo apoyan una evaluación rápida.</p>
+
+    <div class="sub">Preguntas que vale la pena considerar</div>
+    <div class="qs">
+      <div>¿Qué mediciones se pueden realizar en el espacio?</div>
+      <div>¿Por qué es necesario un examen?</div>
+      <div>¿Cómo afectan los peligros del vuelo espacial a estos indicadores de salud?</div>
+      <div>¿Cuándo un resultado amerita la atención de la tripulación o de los médicos de vuelo en Tierra?</div>
+      <div>¿Qué acciones se pueden tomar para prevenir una condición de salud crítica?</div>
+    </div>
+
+    <div class="card" style="margin-top:20px">
+      <h3>🖥️ El diseño de interfaz importa</h3>
+      <p>El diseño de la interfaz juega un papel importante para presentar métricas y diagnósticos con claridad. Se puede aprovechar la animación y la interactividad — por ejemplo, una <b>figura humana donde cada parte del cuerpo es clicable</b> y muestra información sobre su función y estado de salud.</p>
+    </div>
+    <p class="src-note">Fuente: sección <em>Objectives</em> de la página oficial del reto (traducción).</p>
+  </div>
+</section>
+<div class="divline"></div>
+
+<!-- 1 TEXTO OFICIAL -->
+<section id="texto">
+  <div class="wrap inner">
+    <span class="numtag">01</span>
+    <div class="eyebrow" style="margin-top:8px">Traducción oficial del texto</div>
+    <h2>Sobre el reto</h2>
+    <div class="quote"><p>Las misiones de larga duración exponen a los astronautas a la radiación espacial, el aislamiento y el confinamiento, la gravedad alterada y un entorno cerrado hostil, lo que puede provocar cambios inmunológicos, pérdida ósea, eventos cardiovasculares y problemas de salud conductual. En misiones largas, los astronautas tienen gran parte de la responsabilidad de detectar estos cambios en sí mismos. Tu desafío es crear un software de monitoreo de salud que recopile indicadores de salud y permita a los astronautas evaluar y actuar sobre su estado de salud.</p></div>
+
+    <div class="sub">Consideraciones potenciales (opcionales)</div>
+    <ul class="clean">
+      <li>La herramienta podría proporcionar información de salud en distintos entornos: una <b>nave espacial, una estación espacial, un rover o una base</b> en otro planeta o luna.</li>
+      <li>La herramienta podría indicar a los astronautas que tomen medidas o completen acciones específicas de vez en cuando, como parte de la <b>rutina de la misión</b>.</li>
+    </ul>
+
+    <div class="sub">Características que podría incluir</div>
+    <div class="grid3">
+      <div class="feat"><div class="ic">🎮</div><h4>Gamificación</h4><p>Un sistema que ayude a los astronautas a involucrarse con las tareas que apoyan su salud.</p></div>
+      <div class="feat"><div class="ic">📈</div><h4>Gráficas dinámicas</h4><p>Que muestren cómo cambian los indicadores de salud a lo largo del tiempo.</p></div>
+      <div class="feat"><div class="ic">🚦</div><h4>Código de colores</h4><p>Que ayude a interpretar el estado de un indicador de un vistazo.</p></div>
+    </div>
+
+    <div class="callout" style="margin-top:22px"><p><b>No asumas que los astronautas saben todo sobre cómo evaluar su salud.</b> La herramienta podría dar instrucciones y explicaciones simples sobre mediciones, indicadores de salud y riesgos.</p></div>
+    <p>Para datos y recursos relacionados, la pestaña <b>Resources</b> de la página del reto; es posible que se agreguen más antes del hackathon.</p>
+  </div>
+</section>
+<div class="divline"></div>
+
+<!-- 2 CONTEXTO -->
+<section id="contexto">
+  <div class="rings"><span style="width:900px;height:900px;top:-200px;left:-320px"></span></div>
+  <div class="wrap inner">
+    <span class="numtag">02</span>
+    <div class="eyebrow" style="margin-top:8px">Análisis del contexto</div>
+    <h2>¿De qué va el reto?</h2>
+    <p>Basado en la descripción y en la filosofía detrás de los retos de misiones en el espacio profundo, este desafío plantea una transición crucial en la medicina espacial: <b>pasar de la dependencia terrestre a la autonomía médica</b>.</p>
+    <div class="grid2">
+      <div class="card"><h3>🛰️ Hoy: Estación Espacial</h3><p>Los astronautas en la EEI tienen comunicación en tiempo real con el Control de Misión, rodeados de equipos médicos y apoyo constante.</p></div>
+      <div class="card"><h3>🔴 Mañana: Luna y Marte</h3><p>El retraso en las comunicaciones (hasta 20 minutos para Marte) y el aislamiento prolongado obligan a los astronautas a convertirse en sus <b>propios médicos de primer contacto</b>.</p></div>
+    </div>
+    <p>El reto pide diseñar una interfaz (una "app" o "dashboard" espacial) que no solo recopile datos aburridos de sensores, sino que sea <b>educativa, preventiva y fácil de digerir</b>. Si un astronauta está perdiendo densidad ósea o su estrés está subiendo, el software debe usar diseño visual (colores, gráficas) y psicología conductual (gamificación) para alertarlo y guiarlo de forma autónoma.</p>
+  </div>
+</section>
+<div class="divline"></div>
+
+<!-- 3 SALUD MENTAL -->
+<section id="mental">
+  <div class="wrap inner">
+    <span class="numtag">03</span>
+    <div class="eyebrow" style="margin-top:8px">La importancia crítica de la salud mental</div>
+    <h2>Un cuerpo sano no sirve de nada si la mente entra en crisis</h2>
+    <p>El texto original menciona explícitamente el <b>"aislamiento y confinamiento"</b> y los <b>"problemas de salud conductual"</b>. Integrar el monitoreo de la salud mental no es un extra: es el pilar de la misión.</p>
+    <div class="card"><h3>🥫 El "entorno cerrado hostil"</h3><p>Encerrados en una pequeña lata metálica con las mismas tres o cuatro personas durante años, sin salir a tomar aire fresco. La monotonía, la falta de luz solar natural, la alteración del ritmo circadiano y la distancia de sus familias generan un estrés psicológico que la humanidad rara vez experimenta.</p></div>
+    <div class="card"><h3>⚠️ Deterioro cognitivo e impacto operativo</h3><p>En la Tierra, un día de depresión o fatiga severa significa faltar al trabajo. En el espacio, un fallo de atención, tiempos de reacción lentos o una mala decisión por agotamiento mental pueden <b>comprometer la supervivencia de toda la tripulación</b>.</p></div>
+    <div class="card"><h3>🔍 Prevención y detección temprana</h3><p>A diferencia de la presión arterial, la salud mental es difícil de medir objetivamente. El software ideal la rastrea de forma indirecta: tiempo de sueño, tono de voz, velocidad de respuesta en pantalla o diarios interactivos. Aquí brilla la gamificación: <b>mini-juegos cognitivos diarios</b> pueden detectar un declive sutil sin que el astronauta sienta que está en un examen psiquiátrico.</p></div>
+    <p>Abordar el bienestar psicológico asegura que la tripulación no solo sobreviva físicamente, sino que mantenga la moral y la agudeza mental para completar la misión.</p>
+  </div>
+</section>
+<div class="divline"></div>
+
+<!-- 4 VIDEO -->
+<section id="video">
+  <div class="rings"><span style="width:900px;height:900px;top:-220px;right:-320px"></span></div>
+  <div class="wrap inner">
+    <span class="numtag">04</span>
+    <div class="eyebrow" style="margin-top:8px">Perspectiva práctica · contexto del video</div>
+    <h2>Cuando Houston no puede contestar</h2>
+    <p>Según Rodrigo Leonardi (Agencia Espacial Brasileña), en misiones a Marte la comunicación en tiempo real con la Tierra será imposible por el retraso de la señal.</p>
+    <div class="quote"><p>Escenario crítico: <b>un tripulante colapsa por un dolor de pecho</b>. Los demás astronautas, que no son médicos, deben actuar rápido.</p></div>
+    <p>El software debe ser capaz de:</p>
+    <ul class="clean">
+      <li><b>Interpretar</b> los datos biométricos de los sensores.</li>
+      <li><b>Explicar paso a paso</b> cómo confirmar las medidas.</li>
+      <li><b>Guiar las acciones de emergencia</b> de forma autónoma, sin esperar instrucciones de Houston.</li>
+    </ul>
+  </div>
+</section>
+<div class="divline"></div>
+
+<!-- 5 GAMIFICACION -->
+<section id="gamificacion">
+  <div class="wrap inner">
+    <span class="numtag">05</span>
+    <div class="eyebrow" style="margin-top:8px">Psicología conductual y gamificación</div>
+    <h2>Diseñar para el comportamiento humano</h2>
+    <p>Para que el software sea efectivo a largo plazo no basta con mostrar bases de datos complejas: hay que diseñar centrado en cómo se comportan las personas.</p>
+
+    <div class="sub">Psicología conductual</div>
+    <p>Estudia cómo el entorno y las consecuencias moldean nuestras acciones. En el espacio profundo (confinamiento extremo, aislamiento, pérdida del ciclo día-noche) la fuerza de voluntad se desgasta. El gran riesgo es que tareas vitales pero rutinarias — registrar el ánimo, medir la presión, hacer ejercicio — se vuelvan una carga y se abandonen.</p>
+    <div class="callout"><p>El diseño debe crear <b>"empujoncitos cognitivos" (nudges)</b>: que monitorearse sea la acción de menor resistencia, formando hábitos automáticos que no dependan de la motivación del momento.</p></div>
+
+    <div class="sub">Gamificación</div>
+    <p>Aplicar mecánicas y dinámicas de videojuegos (progresión, recompensas, narrativa visual) a entornos serios. Es el puente para poner en práctica la psicología conductual:</p>
+    <div class="grid2">
+      <div class="card"><h3>⚡ Retroalimentación visual inmediata</h3><p>En lugar de tablas densas de ritmo cardíaco o cortisol, la interfaz usa barras de "energía", avatares o semáforos (verde, amarillo, rojo). Ante una emergencia o estrés severo, el estado se entiende en una fracción de segundo. <b>Reduce la carga cognitiva.</b></p></div>
+      <div class="card"><h3>🏅 Sistemas de recompensa</h3><p>Rachas de días consecutivos de ejercicio, hitos desbloqueables o insignias por mantener el bienestar estable. Combate la monotonía del viaje y convierte un chequeo tedioso en algo estimulante. <b>Microdosis de dopamina.</b></p></div>
+    </div>
+    <div class="quote" style="margin-top:6px"><p>Una aplicación ganadora no debe sentirse como un frío historial médico de hospital, sino como <b>un compañero interactivo</b> que mantiene a la tripulación comprometida y segura a millones de kilómetros de casa.</p></div>
+  </div>
+</section>
+
+<footer>
+  Documento de análisis del reto · <em>ejemplo:</em> ORBITAL — NASA Space Apps Challenge CDMX 2026<br/>
+  <a href="index.html">← Volver al HCD Kit</a>
+</footer>
+
+</body>
+</html>

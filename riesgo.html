@@ -1,0 +1,1832 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ORBITAL · Riesgo en entornos confinados</title>
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png">
+<link rel="shortcut icon" href="favicon.ico">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="description" content="Escalera del riesgo, Grado de Peligrosidad (William Fine), Grado de Riesgo (NASA), indicadores adelantados y rezagados, jerarquía de controles y cédulas 1–4 llenables en equipo, con dos ejemplos. NASA Space Apps CDMX 2026." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;800;900&family=Overpass:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --navy-900:#071428;--navy-800:#0a1a33;--navy-700:#0d2244;--navy-600:#102a55;
+    --royal:#1e52c8;--royal-bright:#2a66e6;--blue-soft:#4e8fe6;--blue-pale:#9cc1f2;
+    --lime:#d7e64b;--white:#f4f8ff;--mute:#a9bbd6;--line:rgba(156,193,242,.16);
+    --card:rgba(18,38,74,.6);--ok:#4ccb8f;--warn:#f2c14e;--crit:#ef6a5a;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:"Overpass",system-ui,sans-serif;background:var(--navy-900);color:var(--white);line-height:1.55;-webkit-font-smoothing:antialiased;overflow:hidden}
+  h1,h2,h3,h4,h5{font-family:"Archivo",sans-serif;letter-spacing:-.01em}
+  a{color:var(--blue-soft)}
+
+  /* ---------- DECK ---------- */
+  .deck{position:fixed;inset:0;background:
+      radial-gradient(1200px 760px at 82% 12%, rgba(30,82,200,.32), transparent 60%),
+      radial-gradient(900px 640px at 6% 96%, rgba(20,50,130,.3), transparent 60%),
+      linear-gradient(180deg,var(--navy-800),var(--navy-900))}
+  .slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-start;
+    padding:clamp(70px,10vh,96px) clamp(22px,6vw,96px) clamp(88px,12vh,110px);
+    opacity:0;visibility:hidden;transform:scale(.985);
+    transition:opacity .45s ease,transform .55s cubic-bezier(.2,.7,.2,1),visibility .45s;overflow-y:auto}
+  .slide.active{opacity:1;visibility:visible;transform:none;z-index:2}
+  .sin{width:100%;max-width:1120px;margin:auto}
+  .rings{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+  .rings span{position:absolute;border-radius:50%;border:1px solid rgba(120,160,230,.10)}
+  .r{opacity:0;transform:translateY(22px);transition:opacity .55s cubic-bezier(.2,.7,.2,1),transform .55s cubic-bezier(.2,.7,.2,1)}
+  .slide.active .r{opacity:1;transform:none;transition-delay:var(--d,0s)}
+
+  .eyebrow{font-family:"Archivo";font-weight:800;text-transform:uppercase;letter-spacing:.14em;font-size:clamp(.66rem,1.1vw,.76rem);color:var(--lime);display:inline-flex;align-items:center;gap:10px}
+  .eyebrow::before{content:"";width:26px;height:2px;background:var(--lime);display:inline-block}
+  h2.title{font-size:clamp(1.7rem,4.2vw,3rem);font-weight:900;line-height:1.03;margin:8px 0 12px}
+  .sub{color:var(--mute);font-size:clamp(.98rem,1.6vw,1.12rem);max-width:74ch}
+  .sub b{color:var(--white)}
+  .hl{color:var(--lime)} em{color:var(--blue-soft);font-style:normal}
+  .src{color:var(--mute);font-size:.74rem;margin-top:12px;opacity:.85}
+  .src a{color:var(--mute)}
+  .tag{display:inline-block;font-family:"Archivo";font-weight:800;font-size:.66rem;letter-spacing:.06em;text-transform:uppercase;padding:3px 9px;border-radius:999px}
+  .t-ok{background:rgba(76,203,143,.15);color:var(--ok)}
+  .t-warn{background:rgba(242,193,78,.15);color:var(--warn)}
+  .t-crit{background:rgba(239,106,90,.16);color:var(--crit)}
+  .t-mute{background:rgba(156,193,242,.1);color:var(--mute)}
+  .t-lead{background:rgba(242,193,78,.15);color:var(--warn)}
+  .t-lag{background:rgba(239,106,90,.16);color:var(--crit)}
+  .callout{margin-top:16px;background:rgba(215,230,75,.08);border-left:3px solid var(--lime);border-radius:0 12px 12px 0;padding:13px 17px;color:var(--mute);font-size:.95rem}
+  .callout b{color:var(--lime)}
+  .statement{background:linear-gradient(135deg,var(--navy-600),var(--navy-700));border:1px solid var(--line);border-left:5px solid var(--lime);border-radius:16px;padding:clamp(18px,2.6vw,28px) clamp(20px,3vw,32px);font-family:"Archivo";font-weight:600;font-size:clamp(1.05rem,2.1vw,1.5rem);line-height:1.35;margin-top:18px}
+  .statement small{display:block;font-family:"Overpass";font-weight:400;color:var(--mute);font-size:.9rem;margin-top:6px}
+  .btn{cursor:pointer;font-family:"Archivo";font-weight:800;font-size:.85rem;border-radius:11px;padding:11px 17px;border:1px solid var(--line);background:rgba(10,26,51,.6);color:var(--white);transition:.2s;display:inline-flex;align-items:center;gap:8px;text-decoration:none}
+  .btn:hover{border-color:var(--lime);color:var(--lime)}
+  .btn.prime{background:var(--lime);color:#071428;border-color:var(--lime)}
+  .btn.prime:hover{color:#071428;filter:brightness(1.05)}
+  .btn.ex{color:var(--blue-soft);border-style:dashed;border-color:rgba(78,143,230,.5)}
+  .btn:disabled{opacity:.35;cursor:default}
+  .btnrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+
+  /* portada */
+  .brandmark{display:flex;align-items:center;gap:14px;margin-bottom:30px}
+  .logo-ring{width:48px;height:48px;flex:0 0 auto}
+  .brandmark small{display:block;font-size:.6rem;letter-spacing:.3em;color:var(--mute);font-weight:700;font-family:"Archivo"}
+  .brandmark b{font-size:1rem;letter-spacing:.04em;font-family:"Archivo";font-weight:900;text-transform:uppercase}
+  .hero h1{font-weight:900;font-size:clamp(2.4rem,7vw,5rem);line-height:.98;margin:14px 0 20px}
+  .hero .lead{color:var(--blue-pale);font-size:clamp(1.02rem,2vw,1.3rem);max-width:64ch;margin-bottom:22px}
+  .backlinks{display:flex;gap:10px;flex-wrap:wrap}
+  .backlinks a{font-family:"Archivo";font-weight:700;font-size:.82rem;color:var(--blue-pale);text-decoration:none;border:1px solid var(--line);border-radius:10px;padding:9px 14px}
+  .backlinks a:hover{border-color:var(--blue-soft);color:var(--white)}
+
+  /* grids & cards */
+  .g2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}
+  .g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:18px}
+  .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:18px}
+  .g5{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:18px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:clamp(16px,2vw,22px)}
+  .card .ic{font-size:1.4rem}
+  .card h4{font-size:clamp(1rem,1.6vw,1.15rem);font-weight:800;margin:6px 0 6px}
+  .card p{color:var(--mute);font-size:clamp(.88rem,1.35vw,.98rem)}
+  .card p b{color:var(--white)}
+  .card .big{font-family:"Archivo";font-weight:900;font-size:clamp(2rem,4vw,3rem);line-height:1}
+  .card.top-c{border-top:3px solid var(--c,var(--blue-soft))}
+  .card .kk{font-family:"Archivo";font-weight:800;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--c,var(--blue-soft))}
+  .numq{font-family:"Archivo";font-weight:900;color:var(--lime);font-size:clamp(1.6rem,3vw,2.2rem);line-height:1}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .chips span{border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-size:.84rem;color:var(--blue-pale)}
+
+  /* tables */
+  .tbl{width:100%;border-collapse:collapse;font-size:clamp(.82rem,1.3vw,.95rem)}
+  .tbl th,.tbl td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+  .tbl th{font-family:"Archivo";font-weight:800;font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:var(--blue-soft);background:rgba(10,26,51,.7)}
+  .tbl td.num{text-align:right;font-variant-numeric:tabular-nums}
+  .tbl td small{color:var(--mute)}
+  .tbl tr.lead td{background:rgba(242,193,78,.07)}
+  .tbl tr.lag td{background:rgba(239,106,90,.09)}
+  .tbl td.note{color:var(--mute);font-style:italic}
+  .tblwrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;margin-top:16px}
+
+  /* staircase */
+  .stairwrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:26px;margin-top:18px;align-items:start}
+  .stairs{display:grid;gap:9px}
+  .stair{cursor:pointer;text-align:left;display:flex;align-items:center;gap:14px;background:linear-gradient(90deg,rgba(30,82,200,.55),rgba(30,82,200,.25));border:1px solid var(--line);border-left:4px solid var(--c,var(--blue-soft));border-radius:12px;padding:13px 16px;color:var(--white);transition:.2s;font:inherit}
+  .stair:hover{filter:brightness(1.15)}
+  .stair.on{background:linear-gradient(90deg,rgba(42,102,230,.85),rgba(30,82,200,.45));box-shadow:0 0 0 2px var(--c,var(--lime)) inset}
+  .stair .n{font-family:"Archivo";font-weight:900;font-size:.8rem;color:var(--mute);width:18px}
+  .stair .nm{font-family:"Archivo";font-weight:900;font-size:clamp(1rem,1.7vw,1.25rem);min-width:118px}
+  .stair .df{color:var(--blue-pale);font-size:.84rem}
+  .stair[data-i="2"]{margin-left:20px}.stair[data-i="3"]{margin-left:40px}.stair[data-i="4"]{margin-left:60px}.stair[data-i="5"]{margin-left:80px}
+  .detail{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px}
+  .detail .lvl{font-family:"Archivo";font-weight:800;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
+  .detail h3{font-size:clamp(1.5rem,2.8vw,2rem);font-weight:900;margin:4px 0 6px}
+  .detail .def{color:var(--blue-pale);margin-bottom:14px}
+  .detail .mars{background:linear-gradient(135deg,var(--navy-600),var(--navy-700));border:1px solid var(--line);border-left:4px solid var(--c,var(--lime));border-radius:12px;padding:14px 16px;margin-bottom:12px}
+  .detail .mars .ml{font-family:"Archivo";font-weight:800;font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--lime);margin-bottom:5px}
+  .detail .mars p{font-family:"Archivo";font-weight:600;font-size:clamp(1rem,1.8vw,1.2rem);line-height:1.35}
+  .detail .ask{color:var(--mute);font-size:.92rem;border-top:1px dashed var(--line);padding-top:12px}
+  .detail .ask b{color:var(--white)}
+  .detail .nav{display:flex;gap:10px;margin-top:14px}
+
+  /* charts */
+  .chartcard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 16px 8px}
+  .chartcard h4{font-size:.86rem;font-weight:800;margin-bottom:2px}
+  .chartcard .cs{color:var(--mute);font-size:.76rem;margin-bottom:6px}
+  .chartcard svg{width:100%;height:auto;display:block}
+  .chartsep{height:10px}
+  .legend{display:flex;flex-wrap:wrap;gap:14px;font-size:.78rem;color:var(--mute);margin:4px 0 6px}
+  .legend span{display:inline-flex;align-items:center;gap:7px}
+  .sw{width:14px;height:10px;border-radius:3px;display:inline-block}
+  .datagrid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:22px;margin-top:16px;align-items:start}
+  .insight{display:none}
+  .insight.on{display:block}
+
+  /* valuation */
+  .vcard .vk{font-family:"Archivo";font-weight:800;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--blue-soft)}
+  .vcard .formula{font-family:"Archivo";font-weight:900;font-size:clamp(1.3rem,2.4vw,1.8rem);color:var(--lime);margin:8px 0 6px}
+  .vcard .calc{font-family:"Archivo";font-weight:700;font-size:1.05rem;margin-bottom:8px}
+  .scaletbl td:first-child{font-family:"Archivo";font-weight:900;color:var(--lime);width:54px}
+  .bands{display:grid;gap:8px;margin-top:12px}
+  .bands div{display:flex;gap:10px;align-items:center;font-size:.88rem;color:var(--mute)}
+
+  /* matrix */
+  .rmatrix{display:grid;grid-template-columns:auto repeat(3,1fr);gap:4px;font-family:"Archivo";font-size:.76rem;margin-top:8px}
+  .rmatrix>div{padding:8px 6px;border-radius:6px;text-align:center;font-weight:700;min-height:34px}
+  .rmatrix .hd{background:#0b1730;color:var(--mute)}
+  .rmatrix .sv{background:var(--royal);color:var(--white);text-align:left}
+  .rmatrix .c-bajo{background:rgba(156,193,242,.28);color:#dfe9fb}
+  .rmatrix .c-medio{background:rgba(215,230,75,.75);color:#071428}
+  .rmatrix .c-alto{background:rgba(239,106,90,.85);color:#071428}
+  .rmatrix .pick{outline:3px solid var(--white);outline-offset:-3px;box-shadow:0 0 14px rgba(255,255,255,.35)}
+  .rmatrix .pick::after{content:" ●"}
+  .rmatrix.big>div{min-height:74px;font-size:.8rem;display:flex;flex-direction:column;gap:5px;align-items:center;justify-content:flex-start}
+  .rmatrix.big .sv,.rmatrix.big .hd{justify-content:center}
+  .pin{display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;border-radius:7px;background:#071428;color:var(--lime);font-size:.74rem;font-weight:900;padding:0 6px;margin:1px}
+  .pins{display:flex;flex-wrap:wrap;justify-content:center}
+
+  /* pyramid */
+  .pyr{display:grid;gap:8px;margin-top:16px;max-width:820px}
+  .plevel{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:14px;border-radius:999px;padding:11px 22px;font-family:"Archivo";font-weight:800}
+  .plevel .pn{font-size:.78rem;opacity:.75}
+  .plevel .pd{font-family:"Overpass";font-weight:500;font-size:.88rem;opacity:.9}
+  .plevel .pm{font-size:.74rem;padding:4px 10px;border-radius:999px;background:rgba(7,20,40,.8);color:var(--lime);white-space:nowrap}
+  .pl1{background:#0b1430;color:var(--white);border:1px solid var(--line)}
+  .pl2{background:#1446d8;color:var(--white);margin:0 24px}
+  .pl3{background:#2aa1f0;color:#071428;margin:0 48px}
+  .pl4{background:#d7e64b;color:#071428;margin:0 72px}
+  .pl5{background:#ef7d65;color:#071428;margin:0 96px}
+  .notctrl{margin-top:14px;max-width:820px;background:rgba(239,106,90,.08);border:1px dashed rgba(239,106,90,.5);border-radius:14px;padding:13px 17px;color:var(--mute);font-size:.92rem}
+  .notctrl b{color:var(--crit)}
+
+  /* HAS / DOL / heuristics */
+  .letter{font-family:"Archivo";font-weight:900;font-size:clamp(2.4rem,5vw,3.6rem);line-height:1;color:var(--c)}
+  .heur{display:grid;grid-template-columns:1fr 1fr;gap:10px 22px;margin-top:16px}
+  .heur div{display:flex;gap:12px;align-items:flex-start}
+  .heur .hp{flex:0 0 auto;background:#2aa1f0;color:#071428;font-family:"Archivo";font-weight:800;font-size:.8rem;border-radius:999px;padding:6px 12px;min-width:150px;text-align:center}
+  .heur p{color:var(--mute);font-size:.9rem}
+  .refs{display:grid;gap:9px;margin-top:14px}
+  .refs div{color:var(--mute);font-size:clamp(.82rem,1.25vw,.92rem);padding-left:16px;text-indent:-16px}
+  .refs i{color:var(--blue-pale)}
+
+  /* forms */
+  label.fl{display:block;font-family:"Archivo";font-weight:700;font-size:.82rem;margin:10px 0 5px}
+  label.fl small{font-family:"Overpass";font-weight:400;color:var(--mute);margin-left:6px}
+  input[type=text],input[type=number],textarea,select{width:100%;background:rgba(7,20,40,.55);border:1px solid var(--line);border-radius:10px;color:var(--white);font-family:"Overpass",sans-serif;font-size:.95rem;padding:10px 12px;transition:.15s}
+  input:focus,textarea:focus,select:focus{outline:none;border-color:var(--lime)}
+  textarea{min-height:60px;resize:vertical}
+  select option{background:#0a1a33}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+  .seg{display:flex;gap:8px;flex-wrap:wrap}
+  .seg label{cursor:pointer}
+  .seg input{position:absolute;opacity:0;width:0;height:0}
+  .seg span{display:inline-block;font-family:"Archivo";font-weight:800;font-size:.8rem;padding:9px 14px;border-radius:999px;border:1px solid var(--line);color:var(--mute);transition:.15s}
+  .seg input:checked + span.lead{background:rgba(242,193,78,.18);border-color:var(--warn);color:var(--warn)}
+  .seg input:checked + span.lag{background:rgba(239,106,90,.18);border-color:var(--crit);color:var(--crit)}
+  .seg input:focus-visible + span{outline:2px solid var(--lime)}
+  .ladderhint{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:.72rem;color:var(--mute);margin:4px 0}
+  .ladderhint span{border:1px solid var(--line);border-radius:999px;padding:2px 9px}
+  .result{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:12px;background:rgba(7,20,40,.45);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+  .result .rv{font-family:"Archivo";font-weight:900;font-size:1.9rem;line-height:1}
+  .result .rx{color:var(--mute);font-size:.86rem;flex:1;min-width:180px}
+  .gauge{height:10px;border-radius:999px;background:rgba(156,193,242,.12);overflow:hidden;margin-top:10px;position:relative}
+  .gauge i{position:absolute;left:0;top:0;bottom:0;border-radius:999px;transition:width .3s}
+  .gauge::after{content:"";position:absolute;top:-3px;bottom:-3px;left:66.6%;width:2px;background:var(--white);opacity:.6}
+  .gaugeleg{display:flex;justify-content:space-between;font-size:.68rem;color:var(--mute);margin-top:4px}
+  .ctrlopts{display:grid;gap:8px}
+  .ctrlopt{display:flex;gap:10px;align-items:flex-start;cursor:pointer;border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:.88rem;color:var(--mute)}
+  .ctrlopt input{margin-top:4px;accent-color:#d7e64b}
+  .ctrlopt b{color:var(--white);font-family:"Archivo"}
+  .ctrlopt.sel{border-color:var(--lime);background:rgba(215,230,75,.06)}
+  .advice{display:none;margin-top:10px;border-radius:12px;padding:11px 14px;font-size:.88rem}
+  .advice.on{display:block}
+  .advice.warn{background:rgba(242,193,78,.1);border:1px solid rgba(242,193,78,.4);color:#f7dc96}
+  .advice.ok{background:rgba(76,203,143,.1);border:1px solid rgba(76,203,143,.4);color:#a8ecc9}
+  .err{color:var(--crit);font-size:.86rem;margin-top:8px;min-height:1.2em}
+  .stepdots{display:flex;gap:6px;margin:4px 0 2px}
+  .stepdots i{width:30px;height:5px;border-radius:999px;background:rgba(156,193,242,.2)}
+  .stepdots i.on{background:var(--lime)}
+
+  /* panel */
+  .tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:14px}
+  .tile{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+  .tile .tv{font-family:"Archivo";font-weight:900;font-size:1.9rem;line-height:1}
+  .tile .tl{color:var(--mute);font-size:.8rem;margin-top:6px}
+  .tile.lead .tv{color:var(--warn)} .tile.lag .tv{color:var(--crit)} .tile.crit .tv{color:var(--crit)}
+  .filters{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 12px}
+  .fchip{cursor:pointer;font-family:"Archivo";font-weight:800;font-size:.74rem;color:var(--mute);background:transparent;border:1px solid var(--line);border-radius:999px;padding:7px 12px}
+  .fchip.on{background:var(--white);color:#071428;border-color:var(--white)}
+  .evlist{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .ev{background:rgba(7,20,40,.5);border:1px solid var(--line);border-left:4px solid var(--ec,var(--line));border-radius:14px;padding:14px 16px}
+  .ev .eh{display:flex;align-items:flex-start;gap:8px;flex-wrap:wrap}
+  .ev h4{font-size:1rem;font-weight:800;flex:1;min-width:160px}
+  .ev .meta{color:var(--mute);font-size:.76rem;margin-top:2px}
+  .ev .kv{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:10px;font-size:.8rem}
+  .ev .kv b{font-family:"Archivo";color:var(--white)}
+  .ev details{margin-top:8px}
+  .ev summary{cursor:pointer;color:var(--blue-soft);font-family:"Archivo";font-weight:800;font-size:.78rem}
+  .ev dl{display:grid;grid-template-columns:auto 1fr;gap:5px 12px;margin-top:8px;font-size:.84rem}
+  .ev dt{font-family:"Archivo";font-weight:800;color:var(--blue-pale)}
+  .ev dd{color:var(--mute)}
+  .ev .acts{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+  .ev .acts button{cursor:pointer;font-family:"Archivo";font-weight:800;font-size:.72rem;background:transparent;border:1px solid var(--line);color:var(--mute);border-radius:9px;padding:6px 10px}
+  .ev .acts button:hover{border-color:var(--lime);color:var(--lime)}
+  .ev.example{border-style:dashed}
+  .empty{color:var(--mute);font-size:.9rem;font-style:italic;padding:10px 0}
+
+  /* cédulas */
+  .ced{background:#f4f6fb;color:#16213a;border-radius:18px;padding:clamp(16px,2.4vw,26px);box-shadow:0 18px 50px rgba(0,0,0,.35)}
+  .ced .ck{font-family:"Archivo";font-weight:800;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:#4a5878}
+  .ced h3{font-family:"Archivo";font-weight:900;font-size:clamp(1.3rem,2.6vw,1.9rem);color:#0b1324;text-transform:uppercase;letter-spacing:.01em;margin:2px 0 6px}
+  .ced p.ci{color:#3b4a6b;font-size:.92rem}
+  .ced .chead{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;justify-content:space-between}
+  .ced .chead .hf{display:flex;gap:10px;flex-wrap:wrap}
+  .ced .hf label{font-family:"Archivo";font-weight:800;font-size:.78rem;color:#0b1324;display:flex;flex-direction:column;gap:4px}
+  .ced input[type=text],.ced textarea,.ced select{background:#fff;border:1px solid #c8d0e2;color:#0b1324;border-radius:8px}
+  .ced input:focus,.ced textarea:focus,.ced select:focus{border-color:#1e52c8;box-shadow:0 0 0 3px rgba(30,82,200,.15)}
+  .ced .esc{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:.74rem;color:#4a5878;margin:10px 0 8px}
+  .ced .esc span{border:1px solid #c8d0e2;border-radius:999px;padding:2px 10px;background:#fff}
+  .ced table{width:100%;border-collapse:collapse;font-size:.88rem}
+  .ced th{background:#dfe4ee;color:#0b1324;font-family:"Archivo";font-weight:800;text-align:left;padding:8px 9px;border:1px solid #c8d0e2;vertical-align:top}
+  .ced th small{display:block;font-family:"Overpass";font-weight:400;color:#4a5878;font-size:.74rem}
+  .ced td{border:1px solid #c8d0e2;padding:4px;vertical-align:top;background:#fff}
+  .ced td textarea{border:none;min-height:62px;font-size:.88rem;padding:7px}
+  .ced td.idx{width:34px;text-align:center;font-family:"Archivo";font-weight:800;color:#4a5878;background:#eef1f7;padding-top:10px}
+  .ced .foot{color:#5b6a8a;font-size:.72rem;margin-top:10px;font-style:italic}
+  .ced .tucei{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}
+  .ced .box{border:1px solid #9aa6c2;border-top:4px solid #16213a;border-radius:8px;padding:10px 12px;background:#fff}
+  .ced .box.wide{grid-column:1/-1;border-width:2px;border-top-width:5px}
+  .ced .box h5{font-family:"Archivo";font-weight:900;font-size:1rem;color:#0b1324}
+  .ced .box p{color:#4a5878;font-size:.8rem;margin-bottom:6px}
+  .ced .box textarea{border:1px dashed #c8d0e2;min-height:86px}
+  .ced .box.wide textarea{min-height:110px}
+  .ced .steps3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:10px 0}
+  .ced .steps3 div{border:1px solid #c8d0e2;border-radius:8px;padding:9px 11px;font-size:.84rem;color:#3b4a6b;background:#fff}
+  .ced .steps3 b{font-family:"Archivo";font-size:1rem;color:#0b1324;margin-right:6px}
+  .ced .rmatrix .hd{background:#3a4258;color:#fff}
+  .ced .rmatrix .sv{background:#4f566b;color:#fff}
+  .ced .rmatrix .c-bajo{background:#e3e7ef;color:#16213a}
+  .ced .rmatrix .c-medio{background:#c3c9d6;color:#16213a}
+  .ced .rmatrix .c-alto{background:#8d95a8;color:#fff}
+  .ced .pin{background:#16213a;color:#fff}
+  .ced .placer{display:grid;gap:6px;margin-top:10px}
+  .ced .prow{display:grid;grid-template-columns:30px 1fr 130px 130px 86px;gap:8px;align-items:center;font-size:.86rem}
+  .ced .prow .pi{font-family:"Archivo";font-weight:900;color:#16213a;text-align:center}
+  .ced .prow .pt{color:#16213a}
+  .ced .prow .lv{font-family:"Archivo";font-weight:800;font-size:.72rem;text-align:center;border-radius:999px;padding:4px 6px}
+  .lv-alto{background:#ef6a5a;color:#fff}.lv-medio{background:#d7e64b;color:#16213a}.lv-bajo{background:#c9d6ef;color:#16213a}.lv-none{background:#eef1f7;color:#8590a8}
+  .ced .scale{display:grid;grid-template-columns:110px 90px repeat(5,1fr) 90px;gap:6px;align-items:center;margin-bottom:8px}
+  .ced .scale .sn{font-family:"Archivo";font-weight:800;font-size:1rem;color:#0b1324}
+  .ced .scale .se{color:#4a5878;font-size:.76rem}
+  .ced .scale .se.l{text-align:right}
+  .ced .scale label{cursor:pointer}
+  .ced .scale input{position:absolute;opacity:0;width:0;height:0}
+  .ced .scale span.b{display:flex;align-items:center;justify-content:center;height:42px;border:1px solid #9aa6c2;border-radius:4px;font-size:1.1rem;color:#16213a;background:#fff;transition:.15s}
+  .ced .scale label:last-of-type span.b{border:2px solid #16213a;font-weight:800}
+  .ced .scale input:checked + span.b{background:#1e52c8;color:#fff;border-color:#1e52c8}
+  .ced .scale input:focus-visible + span.b{outline:2px solid #d7e64b}
+  .ced .near{border:1px dashed #9aa6c2;border-radius:8px;padding:10px 12px;margin-top:8px}
+  .ced .near b{font-family:"Archivo";color:#0b1324;font-size:.9rem}
+  .ced .near input{border:none;border-bottom:1px solid #c8d0e2;border-radius:0;margin-top:6px}
+  .ced .ar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:.82rem;background:#fff;border:1px solid #c8d0e2;border-radius:10px;padding:8px 11px;color:#16213a}
+  .ced .ar .ac{font-family:"Archivo";font-weight:800}
+  .ced .ar .av{color:#4a5878}
+  .ced .ar button{margin-left:auto;cursor:pointer;background:transparent;border:1px solid #c8d0e2;color:#4a5878;border-radius:8px;font-size:.7rem;padding:4px 8px}
+  .ced .arlist{display:grid;gap:7px;margin-top:10px}
+  .ced .empty{color:#5b6a8a}
+  .ced .t-ok{background:#d9f4e7;color:#1d7a50}.ced .t-lead{background:#fbeccc;color:#8a5a00}
+  .cedtools{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;align-items:center}
+  .cedtools .hint{color:var(--mute);font-size:.8rem}
+  .exbadge{display:inline-flex;gap:6px;align-items:center}
+
+  /* modal */
+  .modal{position:fixed;inset:0;z-index:60;background:rgba(4,10,22,.8);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:16px}
+  .modal.open{display:flex}
+  .mbox{background:var(--navy-800);border:1px solid var(--line);border-radius:18px;max-width:980px;width:100%;max-height:88vh;overflow:auto;padding:24px 26px;position:relative}
+  .mbox h3{font-size:clamp(1.1rem,2vw,1.4rem);font-weight:900;margin:0 40px 6px 0}
+  .mbox .ms{color:var(--mute);font-size:.88rem;margin-bottom:12px}
+  .mclose{position:absolute;top:14px;right:14px;width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:rgba(10,26,51,.8);color:var(--white);cursor:pointer;font-size:1rem}
+  .mclose:hover{border-color:var(--lime);color:var(--lime)}
+  .mbox .tbl td{color:var(--mute)}
+  .mbox .tbl td b{color:var(--white)}
+
+  /* chrome */
+  .prog{position:fixed;top:0;left:0;height:3px;background:var(--lime);width:0;z-index:40;transition:width .4s ease;box-shadow:0 0 12px rgba(215,230,75,.5)}
+  .tbar{position:fixed;top:0;left:0;right:0;z-index:35;background:rgba(7,20,40,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .tin{padding:9px 16px;display:flex;align-items:center;gap:6px;overflow-x:auto;scrollbar-width:none}
+  .tin::-webkit-scrollbar{display:none}
+  .tchip{flex:0 0 auto;font-family:"Archivo";font-weight:800;font-size:.72rem;color:var(--mute);background:transparent;cursor:pointer;padding:7px 11px;border-radius:999px;border:1px solid var(--line);white-space:nowrap;transition:.2s}
+  .tchip:hover{color:var(--white);border-color:var(--blue-soft)}
+  .tchip.on{color:#071428;background:var(--lime);border-color:var(--lime)}
+  .tin .sp{flex:1 0 8px}
+  .tin .tb{flex:0 0 auto;font-family:"Archivo";font-weight:800;font-size:.72rem;cursor:pointer;border-radius:10px;padding:8px 11px;border:1px solid var(--line);background:rgba(10,26,51,.6);color:var(--white);display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+  .tin .tb:hover{border-color:var(--lime);color:var(--lime)}
+  .tin .tb.prime{background:var(--lime);color:#071428;border-color:var(--lime)}
+  .saved{flex:0 0 auto;font-size:.72rem;color:var(--ok);font-family:"Archivo";font-weight:700;opacity:0;transition:.3s}
+  .saved.show{opacity:1}
+  .hud{position:fixed;bottom:18px;right:20px;display:flex;align-items:center;gap:10px;z-index:30}
+  .hud button{width:44px;height:44px;border-radius:12px;border:1px solid var(--line);background:rgba(10,26,51,.85);color:var(--white);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;backdrop-filter:blur(6px)}
+  .hud button:hover{border-color:var(--lime);color:var(--lime)}
+  .hud button:disabled{opacity:.3;cursor:default}
+  .counter{font-family:"Archivo";font-weight:800;font-size:.82rem;color:var(--mute);letter-spacing:.08em;padding:0 6px;min-width:62px;text-align:center}
+  .counter b{color:var(--lime)}
+  .hint-key{position:fixed;bottom:20px;left:20px;z-index:30;color:var(--mute);font-size:.72rem;font-family:"Archivo";font-weight:700;letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;gap:8px;background:rgba(7,20,40,.9);border:1px solid var(--line);border-radius:12px;padding:7px 11px}
+  .hint-key kbd{background:rgba(10,26,51,.8);border:1px solid var(--line);border-radius:6px;padding:2px 7px;font-family:"Archivo";font-size:.72rem}
+  .hint-key.gone{opacity:0;transition:opacity .6s;pointer-events:none}
+  .toast{position:fixed;left:50%;bottom:80px;transform:translateX(-50%) translateY(20px);background:var(--lime);color:#071428;font-family:"Archivo";font-weight:800;font-size:.86rem;padding:11px 18px;border-radius:12px;opacity:0;transition:.3s;z-index:70;pointer-events:none;max-width:90vw;text-align:center}
+  .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  @media(max-width:900px){
+    .g4,.g5,.tiles{grid-template-columns:1fr 1fr}
+    .g2,.g3,.stairwrap,.datagrid,.heur,.evlist,.row3{grid-template-columns:1fr}
+    .stair[data-i]{margin-left:0}
+    .pl2,.pl3,.pl4,.pl5{margin:0}
+    .plevel{grid-template-columns:auto 1fr;border-radius:16px}
+    .plevel .pm{grid-column:1/-1;justify-self:start;white-space:normal}
+    .hint-key{display:none}
+    .slide{padding:66px 18px 92px}
+    .ced .tucei,.ced .steps3{grid-template-columns:1fr}
+    .ced .prow{grid-template-columns:26px 1fr 1fr;}
+    .ced .prow .pt{grid-column:2/-1}
+    .ced .prow .lv{grid-column:2/-1;justify-self:start}
+    .ced .prow select:nth-of-type(1){grid-column:2}
+    .ced .prow select:nth-of-type(2){grid-column:3}
+    .ced .prow{border-bottom:1px solid #e3e7ef;padding-bottom:8px}
+    .heur .hp{min-width:120px}
+  }
+  @media(max-width:560px){
+    .row2,.g4,.tiles{grid-template-columns:1fr}
+    .stair .df{display:none}
+    .ced .scale{grid-template-columns:repeat(5,1fr)}
+    .ced .scale .sn{grid-column:1/-1}
+    .ced .scale .se{display:none}
+    .tin .tl{display:none}
+    .ced table.c1 thead{display:none}
+    .ced table.c1,.ced table.c1 tbody,.ced table.c1 tr,.ced table.c1 td{display:block;width:100%}
+    .ced table.c1 tr{border:1px solid #c8d0e2;border-radius:10px;margin-bottom:10px;overflow:hidden}
+    .ced table.c1 td{border:none;border-bottom:1px solid #e3e7ef}
+    .ced table.c1 td.idx{text-align:left;padding:6px 10px;width:auto}
+    .ced table.c1 td[data-l]::before{content:attr(data-l);display:block;font-family:"Archivo";font-weight:800;font-size:.72rem;color:#4a5878;padding:6px 7px 0}
+  }
+</style>
+</head>
+<body>
+
+<div class="prog" id="prog"></div>
+<nav class="tbar">
+  <div class="tin" id="tin">
+    <button type="button" class="tchip" data-goto="ruta" data-step="0">Ruta</button>
+    <button type="button" class="tchip" data-goto="a-entornos" data-step="A">A · Entorno</button>
+    <button type="button" class="tchip" data-goto="escalera" data-step="B">B · Escalera</button>
+    <button type="button" class="tchip" data-goto="c-medir" data-step="C">C · El dato</button>
+    <button type="button" class="tchip" data-goto="d-formulas" data-step="D">D · Valorar</button>
+    <button type="button" class="tchip" data-goto="e-controles" data-step="E">E · Controles</button>
+    <button type="button" class="tchip" data-goto="f-cedulas" data-step="F">F · Cédulas</button>
+    <button type="button" class="tchip" data-goto="g-ev1" data-step="G">G · Panel</button>
+    <span class="sp"></span>
+    <span class="saved" id="savedMsg">Guardado ✓</span>
+    <button type="button" class="tb" id="copyBtn" title="Copiar todo en formato tabla para pegar en Google Sheets">⧉<span class="tl"> Copiar para Sheets</span></button>
+    <button type="button" class="tb prime" id="csvBtn" title="Descargar CSV para abrir en Sheets/Excel">↓<span class="tl"> Exportar</span></button>
+  </div>
+</nav>
+
+<div class="deck" id="deck">
+
+<!-- ================= INTRO ================= -->
+<section class="slide active" id="portada">
+  <div class="rings"><span style="width:620px;height:620px;top:-120px;right:-160px"></span><span style="width:940px;height:940px;top:-260px;right:-320px"></span></div>
+  <div class="sin hero" style="position:relative;z-index:1">
+    <div class="brandmark r" style="--d:.05s">
+      <span class="logo-ring"><svg viewBox="0 0 48 48" fill="none"><circle cx="22" cy="26" r="16" stroke="#f4f8ff" stroke-width="2.4"/><path d="M34 14 C 30 10, 24 9, 20 11" stroke="#d7e64b" stroke-width="2.4" stroke-linecap="round"/><circle cx="35" cy="13" r="2.4" fill="#ef6a5a"/></svg></span>
+      <span><small>NASA Space Apps · CDMX 2026 · Equipo ORBITAL</small><b>Riesgo en entornos confinados</b></span>
+    </div>
+    <div class="eyebrow r" style="--d:.15s">Monitoreo de salud de la tripulación</div>
+    <h1 class="r" style="--d:.25s">Medir antes del daño</h1>
+    <p class="lead r" style="--d:.35s">Aprendan a desarmar un evento con la <b>escalera del riesgo</b>, a valorarlo con dos fórmulas sencillas y a elegir el control más eficaz. Primero con un caso de Marte; luego, con sus propios eventos.</p>
+    <div class="backlinks r" style="--d:.45s">
+      <a href="proyecto.html">← Descripción del proyecto</a>
+      <a href="aterrizar.html">🧭 Aterrizar el reto</a>
+      <a href="empatia.html">🧠 Mapa de empatía</a>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="como" data-step="0">
+  <div class="sin">
+    <div class="eyebrow r">Antes de empezar</div>
+    <h2 class="title r" style="--d:.08s">Cómo usar esta presentación</h2>
+    <div class="g3">
+      <div class="card r" style="--d:.15s"><div class="ic">⌨️</div><h4>Avancen en orden</h4><p>Con las <b>flechas</b>, deslizando en el celular o con la barra de arriba para saltar a un bloque. <b>Esc</b> los saca de un campo; <b>F</b> pone pantalla completa.</p></div>
+      <div class="card r" style="--d:.22s"><div class="ic">✍️</div><h4>Llenen en equipo</h4><p>Las <b>cédulas 1–4</b> y el <b>panel de eventos</b> se llenan en vivo. Lo que registren se guarda solo y se sincroniza con el equipo.</p></div>
+      <div class="card r" style="--d:.29s"><div class="ic">🧪</div><h4>Partan de un ejemplo</h4><p>Cada cédula trae <b>dos ejemplos</b>: el hábitat en Marte y la estación remota del taller. Pueden verlos o copiarlos a los campos vacíos.</p></div>
+    </div>
+    <div class="callout r" style="--d:.36s"><b>Al terminar:</b> “Exportar” o “Copiar para Sheets” (barra de arriba) se lleva cédulas, eventos y autorreportes a una hoja de cálculo como insumo para prototipar.</div>
+  </div>
+</section>
+
+<section class="slide" id="equipo" data-step="0">
+  <div class="sin">
+    <div class="eyebrow r">Trabajo en equipo</div>
+    <h2 class="title r" style="--d:.08s">Tu nombre y tu equipo</h2>
+    <div id="syncbar" class="r" style="--d:.15s;margin-top:6px"></div>
+    <p class="sub r" style="--d:.22s;margin-top:12px;font-size:.95rem">Pon tu nombre para que tus eventos y autorreportes queden firmados. Todos con el mismo equipo (<b>tacos-de-asada</b>) ven lo mismo.</p>
+    <div style="height:160px"></div>
+  </div>
+</section>
+
+<section class="slide" id="ruta" data-step="0">
+  <div class="sin">
+    <div class="eyebrow r">La ruta de la sesión</div>
+    <h2 class="title r" style="--d:.08s">Siete bloques, en orden</h2>
+    <p class="sub r" style="--d:.1s;font-size:.9rem">Las dos pantallas de antes quedaron así: <b>1 · Aprender: escalera con el caso Marte</b> → bloques A a E · <b>2 · Panel de eventos y cálculos</b> → bloques F y G.</p>
+    <div class="g4" style="grid-template-columns:repeat(4,1fr)">
+      <a class="card r" style="--d:.12s;text-decoration:none;color:inherit" href="#a-entornos" data-goto="a-entornos"><div class="numq">A</div><h4>El entorno y el usuario</h4><p>Dónde y en quién se captura el dato.</p></a>
+      <a class="card r" style="--d:.17s;text-decoration:none;color:inherit" href="#escalera" data-goto="escalera"><div class="numq">B</div><h4>La escalera del riesgo</h4><p>Del peligro al daño, con el caso Marte.</p></a>
+      <a class="card r" style="--d:.22s;text-decoration:none;color:inherit" href="#c-medir" data-goto="c-medir"><div class="numq">C</div><h4>El dato</h4><p>Indicadores adelantados y rezagados, dos bitácoras.</p></a>
+      <a class="card r" style="--d:.27s;text-decoration:none;color:inherit" href="#d-formulas" data-goto="d-formulas"><div class="numq">D</div><h4>Valorar el riesgo</h4><p>GP de William Fine, GR de la NASA y la matriz.</p></a>
+      <a class="card r" style="--d:.32s;text-decoration:none;color:inherit" href="#e-controles" data-goto="e-controles"><div class="numq">E</div><h4>Controles y sistema</h4><p>Jerarquía, “¿Y si…?”, HAS, DOL y heurísticas.</p></a>
+      <a class="card r" style="--d:.37s;text-decoration:none;color:inherit" href="#f-cedulas" data-goto="f-cedulas"><div class="numq">F</div><h4>Cédulas 1–4</h4><p>Peligros, matriz, autorreporte y lienzo del sistema.</p></a>
+      <a class="card r" style="--d:.42s;text-decoration:none;color:inherit" href="#g-ev1" data-goto="g-ev1"><div class="numq">G</div><h4>Panel de eventos</h4><p>Registrar, calcular GP y GR, y elegir control.</p></a>
+      <a class="card r" style="--d:.47s;text-decoration:none;color:inherit" href="#biblio1" data-goto="biblio1"><div class="numq">+</div><h4>Fuentes</h4><p>Bibliografía del bootcamp y referencias.</p></a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= A · ENTORNO Y USUARIO ================= -->
+<section class="slide" id="a-entornos" data-step="A">
+  <div class="sin">
+    <div class="eyebrow r">A · Las naves y los navíos</div>
+    <h2 class="title r" style="--d:.08s">Entornos confinados</h2>
+    <p class="sub r" style="--d:.14s">Naves, bases, barcos, buques, estaciones remotas, cápsulas y satélites <b>comparten condiciones que cambian cómo interactuamos y cómo nos cuidamos.</b></p>
+    <div class="g4">
+      <div class="card r" style="--d:.2s"><div class="ic">🛖</div><h4>Confinado</h4><p>Espacio cerrado, convivencia continua y rutinas que no se interrumpen.</p></div>
+      <div class="card r" style="--d:.26s"><div class="ic">📡</div><h4>Lejos de ayuda</h4><p>La atención especializada puede tardar horas, días o no llegar nunca.</p></div>
+      <div class="card r" style="--d:.32s"><div class="ic">🧯</div><h4>Recursos limitados</h4><p>Cada objeto y cada minuto compiten por la atención del usuario.</p></div>
+      <div class="card r" style="--d:.38s"><div class="ic">🔁</div><h4>Rutinas ininterrumpidas</h4><p>Turnos nocturnos, sueño fragmentado y vigilancia larga.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="a-cambia" data-step="A">
+  <div class="sin">
+    <div class="eyebrow r">A · El entorno cambia a las personas</div>
+    <h2 class="title r" style="--d:.08s">Qué cambia y dónde se manifiesta</h2>
+    <div class="tblwrap r" style="--d:.15s">
+      <table class="tbl">
+        <thead><tr><th>Factor del entorno</th><th>Qué cambia en las personas</th><th>En dónde se manifiesta</th></tr></thead>
+        <tbody>
+          <tr><td><b>Gravedad reducida</b></td><td>Músculos, huesos, sentidos, equilibrio y circulación</td><td>En altitudes, latitudes y condiciones climáticas <small>(así como en vuelo, órbita, la Luna o en Marte)</small></td></tr>
+          <tr><td><b>Aislamiento y confinamiento</b></td><td>Ánimo, sueño, motivación y convivencia</td><td>Naves, bases, barcos, estaciones remotas <small>(así como en cápsulas, cabinas o planetas)</small></td></tr>
+          <tr><td><b>Luz y ciclos de día y noche</b></td><td>Descanso, alerta y tiempo de reacción</td><td>Turnos, bases polares, ubicaciones y localizaciones</td></tr>
+          <tr><td><b>Temperatura y presión</b></td><td>Fatiga, desempeño y riesgos de lesión</td><td>Uniformes, hábitats, trabajo a la intemperie</td></tr>
+          <tr><td><b>Ruido y vibración</b></td><td>Audición, concentración y comunicación</td><td>Vehículos, máquinas, módulos cerrados y estaciones de trabajo</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="statement r" style="--d:.22s">Ningún tipo de dato se entiende sin saber en qué entorno se capturó.<small>El aislamiento puede derivar en agitación o claustrofobia; la iluminación y los ciclos de día y noche afectan directamente el descanso, las alertas y los tiempos de reacción.</small></div>
+    <p class="src">Fuentes: Enciclopedia de Salud y Seguridad en el Trabajo (OIT), caps. 29, 37, 42, 47, 50 y 102; Mancera Fernández et al. (2018).</p>
+  </div>
+</section>
+
+<section class="slide" id="a-dato" data-step="A">
+  <div class="sin">
+    <div class="eyebrow r">A · El dato y el usuario</div>
+    <h2 class="title r" style="--d:.08s">Cuatro preguntas para cualquier dato</h2>
+    <div class="g4">
+      <div class="card r" style="--d:.15s"><div class="numq">01</div><h4>¿Quién lo genera?</h4><p>La persona, un sensor, un compañero o el sistema.</p></div>
+      <div class="card r" style="--d:.21s"><div class="numq">02</div><h4>¿En qué condición se tomó?</h4><p>Entorno, turno, estado de la persona.</p></div>
+      <div class="card r" style="--d:.27s"><div class="numq">03</div><h4>¿Quién lo lee?</h4><p>La propia tripulación, un médico, el control de misión.</p></div>
+      <div class="card r" style="--d:.33s"><div class="numq">04</div><h4>¿Qué decisión permite tomar?</h4><p>Si no cambia una decisión, quizá no hay que medirlo.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="a-promedio" data-step="A">
+  <div class="sin">
+    <div class="eyebrow r">A · Diseñar para personas reales</div>
+    <h2 class="title r" style="--d:.08s">El usuario promedio no existe</h2>
+    <div class="g2">
+      <div class="card r" style="--d:.15s"><div class="kk" style="--c:var(--mute)">Lo habitual</div><h4>Tablas y promedios</h4><p>Datos de poblaciones que quizá no son quienes usarán lo que diseñamos.</p></div>
+      <div class="card top-c r" style="--d:.22s;--c:var(--crit)"><div class="kk" style="--c:var(--crit)">Lo conveniente</div><h4>Medir a quien lo vive</h4><p>Observar, medir y probar con personas reales, en condiciones parecidas a las reales.</p></div>
+    </div>
+    <div class="statement r" style="--d:.3s;border-left-color:var(--royal-bright)">La información tiene que venir del cuerpo real, en la condición real.<small>Y cuando el entorno cambia, el cuerpo cambia con él.</small></div>
+  </div>
+</section>
+
+<section class="slide" id="a-marte" data-step="A">
+  <div class="sin">
+    <div class="eyebrow r">El entorno · Hábitat de superficie en Marte</div>
+    <h2 class="title r" style="--d:.08s">Ningún dato se entiende sin su entorno</h2>
+    <p class="sub r" style="--d:.14s">Un hábitat en Marte comparte las condiciones de naves, bases polares y estaciones remotas: cambian cómo interactuamos y cómo nos cuidamos.</p>
+    <div class="g4">
+      <div class="card r" style="--d:.2s"><div class="ic">🛖</div><h4>Confinado</h4><p>Espacio cerrado, convivencia continua y aire que se recircula.</p></div>
+      <div class="card r" style="--d:.26s"><div class="ic">📡</div><h4>Lejos de ayuda</h4><p>Hasta ~20 min de retraso por mensaje: la tripulación decide sola.</p></div>
+      <div class="card r" style="--d:.32s"><div class="ic">🧯</div><h4>Recursos limitados</h4><p>Cada filtro, repuesto y minuto compite por la atención.</p></div>
+      <div class="card r" style="--d:.38s"><div class="ic">🔁</div><h4>Rutinas ininterrumpidas</h4><p>Turnos nocturnos, sueño fragmentado y vigilancia larga.</p></div>
+    </div>
+    <div class="callout r" style="--d:.44s"><b>Datos ficticios.</b> El caso y la bitácora de esta pantalla son inventados para aprender a usar la herramienta, inspirados en el ejercicio de la bitácora de una estación remota del bootcamp.</div>
+  </div>
+</section>
+
+<!-- ================= B · ESCALERA ================= -->
+<section class="slide" id="escalera" data-step="B">
+  <div class="sin">
+    <div class="eyebrow r">Paso 1 · Desarmar el evento</div>
+    <h2 class="title r" style="--d:.08s">La escalera del riesgo</h2>
+    <p class="sub r" style="--d:.14s">Toquen cada escalón, en orden. Un evento se entiende de arriba hacia abajo: <b>del peligro al daño</b>. Monitorear sirve para actuar antes del último escalón.</p>
+    <div class="stairwrap r" style="--d:.2s">
+      <div class="stairs" id="stairs"></div>
+      <div class="detail" id="stairDetail"></div>
+    </div>
+    <p class="src">Con base en ISO 14971:2019, UNDRR (2016), Ley General de Protección Civil y Wilches-Chaux (1993), según la ponencia del bootcamp (CIDI UNAM).</p>
+  </div>
+</section>
+
+<section class="slide" id="b-terminos" data-step="B">
+  <div class="sin">
+    <div class="eyebrow r">B · ¿Riesgo o daño?</div>
+    <h2 class="title r" style="--d:.08s">Antes de medir, cada equipo define sus términos</h2>
+    <div class="g2">
+      <div class="card r" style="--d:.15s">
+        <div class="kk">Peligro</div><div class="big" style="margin:6px 0 14px">Ruido</div>
+        <div class="kk" style="--c:var(--crit)">¿“Posible riesgo”?</div><div class="big" style="margin-top:6px">Sordera</div>
+      </div>
+      <div class="card r" style="--d:.22s">
+        <p>Una matriz de peligros analizada pone el ruido como peligro y la sordera como “posible riesgo”.</p>
+        <p style="margin-top:12px">En nuestra escalera, la sordera es el <b>daño</b>. El riesgo es qué tan probable y qué tan grave es llegar a ella.</p>
+        <p style="margin-top:12px;color:var(--crit);font-family:Archivo;font-weight:800;font-size:1.1rem">Antes de medir, cada equipo define sus términos.</p>
+      </div>
+    </div>
+    <p class="src">Ejemplo tomado de Butrón Palacio (2018), elaboración de la matriz de peligros.</p>
+  </div>
+</section>
+
+<!-- ================= C · EL DATO ================= -->
+<section class="slide" id="c-medir" data-step="C">
+  <div class="sin">
+    <div class="eyebrow r">C · El dato</div>
+    <h2 class="title r" style="--d:.08s">Medir antes del daño</h2>
+    <div class="g2">
+      <div class="card top-c r" style="--d:.15s;--c:var(--crit)"><div class="kk" style="--c:var(--crit)">Llegan tarde</div><h4>Indicadores rezagados</h4><p>Lesiones, fallas, incidentes, días perdidos.</p><p style="margin-top:10px"><b>Confirman el daño cuando ya ocurrió.</b></p></div>
+      <div class="card top-c r" style="--d:.22s;--c:var(--warn)"><div class="kk" style="--c:var(--warn)">Avisan antes</div><h4>Indicadores adelantados</h4><p>Cansancio, mantenimiento atrasado, alarmas ignoradas, casi-incidentes.</p><p style="margin-top:10px"><b>Permiten actuar antes.</b></p></div>
+    </div>
+    <div class="statement r" style="--d:.3s">Casi todos los proyectos miden el daño. <span class="hl">El valor del monitoreo está antes.</span></div>
+  </div>
+</section>
+
+<section class="slide" id="dato" data-step="C">
+  <div class="sin">
+    <div class="eyebrow r">Paso 2 · El dato</div>
+    <h2 class="title r" style="--d:.08s">Bitácora del hábitat · 7 soles</h2>
+    <p class="sub r" style="--d:.14s">Tres señales de la tripulación cruzadas con el CO₂ del módulo. Lean la gráfica de izquierda a derecha y busquen <b>cuándo apareció el primer aviso</b>.</p>
+    <div class="datagrid r" style="--d:.2s">
+      <div class="chartcard">
+        <div class="legend">
+          <span><i class="sw" style="background:rgba(242,193,78,.35)"></i>Indicador adelantado (aviso)</span>
+          <span><i class="sw" style="background:rgba(239,106,90,.4)"></i>Indicador rezagado (daño)</span>
+          <span><i class="sw" style="background:#ef6a5a;height:2px"></i>Límite NASA de CO₂</span>
+        </div>
+        <h4>CO₂ en el módulo (ppm)</h4><div class="cs">Límite: 3 mmHg ≈ 3,950 ppm, promedio de 1 hora (NASA-STD-3001 Vol. 2, V2 6004)</div>
+        <svg id="chCO2" viewBox="0 0 640 150" role="img" aria-label="CO2 por sol"></svg>
+        <div class="chartsep"></div>
+        <h4>Sueño promedio de la tripulación (h)</h4><div class="cs">Menos horas = más fatiga y menos atención</div>
+        <svg id="chSleep" viewBox="0 0 640 120" role="img" aria-label="Sueño por sol"></svg>
+        <div class="chartsep"></div>
+        <h4>Frecuencia respiratoria en reposo (resp/min)</h4><div class="cs">Respiración agitada al subir el CO₂</div>
+        <svg id="chResp" viewBox="0 0 640 120" role="img" aria-label="Frecuencia respiratoria por sol"></svg>
+      </div>
+      <div>
+        <table class="tbl" id="logtbl">
+          <thead><tr><th>Sol</th><th>CO₂</th><th>Sueño</th><th>Resp.</th><th>Alarmas</th><th>Nota de la bitácora</th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <div style="margin-top:12px"><button type="button" class="btn" id="btnInsight">🔍 ¿Dónde estaba el aviso?</button></div>
+        <div class="callout insight" id="insight">
+          <b>El aviso llegó dos soles antes del daño.</b> En los soles 3 y 4 ya había <b>indicadores adelantados</b>: menos sueño, más alarmas, un ventilador ruidoso y una alarma silenciada. El sol 5 trae el <b>indicador rezagado</b>: el daño confirmado. Casi todos los proyectos miden el daño; el valor del monitoreo está antes.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="c-estacion" data-step="C">
+  <div class="sin">
+    <div class="eyebrow r">Ejemplo 2 · Datos ficticios del taller</div>
+    <h2 class="title r" style="--d:.08s">Bitácora de una estación remota</h2>
+    <p class="sub r" style="--d:.14s">El ejercicio del bootcamp. Antes de ver la respuesta, en equipo: <b>¿qué día aparece el primer aviso?, ¿cuál es el daño?, ¿qué control funcionó?</b></p>
+    <div class="tblwrap r" style="--d:.2s">
+      <table class="tbl" id="logtbl2">
+        <thead><tr><th>Día</th><th>CO₂ interior (ppm)</th><th>Sueño promedio (h)</th><th>Alarmas del sistema</th><th>Nota de la bitácora</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <p class="src">Datos inventados para el ejercicio; no corresponden a ninguna persona. (¿O sí?)</p>
+    <div style="margin-top:12px"><button type="button" class="btn" id="btnInsight2">🔍 Ver la lectura</button></div>
+    <div class="callout insight" id="insight2"><b>Aviso desde el miércoles:</b> el CO₂ sube, el sueño baja y el ventilador 2 hace ruido. El jueves silencian una alarma repetida (indicador adelantado ignorado). El viernes llega el <b>daño</b>: dos personas con dolor de cabeza (indicador rezagado). El sábado <b>se cambió el filtro</b> (sustitución) y el lunes siguiente todo vuelve a la línea base. Ojo: 1,900 ppm sigue debajo del límite NASA (GR ≈ 0.48), y aun así hubo síntomas: <b>comparen contra la línea base de la tripulación, no solo contra el límite.</b></div>
+  </div>
+</section>
+
+<section class="slide" id="c-subjetivo" data-step="C">
+  <div class="sin">
+    <div class="eyebrow r">Lo que no mide un sensor</div>
+    <h2 class="title r" style="--d:.08s">El dato subjetivo también se diseña</h2>
+    <div class="g3">
+      <div class="card r" style="--d:.15s"><h4>Escalas visuales</h4><p>Cuánto: caritas, colores, termómetros.</p></div>
+      <div class="card r" style="--d:.21s"><h4>Mapas</h4><p>Dónde, señalado sobre una silueta, un plano o un mapa.</p></div>
+      <div class="card r" style="--d:.27s"><h4>Preguntas de un minuto</h4><p>Fatiga, ánimo o confianza, sin formularios largos.</p></div>
+    </div>
+    <div class="statement r" style="--d:.34s;background:var(--lime);color:#071428;border-left-color:#071428">Validar y recortar también es diseñar.<small style="color:#1b2440">En 48 horas, decidir qué no se mide es tan importante como decidir qué sí.</small></div>
+  </div>
+</section>
+
+<section class="slide" id="c-vigila" data-step="C">
+  <div class="sin">
+    <div class="eyebrow r">¿Quién mira los datos?</div>
+    <h2 class="title r" style="--d:.08s">Nadie vigila una pantalla todo el día</h2>
+    <p class="sub r" style="--d:.14s"><b>Detectar señales raras e imprevisibles se vuelve más difícil mientras más larga es la tarea.</b> Eviten turnos de vigilancia ininterrumpidos de más de 8 horas: la fatiga visual reduce drásticamente la capacidad de detectar alertas.</p>
+    <div class="g3">
+      <div class="card top-c r" style="--d:.2s;--c:var(--blue-soft)"><h4>Su línea base</h4><p>Comparar contra su propio historial, no solo contra un promedio.</p></div>
+      <div class="card top-c r" style="--d:.26s;--c:var(--lime)"><h4>Pocas alarmas</h4><p>Bien jerarquizadas: el exceso de avisos se termina ignorando.</p></div>
+      <div class="card top-c r" style="--d:.32s;--c:var(--crit)"><h4>Lectura simple</h4><p>Diseñar para quien no es experto en el tema.</p></div>
+    </div>
+    <p class="src">Heuer, “Vigilancia”, en Enciclopedia de Salud y Seguridad en el Trabajo (OIT), cap. 29.</p>
+  </div>
+</section>
+
+<!-- ================= D · VALORAR ================= -->
+<section class="slide" id="d-formulas" data-step="D">
+  <div class="sin">
+    <div class="eyebrow r">Valorar el riesgo</div>
+    <h2 class="title r" style="--d:.08s">Dos fórmulas sencillas</h2>
+    <div class="g2">
+      <div class="card vcard r" style="--d:.15s"><div class="formula">GP = C × E × P</div><p><b>Grado de peligrosidad:</b> consecuencias × exposición × probabilidad. Método de William Fine.</p></div>
+      <div class="card vcard r" style="--d:.22s"><div class="formula">GR = real ÷ límite</div><p><b>Grado de riesgo:</b> la dosis que se midió dividida entre la dosis permitida.</p></div>
+    </div>
+    <div class="statement r" style="--d:.3s">Eso es monitorear: <span style="color:var(--blue-soft)">comparar datos con sus límites.</span><small>La NASA hace lo mismo con sus límites de exposición permisibles para vuelos espaciales.</small></div>
+    <p class="src">Butrón Palacio (2018); Mancera Fernández et al. (2018); NASA-STD-3001, Vol. 1, Rev. C.</p>
+  </div>
+</section>
+
+<section class="slide" id="d-escalas" data-step="D">
+  <div class="sin">
+    <div class="eyebrow r">D · Las escalas de William Fine</div>
+    <h2 class="title r" style="--d:.08s">C, E y P: elijan un valor de cada tabla</h2>
+    <div class="g3 r" style="--d:.15s" id="fineTables"></div>
+    <div class="card r" style="--d:.22s;margin-top:16px"><div class="kk">Interpretación del GP</div><div class="bands" id="fineBands"></div></div>
+    <p class="src">Escalas según INSST, <a href="https://www.insst.es/documentacion/colecciones-tecnicas/ntp-notas-tecnicas-de-prevencion/3-serie-ntp-numeros-086-a-120-ano-1984/ntp-101-comunicacion-de-riesgos-en-la-empresantp_101" target="_blank" rel="noopener">NTP 101</a>. GR: ≥ 1 excede el límite; la zona “vigilar” (≥ 0.5) es una decisión de diseño de ORBITAL.</p>
+  </div>
+</section>
+
+<section class="slide" id="valorar" data-step="D">
+  <div class="sin">
+    <div class="eyebrow r">Paso 3 · Valorar el riesgo del caso</div>
+    <h2 class="title r" style="--d:.08s">Dos fórmulas sencillas</h2>
+    <p class="sub r" style="--d:.14s">Monitorear es <b>comparar datos con sus límites</b>. La NASA hace lo mismo con sus límites de exposición permisibles para vuelos espaciales.</p>
+    <div class="g3">
+      <div class="card vcard r" style="--d:.2s">
+        <div class="vk">Grado de peligrosidad · William Fine</div>
+        <div class="formula">GP = C × E × P</div>
+        <div class="calc">15 × 6 × 6 = <span class="hl" id="exGP">540</span></div>
+        <p><b>C = 15</b> lesión extremadamente grave (síncope, afectación motriz) · <b>E = 6</b> la falla nocturna ocurre casi a diario · <b>P = 6</b> completamente posible con la tripulación fatigada.</p>
+        <div style="margin-top:10px" id="exGPband"></div>
+      </div>
+      <div class="card vcard r" style="--d:.26s">
+        <div class="vk">Grado de riesgo · parámetro NASA</div>
+        <div class="formula">GR = real ÷ límite</div>
+        <div class="calc">4,300 ÷ 3,950 = <span class="hl" id="exGR">1.09</span></div>
+        <p>CO₂ medido el <b>sol 5</b> entre el límite permisible. <b>GR ≥ 1</b> significa que la dosis medida ya rebasó la permitida.</p>
+        <div style="margin-top:10px" id="exGRband"></div>
+      </div>
+      <div class="card vcard r" style="--d:.32s">
+        <div class="vk">Matriz de riesgo · probabilidad × severidad</div>
+        <div class="rmatrix" id="exMatrix"></div>
+        <p style="margin-top:10px">Probabilidad <b>alta</b> × severidad <b>grave</b> = <b>Alto</b>: se atiende primero, con la jerarquía de controles.</p>
+      </div>
+    </div>
+    <p class="src">Escalas de Fine según INSST, <a href="https://www.insst.es/documentacion/colecciones-tecnicas/ntp-notas-tecnicas-de-prevencion/3-serie-ntp-numeros-086-a-120-ano-1984/ntp-101-comunicacion-de-riesgos-en-la-empresantp_101" target="_blank" rel="noopener">NTP 101</a>; límite de CO₂ según NASA OCHMO, <a href="https://www.nasa.gov/wp-content/uploads/2023/12/ochmo-tb-004-carbon-dioxide.pdf" target="_blank" rel="noopener">Technical Brief CO₂</a>; matriz simplificada (ISO 14971; Butrón Palacio, 2018; Mancera Fernández et al., 2018).</p>
+  </div>
+</section>
+
+<section class="slide" id="d-matriz" data-step="D">
+  <div class="sin">
+    <div class="eyebrow r">Cédula 2 · Cómo se usa</div>
+    <h2 class="title r" style="--d:.08s">Matriz de riesgo</h2>
+    <div class="g2">
+      <div class="card r" style="--d:.15s"><div class="rmatrix big" id="matrixBlank"></div></div>
+      <div class="card r" style="--d:.22s">
+        <p style="font-size:1.05rem"><b>1.</b> Escriban cada peligro de la cédula 1 en una nota adhesiva o en su casilla.</p>
+        <p style="font-size:1.05rem;margin-top:12px"><b>2.</b> Colóquenlo según qué tan probable y qué tan grave es.</p>
+        <p style="font-size:1.05rem;margin-top:12px"><b>3.</b> Lo que caiga en <b style="color:var(--crit)">Alto</b> (coral) se atiende primero, con la jerarquía de controles.</p>
+      </div>
+    </div>
+    <p class="src">Versión simplificada de probabilidad × severidad (ISO 14971; Butrón Palacio, 2018; Mancera Fernández et al., 2018).</p>
+  </div>
+</section>
+
+<!-- ================= E · CONTROLES Y SISTEMA ================= -->
+<section class="slide" id="e-controles" data-step="E">
+  <div class="sin">
+    <div class="eyebrow r">Paso 4 · ¿Y luego qué hacemos?</div>
+    <h2 class="title r" style="--d:.08s">La jerarquía de controles</h2>
+    <p class="sub r" style="--d:.14s">De lo más eficaz a lo menos: actuar <b>en la fuente</b>, <b>en el medio</b> y, al final, <b>en la persona</b>. Así se resolvió el caso de Marte:</p>
+    <div class="pyr r" style="--d:.2s" id="exPyr"></div>
+    <div class="notctrl r" style="--d:.26s"><b>✕ Apagar o silenciar la alarma no es un control.</b> Es lo que hizo la tripulación el sol 4: el CO₂ siguió subiendo y el daño llegó al día siguiente. Una alarma ignorada es un indicador adelantado, no una solución.</div>
+    <p class="src">NIOSH, Hierarchy of Controls; Butrón Palacio (2018); Mancera Fernández et al. (2018).</p>
+    <div class="btnrow r" style="--d:.3s">
+      <button type="button" class="btn prime" data-goto="f-cedulas">Ahora registren sus propios eventos →</button>
+      <button type="button" class="btn" id="btnLoadExample">Ver el caso Marte en el panel</button>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="e-ysi" data-step="E">
+  <div class="sin">
+    <div class="eyebrow r">Anticipar la falla</div>
+    <h2 class="title r" style="--d:.08s">Herramientas para preguntar “¿Y si…?”</h2>
+    <div class="g3">
+      <div class="card top-c r" style="--d:.15s;--c:var(--crit)"><h4 style="color:var(--crit)">AMEF</h4><p>Análisis de modos de falla y efectos: <b>qué puede fallar, qué provoca y qué tan grave es.</b></p></div>
+      <div class="card top-c r" style="--d:.21s;--c:var(--blue-soft)"><h4 style="color:var(--blue-soft)">Árbol de fallos</h4><p>Desde un evento que no queremos hasta todas sus causas posibles. <b>De dónde vino y cómo lo atendemos.</b></p></div>
+      <div class="card top-c r" style="--d:.27s;--c:var(--lime)"><h4 style="color:var(--lime)">¿Qué pasa si…?</h4><p>Preguntas abiertas sobre escenarios para encontrar errores antes de siquiera construir. <b>¿Y si por un estornudo…?</b></p></div>
+    </div>
+    <p class="src">Mancera Fernández et al. (2018); herramientas comunes en la gestión de riesgos de dispositivos médicos (ISO 14971).</p>
+  </div>
+</section>
+
+<section class="slide" id="e-has" data-step="E">
+  <div class="sin">
+    <div class="eyebrow r">El sistema</div>
+    <h2 class="title r" style="--d:.08s">Cinco preguntas antes de diseñar</h2>
+    <p class="sub r" style="--d:.12s;font-family:Archivo;font-weight:800;color:var(--blue-soft)">HAS = (T, U, C, E, I)</p>
+    <div class="g5">
+      <div class="card top-c r" style="--d:.16s;--c:#ef6a5a"><div class="letter" style="--c:#ef6a5a">T</div><h4>Tareas</h4><p>¿Qué tiene que hacer la persona, física y mentalmente?</p></div>
+      <div class="card top-c r" style="--d:.21s;--c:#2a66e6"><div class="letter" style="--c:#4e8fe6">U</div><h4>Usuario</h4><p>¿Cómo están su cuerpo y su mente en esa condición?</p></div>
+      <div class="card top-c r" style="--d:.26s;--c:#d7e64b"><div class="letter" style="--c:#d7e64b">C</div><h4>Automatización</h4><p>¿Qué hacen el software, el hardware y la interfaz?</p></div>
+      <div class="card top-c r" style="--d:.31s;--c:#2aa1f0"><div class="letter" style="--c:#2aa1f0">E</div><h4>Entorno</h4><p>¿Dónde ocurre: confinado, lejos, con retraso en la comunicación?</p></div>
+      <div class="card top-c r" style="--d:.36s;--c:#f4f8ff"><div class="letter" style="--c:#f4f8ff">I</div><h4>Interacciones</h4><p>¿Cómo se afectan los cuatro anteriores entre sí?</p></div>
+    </div>
+    <p class="src">Karwowski y Zurada, “Software y ordenadores: sistemas híbridos automatizados”, en Enciclopedia de Salud y Seguridad en el Trabajo (OIT), cap. 58.</p>
+  </div>
+</section>
+
+<section class="slide" id="e-dol" data-step="E">
+  <div class="sin">
+    <div class="eyebrow r">Un principio de operación</div>
+    <h2 class="title r" style="--d:.08s">Disciplina, orden y limpieza</h2>
+    <div class="g3">
+      <div class="card r" style="--d:.15s"><div class="letter" style="--c:#d7e64b">D</div><h4>Disciplina</h4><p>El protocolo: lo que se hace siempre igual, aunque nadie esté mirando.</p></div>
+      <div class="card r" style="--d:.21s"><div class="letter" style="--c:#2aa1f0">O</div><h4>Orden</h4><p>La jerarquía de la información: lo urgente primero y en el mismo lugar.</p></div>
+      <div class="card r" style="--d:.27s"><div class="letter" style="--c:#ef7d65">L</div><h4>Limpieza</h4><p>Una interfaz sin ruido: si todo resalta, nada resalta. <b>No amontonemos nada.</b></p></div>
+    </div>
+    <p class="src">Principios fundamentales de la operación segura, aplicados en instituciones navales (ponencia del bootcamp).</p>
+  </div>
+</section>
+
+<section class="slide" id="e-heur" data-step="E">
+  <div class="sin">
+    <div class="eyebrow r">Para diseñar la interfaz</div>
+    <h2 class="title r" style="--d:.08s">Heurísticas de Nielsen (10) para la usabilidad</h2>
+    <p class="sub r" style="--d:.12s">Principios fundamentales de usabilidad propuestos por <b>Jakob Nielsen</b> para el diseño de interfaces, que actúan como <b>reglas generales</b> para mejorar la experiencia del usuario. Se usan para <b>realizar evaluaciones heurísticas</b>: identificar problemas de diseño y crear interfaces más intuitivas, eficientes y fáciles de aprender.</p>
+    <div class="heur r" style="--d:.18s" id="heurList"></div>
+    <p class="src">Presentación “Heurísticas”, Tarek Villalobos Cacho (bootcamp). En la diapositiva, la descripción de “10. Ayuda” repetía la de “9. Recuperación”; aquí se usa la definición general de Nielsen.</p>
+  </div>
+</section>
+
+<!-- ================= F · CÉDULAS ================= -->
+<section class="slide" id="f-cedulas" data-step="F">
+  <div class="sin">
+    <div class="eyebrow r">F · Ahora ustedes</div>
+    <h2 class="title r" style="--d:.08s">Las cuatro cédulas, en equipo</h2>
+    <p class="sub r" style="--d:.14s">Son las hojas del bootcamp, ahora llenables desde cualquier dispositivo. Llénenlas en este orden; cada una alimenta a la siguiente.</p>
+    <div class="g4">
+      <div class="card r" style="--d:.2s"><div class="numq">1</div><h4>Identificación de peligros</h4><p>Elijan una tarea en un entorno confinado y bajen cada peligro por la escalera.</p></div>
+      <div class="card r" style="--d:.26s"><div class="numq">2</div><h4>Matriz de riesgo</h4><p>Ubiquen cada peligro por probabilidad × severidad y elijan control.</p></div>
+      <div class="card r" style="--d:.32s"><div class="numq">3</div><h4>Autorreporte diario</h4><p>Un minuto por persona: fatiga, dolor, ánimo, sueño y casi-incidentes.</p></div>
+      <div class="card r" style="--d:.38s"><div class="numq">4</div><h4>Lienzo del sistema</h4><p>T, U, C, E e I de su propio proyecto. Interacciones es la más importante.</p></div>
+    </div>
+    <div class="g2">
+      <div class="card r" style="--d:.44s"><div class="kk" style="--c:var(--lime)">Ejemplo 1</div><h4>Hábitat en Marte · CO₂</h4><p>El caso de esta presentación: turno nocturno de soporte vital.</p></div>
+      <div class="card r" style="--d:.5s"><div class="kk" style="--c:var(--lime)">Ejemplo 2</div><h4>Estación remota · bitácora del taller</h4><p>Los datos del ejercicio del bootcamp (lunes a domingo).</p></div>
+    </div>
+    <div class="callout r" style="--d:.56s"><b>Usen los ejemplos como punto de partida</b>, no como respuesta: “Copiar a campos vacíos” nunca borra lo que ya escribieron. Luego cámbienlo por su escenario real (ORBITAL · Katya E.).</div>
+  </div>
+</section>
+
+<section class="slide" id="f-c1" data-step="F">
+  <div class="sin">
+    <div class="ced r" style="--d:.05s">
+      <div class="chead">
+        <div><div class="ck">Cédula 1</div><h3>Identificación de peligros</h3></div>
+        <div class="hf"><label>Equipo: <input type="text" data-k="equipo" maxlength="40" placeholder="Tacos de Asada"></label><label>Tarea elegida: <input type="text" data-k="c1_tarea" maxlength="90" placeholder="Ej. Turno nocturno de soporte vital"></label></div>
+      </div>
+      <p class="ci">Elijan una tarea en un entorno confinado. Llenen una fila por cada peligro que encuentren.</p>
+      <div class="esc">Recuerden la escalera: <span>Peligro</span>›<span>Amenaza</span>›<span>Vulnerabilidad</span>›<span>Riesgo</span>›<span>Daño</span></div>
+      <table class="c1"><thead><tr><th></th><th>Peligro<small>Lo que puede hacer daño</small></th><th>Amenaza<small>Cuándo y cómo se activa</small></th><th>¿Quién es vulnerable?<small>Y por qué</small></th><th>Daño posible<small>Lo que podría ocurrir</small></th></tr></thead><tbody id="c1rows"></tbody></table>
+      <p class="foot">Basada en la matriz de peligros (Butrón Palacio, 2018) y en la escalera del riesgo · Bootcamp NASA Space Apps Challenge 2026, CIDI UNAM</p>
+    </div>
+    <div class="cedtools"><button type="button" class="btn ex" data-showex="1" data-ced="c1">👁 Ejemplo 1 · Marte</button><button type="button" class="btn ex" data-showex="2" data-ced="c1">👁 Ejemplo 2 · Estación remota</button><span class="hint">Las filas vacías no se cuentan.</span></div>
+  </div>
+</section>
+
+<section class="slide" id="f-c2" data-step="F">
+  <div class="sin">
+    <div class="ced r" style="--d:.05s">
+      <div class="chead">
+        <div><div class="ck">Cédula 2</div><h3>Matriz de riesgo</h3></div>
+        <div class="hf"><label>Equipo: <span class="eqecho" style="font-weight:600">—</span></label></div>
+      </div>
+      <div class="steps3"><div><b>1</b>Escriban cada peligro de la cédula 1 en una nota adhesiva o en su casilla.</div><div><b>2</b>Colóquenlo según qué tan probable y qué tan grave es.</div><div><b>3</b>Lo que caiga en <b>Alto</b>, el gris más oscuro, se atiende primero.</div></div>
+      <div class="row2" style="align-items:start">
+        <div><div class="placer" id="c2placer"></div></div>
+        <div><div style="text-align:center;font-family:Archivo;font-weight:800;color:#0b1324;margin-top:6px">Probabilidad</div><div class="rmatrix big" id="c2matrix"></div><div style="font-family:Archivo;font-weight:800;color:#0b1324;font-size:.8rem;margin-top:4px">↑ Severidad</div></div>
+      </div>
+      <h4 style="font-family:Archivo;font-weight:900;color:#0b1324;margin-top:16px">Prioridades y control elegido</h4>
+      <p class="ci" style="font-size:.84rem">De lo más eficaz a lo menos: eliminar › sustituir › ingeniería › administrativo › equipo de protección</p>
+      <table style="margin-top:8px"><thead><tr><th style="width:34px">#</th><th>Peligro</th><th>Control elegido y por qué</th></tr></thead><tbody id="c2prio"></tbody></table>
+      <p class="foot">Versión simplificada de probabilidad × severidad (ISO 14971; Butrón Palacio, 2018; Mancera Fernández et al., 2018) · Bootcamp NASA Space Apps Challenge 2026, CIDI UNAM</p>
+    </div>
+    <div class="cedtools"><button type="button" class="btn" id="btnSuggest">↯ Sugerir prioridades desde la matriz</button><button type="button" class="btn ex" data-showex="1" data-ced="c2">👁 Ejemplo 1</button><button type="button" class="btn ex" data-showex="2" data-ced="c2">👁 Ejemplo 2</button></div>
+    <div class="advice" id="c2advice"></div>
+  </div>
+</section>
+
+<section class="slide" id="autorreporte" data-step="F">
+  <div class="sin">
+    <div class="ced r" style="--d:.05s">
+      <div class="chead">
+        <div><div class="ck">Cédula 3</div><h3>Autorreporte diario</h3></div>
+        <div class="hf"><label>Fecha o sol: <input type="text" id="arDate" maxlength="20" placeholder="Ej. Sol 3"></label><label>Código del tripulante: <input type="text" id="arCode" maxlength="16" placeholder="Ej. T-02"></label></div>
+      </div>
+      <p class="ci">Marca un número en cada fila. <b>En todas las escalas, 5 es lo peor.</b> Un minuto por tripulante. Cada reporte se compara contra la línea base de esa persona, no contra un promedio.</p>
+      <div style="margin-top:12px" id="arScales"></div>
+      <div class="near"><b>¿Algo estuvo a punto de salir mal hoy? Cuéntalo en una línea.</b><input type="text" id="arNear" maxlength="140" placeholder="Ej. Casi no escuché la alarma del ventilador 2"></div>
+      <div class="err" id="arErr"></div>
+      <div class="btnrow" style="margin-top:6px"><button type="button" class="btn prime" id="btnAR">Guardar autorreporte</button></div>
+      <div class="arlist" id="arList"></div>
+      <p class="foot">Dos autorreportes por hoja · Bootcamp NASA Space Apps Challenge 2026, CIDI UNAM</p>
+    </div>
+    <div class="cedtools"><button type="button" class="btn ex" data-showex="1" data-ced="c3">👁 Ejemplo 1</button><button type="button" class="btn ex" data-showex="2" data-ced="c3">👁 Ejemplo 2</button><span class="hint">Los autorreportes son indicadores adelantados: avisan antes del daño.</span></div>
+  </div>
+</section>
+
+<section class="slide" id="f-c4" data-step="F">
+  <div class="sin">
+    <div class="ced r" style="--d:.05s">
+      <div class="chead">
+        <div><div class="ck">Cédula 4</div><h3>Lienzo del sistema</h3></div>
+        <div class="hf"><label>Equipo: <span class="eqecho" style="font-weight:600">—</span></label></div>
+      </div>
+      <p class="ci">Respondan cada caja con una o dos frases sobre su propio proyecto. La de interacciones es la más importante: ahí aparece lo que nadie vio.</p>
+      <div class="tucei">
+        <div class="box"><h5>T · Tareas</h5><p>¿Qué tiene que hacer la persona, física y mentalmente?</p><textarea data-k="c4_T"></textarea></div>
+        <div class="box"><h5>U · Usuario</h5><p>¿Cómo están su cuerpo y su mente en esa condición?</p><textarea data-k="c4_U"></textarea></div>
+        <div class="box"><h5>C · Automatización</h5><p>¿Qué hacen el software, el hardware y la interfaz?</p><textarea data-k="c4_C"></textarea></div>
+        <div class="box"><h5>E · Entorno</h5><p>¿Dónde ocurre: confinado, lejos, con retraso en la comunicación?</p><textarea data-k="c4_E"></textarea></div>
+        <div class="box wide"><h5>I · Interacciones</h5><p>¿Cómo se afectan los cuatro anteriores entre sí? ¿Qué pasa si uno falla?</p><textarea data-k="c4_I"></textarea></div>
+      </div>
+      <p class="foot">Basado en el modelo de sistema híbrido automatizado de Karwowski y Zurada (Enciclopedia de Salud y Seguridad en el Trabajo, OIT, cap. 58) · Bootcamp NASA Space Apps Challenge 2026, CIDI UNAM</p>
+    </div>
+    <div class="cedtools"><button type="button" class="btn ex" data-showex="1" data-ced="c4">👁 Ejemplo 1</button><button type="button" class="btn ex" data-showex="2" data-ced="c4">👁 Ejemplo 2</button></div>
+  </div>
+</section>
+
+<!-- ================= G · PANEL ================= -->
+<section class="slide" id="g-ev1" data-step="G">
+  <div class="sin">
+    <div class="eyebrow r">Panel de monitoreo</div>
+    <h2 class="title r" style="--d:.06s">Registrar eventos y valorarlos</h2>
+    <p class="sub r" style="--d:.1s">Cada evento baja por la escalera, se valora con <b>GP</b> y <b>GR</b>, cae en la matriz y recibe un control. Pocas alarmas, bien jerarquizadas: solo lo crítico se pinta en coral.</p>
+    <div class="stepdots r" style="--d:.12s"><i class="on"></i><i></i><i></i><i></i></div>
+    <div class="card r" style="--d:.16s;margin-top:10px">
+      <h3 id="formTitle" style="font-family:Archivo;font-weight:900;font-size:1.15rem">Nuevo evento</h3>
+      <p class="sub" style="font-size:.88rem;margin-bottom:8px">Llenen de arriba hacia abajo. Los cálculos se actualizan solos. <b>Evento · 1 de 4:</b> qué registran y la escalera.</p>
+      <div class="kk" style="--c:var(--lime);margin-top:12px">1 · Qué registran</div>
+      <div class="row2">
+        <div><label class="fl" for="fTitle">Título corto</label><input type="text" id="fTitle" maxlength="90" placeholder="Ej. CO₂ elevado en el módulo de descanso"></div>
+        <div class="row2">
+          <div><label class="fl" for="fWhen">Sol o fecha</label><input type="text" id="fWhen" maxlength="30" placeholder="Ej. Sol 5 · turno nocturno"></div>
+          <div><label class="fl">Tipo de indicador</label>
+            <div class="seg">
+              <label><input type="radio" name="fType" value="adelantado" checked><span class="lead">⚠ Aviso (adelantado)</span></label>
+              <label><input type="radio" name="fType" value="rezagado"><span class="lag">✚ Daño (rezagado)</span></label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="kk" style="--c:var(--lime);margin-top:12px">2 · Escalera del riesgo</div>
+      <div class="ladderhint"><span>Peligro</span>›<span>Amenaza</span>›<span>Vulnerabilidad</span>›<span>Riesgo</span>›<span>Daño</span></div>
+      <div class="row2">
+        <div><label class="fl" for="fPel">Peligro <small>fuente potencial de daño</small></label><textarea id="fPel" placeholder="Ej. Acumulación de CO₂ en el módulo cerrado"></textarea></div>
+        <div><label class="fl" for="fAme">Amenaza <small>el peligro manifestándose en un contexto</small></label><textarea id="fAme" placeholder="Ej. Falla la ventilación durante el turno nocturno"></textarea></div>
+        <div><label class="fl" for="fVul">Vulnerabilidad <small>qué tan susceptible es quien se expone</small></label><textarea id="fVul" placeholder="Ej. Tripulante fatigado, con privación de sueño"></textarea></div>
+        <div><label class="fl" for="fRie">Riesgo <small>probabilidad del daño × su severidad</small></label><textarea id="fRie" placeholder="Ej. Alta probabilidad de ignorar una alarma; severidad crítica"></textarea></div>
+      </div>
+      <label class="fl" for="fDan">Daño <small>lo que efectivamente ocurrió · déjenlo vacío si fue solo un aviso</small></label>
+      <textarea id="fDan" placeholder="Ej. Síncope, dolor de cabeza severo y afectación motriz"></textarea>
+      <div class="err" data-err="1"></div>
+      <div class="btnrow"><button type="button" class="btn" id="btnFillExample">Llenar con el caso Marte</button><button type="button" class="btn" id="btnFillExample2">Llenar con la estación remota</button><button type="button" class="btn" id="btnClear">Limpiar</button></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="g-ev2" data-step="G">
+  <div class="sin">
+    <div class="eyebrow r">Evento · 2 de 4 · 3 · Grado de peligrosidad (William Fine)</div>
+    <h2 class="title r" style="--d:.06s">Grado de peligrosidad (William Fine)</h2>
+    <div class="stepdots"><i class="on"></i><i class="on"></i><i></i><i></i></div>
+    <div class="card r" style="--d:.12s;margin-top:10px">
+      <label class="fl" for="fC">C · Consecuencias <small>resultado más probable</small></label>
+      <select id="fC"></select>
+      <label class="fl" for="fE">E · Exposición <small>con qué frecuencia ocurre la situación</small></label>
+      <select id="fE"></select>
+      <label class="fl" for="fP">P · Probabilidad <small>de que la secuencia termine en daño</small></label>
+      <select id="fP"></select>
+      <div class="result"><div class="rv" id="gpVal">—</div><div class="rx" id="gpTxt">Elijan C, E y P.</div></div>
+      <div class="err" data-err="2"></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="g-ev3" data-step="G">
+  <div class="sin">
+    <div class="eyebrow r">Evento · 3 de 4 · 4 · Grado de riesgo (NASA)</div>
+    <h2 class="title r" style="--d:.06s">Grado de riesgo (NASA)</h2>
+    <div class="stepdots"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div>
+    <div class="card r" style="--d:.12s;margin-top:10px">
+      <label class="fl" for="fPreset">Variable medida</label>
+      <select id="fPreset">
+        <option value="co2">CO₂ en el módulo · límite 3,950 ppm (3 mmHg, promedio 1 h)</option>
+        <option value="co2w">CO₂ promedio de 7 días · guía 3,290 ppm (2.5 mmHg)</option>
+        <option value="custom">Otra variable (escriban su límite)</option>
+      </select>
+      <div class="row3">
+        <div><label class="fl" for="fVar">Nombre</label><input type="text" id="fVar" maxlength="40"></div>
+        <div><label class="fl" for="fReal">Valor medido</label><input type="number" id="fReal" step="any" min="0" placeholder="Ej. 4300"></div>
+        <div><label class="fl" for="fLim">Límite permitido</label><input type="number" id="fLim" step="any" min="0"></div>
+      </div>
+      <label class="fl" for="fUnit">Unidad</label><input type="text" id="fUnit" maxlength="16">
+      <div class="result"><div class="rv" id="grVal">—</div><div class="rx" id="grTxt">Escriban el valor medido.</div></div>
+      <div class="gauge"><i id="grBar"></i></div>
+      <div class="gaugeleg"><span>0</span><span>0.5 · vigilar</span><span>1.0 · límite</span><span>1.5+</span></div>
+      <div class="err" data-err="3"></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="g-ev4" data-step="G">
+  <div class="sin">
+    <div class="eyebrow r">Evento · 4 de 4</div>
+    <h2 class="title r" style="--d:.06s">Matriz y control elegido</h2>
+    <div class="stepdots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div>
+    <div class="g2" style="align-items:start">
+      <div class="card r" style="--d:.12s">
+        <div class="kk">5 · Matriz de riesgo</div>
+        <p style="margin:4px 0 6px">Se ubica sola con C (severidad) y P (probabilidad).</p>
+        <div class="rmatrix" id="fMatrix"></div>
+      </div>
+      <div class="card r" style="--d:.18s">
+        <div class="kk">6 · Control elegido (jerarquía)</div>
+        <div class="ctrlopts" id="ctrlOpts" style="margin-top:8px"></div>
+        <label class="fl" for="fCtrlDesc">¿Qué harán exactamente y por qué?</label>
+        <textarea id="fCtrlDesc" placeholder="Ej. Sustituir los filtros de CO₂ y reactivar la redundancia de ventilación"></textarea>
+        <div class="advice" id="ctrlAdvice"></div>
+      </div>
+    </div>
+    <div class="err" id="formErr"></div>
+    <div class="btnrow"><button type="button" class="btn prime" id="btnSave">Guardar evento</button><button type="button" class="btn" data-goto="g-lista">Ver eventos del equipo →</button></div>
+  </div>
+</section>
+
+<section class="slide" id="g-lista" data-step="G">
+  <div class="sin">
+    <div class="eyebrow r">Panel de monitoreo</div>
+    <h2 class="title r" style="--d:.06s">Eventos del equipo</h2>
+    <p class="sub r" style="--d:.1s">Ordenados por grado de peligrosidad: lo urgente primero.</p>
+    <div class="tiles r" style="--d:.14s">
+      <div class="tile"><div class="tv" id="tTotal">0</div><div class="tl">Eventos registrados</div></div>
+      <div class="tile lead"><div class="tv" id="tLead">0</div><div class="tl">Indicadores adelantados (avisos)</div></div>
+      <div class="tile lag"><div class="tv" id="tLag">0</div><div class="tl">Indicadores rezagados (daños)</div></div>
+      <div class="tile crit"><div class="tv" id="tCrit">0</div><div class="tl">Críticos (GP &gt; 200 o GR ≥ 1)</div></div>
+    </div>
+    <div class="filters r" style="--d:.18s">
+      <button type="button" class="fchip on" data-f="all">Todos</button>
+      <button type="button" class="fchip" data-f="adelantado">⚠ Adelantados</button>
+      <button type="button" class="fchip" data-f="rezagado">✚ Rezagados</button>
+      <button type="button" class="fchip" data-f="crit">Críticos</button>
+      <button type="button" class="btn prime" data-goto="g-ev1" style="margin-left:auto;padding:7px 14px;font-size:.78rem" id="btnNewEv">+ Nuevo evento</button>
+    </div>
+    <div class="evlist r" style="--d:.22s" id="evList"></div>
+  </div>
+</section>
+
+<!-- ================= CIERRE Y FUENTES ================= -->
+<section class="slide" id="cierre">
+  <div class="sin">
+    <div class="eyebrow r">Al terminar</div>
+    <h2 class="title r" style="--d:.06s">Lo que se llevan para prototipar</h2>
+    <div class="g4">
+      <div class="card r" style="--d:.12s"><h4>Peligros priorizados</h4><p>Cédulas 1 y 2: qué atender primero y con qué control.</p></div>
+      <div class="card r" style="--d:.17s"><h4>Indicadores adelantados</h4><p>Autorreportes y avisos: lo que ORBITAL debe vigilar contra la línea base.</p></div>
+      <div class="card r" style="--d:.22s"><h4>Requisitos del sistema</h4><p>Cédula 4: tareas, usuario, automatización, entorno e interacciones.</p></div>
+      <div class="card r" style="--d:.27s"><h4>Eventos valorados</h4><p>GP, GR y matriz para justificar cada alerta ante los jueces.</p></div>
+    </div>
+    <div class="btnrow r" style="--d:.32s">
+      <button type="button" class="btn" id="copyBtn2">⧉ Copiar para Sheets</button>
+      <button type="button" class="btn prime" id="csvBtn2">↓ Exportar CSV</button>
+      <a class="btn" href="insights.html">📊 Ver Insights</a>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="biblio1">
+  <div class="sin">
+    <div class="eyebrow r">Para seguir leyendo · 1 de 2</div>
+    <h2 class="title r" style="--d:.06s">Bibliografía</h2>
+    <div class="refs r" style="--d:.12s">
+      <div>Butrón Palacio, E. (2018). <i>Sistema de gestión de riesgos en seguridad y salud en el trabajo: Paso a paso para el diseño práctico del SG-SST</i> (2.ª ed.). Ediciones de la U.</div>
+      <div>Castillo M., J. A. (2019). <i>La arquitectura de la prevención: La ergonomía prospectiva y el análisis de los riesgos en el trabajo</i>. Editorial Universidad del Rosario.</div>
+      <div>Heuer, H. (1998). Vigilancia. En J. M. Stellman (Dir.), <i>Enciclopedia de salud y seguridad en el trabajo</i> (cap. 29). OIT.</div>
+      <div>Hollnagel, E., Woods, D. D. y Leveson, N. (Eds.). (2006). <i>Resilience engineering: Concepts and precepts</i>. Ashgate.</div>
+      <div>Karwowski, W. y Zurada, J. (1998). Software y ordenadores: sistemas híbridos automatizados. En J. M. Stellman (Dir.), <i>Enciclopedia de salud y seguridad en el trabajo</i> (cap. 58). OIT.</div>
+      <div>Lange-Morales, K. (2022). <i>Entre ergonomía y etnografía: Bocetos del uso de dispositivos médicos</i>. Editorial Universidad Nacional de Colombia.</div>
+      <div>Mancera Fernández, M., Mancera Ruiz, M. T., Mancera Ruiz, M. R. y Mancera Ruiz, J. R. (2018). <i>Seguridad y salud en el trabajo: Gestión de riesgos</i> (2.ª ed. ampliada). Alfaomega.</div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="biblio2">
+  <div class="sin">
+    <div class="eyebrow r">Para seguir leyendo · 2 de 2</div>
+    <h2 class="title r" style="--d:.06s">Bibliografía y fuentes</h2>
+    <div class="refs r" style="--d:.12s">
+      <div>Montero Martínez, R. de L. C., Martínez Oropesa, C. y Arias Castro, G. de J. (2020). <i>Ergonomía: Productividad, calidad y seguridad</i>. Ecoe Ediciones.</div>
+      <div>NASA. <i>NASA-STD-3001, Spaceflight Human-System Standard</i>: Vol. 1, Crew Health (Rev. C) y Vol. 2, Human Factors, Habitability, and Environmental Health (Rev. E); <a href="https://www.nasa.gov/wp-content/uploads/2023/12/ochmo-tb-004-carbon-dioxide.pdf" target="_blank" rel="noopener">OCHMO Technical Brief: Carbon Dioxide</a>.</div>
+      <div>NIOSH. <i>Hierarchy of Controls</i>. National Institute for Occupational Safety and Health.</div>
+      <div>Patterson, R. y Rayman, R. B. (1998). Medicina aeroespacial: efectos de la gravedad, la aceleración y la microgravedad en el entorno aeroespacial. En J. M. Stellman (Dir.), <i>Enciclopedia de salud y seguridad en el trabajo</i> (cap. 102). OIT.</div>
+      <div>ISO 14971:2019, gestión de riesgos en dispositivos médicos · ISO 31000:2018, gestión del riesgo.</div>
+      <div>Ley General de Protección Civil (2012). <i>Diario Oficial de la Federación</i>, 6 de junio de 2012 · UNDRR (2016). Terminología sobre la reducción del riesgo de desastres.</div>
+      <div>Wilches-Chaux, G. (1993). La vulnerabilidad global. En A. Maskrey (Comp.), <i>Los desastres no son naturales</i>. LA RED.</div>
+      <div>INSST. <a href="https://www.insst.es/documentacion/colecciones-tecnicas/ntp-notas-tecnicas-de-prevencion/3-serie-ntp-numeros-086-a-120-ano-1984/ntp-101-comunicacion-de-riesgos-en-la-empresantp_101" target="_blank" rel="noopener"><i>NTP 101: Comunicación de riesgos en la empresa</i></a> (método de William Fine).</div>
+      <div>Tarek (CIDI UNAM). <i>Comportamientos en entornos confinados</i>, ponencia y cédulas 1–4. Bootcamp NASA Space Apps Challenge 2026.</div>
+    </div>
+    <div class="credit" style="margin-top:22px;text-align:center;color:var(--mute);font-size:.84rem">ORBITAL · Riesgo en entornos confinados — 🌮 Tacos de Asada<br/>NASA Space Apps Challenge CDMX 2026</div>
+  </div>
+</section>
+
+</div>
+
+<div class="modal" id="exmodal" role="dialog" aria-modal="true" aria-labelledby="exttl">
+  <div class="mbox">
+    <button type="button" class="mclose" id="exclose" aria-label="Cerrar">✕</button>
+    <h3 id="exttl"></h3>
+    <div class="ms" id="exsub"></div>
+    <div id="exbody"></div>
+    <div class="btnrow" id="exactions"></div>
+  </div>
+</div>
+
+<div class="hud">
+  <button id="prev" aria-label="Anterior"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <span class="counter"><b id="cur">01</b> / <span id="total">00</span></span>
+  <button id="next" aria-label="Siguiente"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <button id="sendBtn" type="button" style="width:auto;padding:0 16px;height:44px;font-family:Archivo,sans-serif;font-weight:800;font-size:.78rem;letter-spacing:.02em;color:#071428;background:var(--lime);border:none;border-radius:12px;cursor:pointer">Enviar mi cédula</button>
+  <button id="fs" aria-label="Pantalla completa"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 9V5a1 1 0 011-1h4M20 9V5a1 1 0 00-1-1h-4M4 15v4a1 1 0 001 1h4M20 15v4a1 1 0 01-1 1h-4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</div>
+<div class="hint-key" id="keyhint"><kbd>←</kbd><kbd>→</kbd> navega · <kbd>Esc</kbd> sale del campo · <kbd>F</kbd> pantalla completa</div>
+<div class="toast" id="toast"></div>
+
+<script src="sync.js"></script>
+<script>
+/* =================== DATOS DEL MÉTODO =================== */
+var FINE = {
+  C:[{v:50,t:'Varias muertes'},{v:25,t:'Muerte'},{v:15,t:'Lesiones extremadamente graves (incapacidad permanente)'},{v:5,t:'Lesiones con baja (tripulante fuera de servicio)'},{v:1,t:'Heridas leves, contusiones, pequeños daños'}],
+  E:[{v:10,t:'Continuamente (o muchas veces al día)'},{v:6,t:'Frecuentemente (aprox. una vez al día)'},{v:3,t:'Ocasionalmente (de semanal a mensual)'},{v:1,t:'Raramente (se sabe que ocurre)'},{v:0.5,t:'Remotamente posible (no se sabe que haya ocurrido)'}],
+  P:[{v:10,t:'Resultado más probable y esperado'},{v:6,t:'Completamente posible (50 %)'},{v:3,t:'Secuencia o coincidencia rara (10 %)'},{v:1,t:'Remotamente posible; se sabe que ha ocurrido (1 %)'},{v:0.5,t:'Nunca ha sucedido, pero es concebible'}]
+};
+function gpBand(gp){
+  if(gp>200) return {cls:'t-crit',lbl:'GP > 200 · Corrección inmediata',txt:'Detengan la actividad hasta reducir el riesgo.',color:'var(--crit)'};
+  if(gp>85)  return {cls:'t-warn',lbl:'85 < GP ≤ 200 · Actuación urgente',txt:'Requiere atención lo antes posible.',color:'var(--warn)'};
+  return {cls:'t-ok',lbl:'GP ≤ 85 · Eliminar sin demora',txt:'Debe corregirse, pero no es una emergencia.',color:'var(--ok)'};
+}
+function grBand(gr){
+  if(gr>=1)  return {cls:'t-crit',lbl:'GR ≥ 1 · Excede el límite',txt:'La dosis medida ya rebasó la permitida: actúen ahora.',color:'var(--crit)'};
+  if(gr>=0.5)return {cls:'t-warn',lbl:'0.5 ≤ GR < 1 · Vigilar',txt:'Dentro del límite pero acercándose: es un aviso adelantado.',color:'var(--warn)'};
+  return {cls:'t-ok',lbl:'GR < 0.5 · Dentro del límite',txt:'Sigan midiendo contra su línea base.',color:'var(--ok)'};
+}
+var MATRIX = { Grave:['medio','alto','alto'], Moderada:['bajo','medio','alto'], Leve:['bajo','bajo','medio'] };
+var PROBS=['Baja','Media','Alta'], SEVS=['Grave','Moderada','Leve'];
+function sevFromC(c){ return c>=15?'Grave':(c>=5?'Moderada':'Leve'); }
+function probFromP(p){ return p>=6?2:(p>=3?1:0); }
+var CONTROLS = [
+  {k:1,n:'Eliminar el peligro',d:'Quitar la fuente: rediseñar para que el peligro no exista.',ex:'Que el CO₂ no pueda acumularse en el módulo.'},
+  {k:2,n:'Sustituirlo',d:'Cambiar por algo menos peligroso.',ex:'Sustituir los filtros de CO₂ saturados.'},
+  {k:3,n:'Controles de ingeniería',d:'Separar a la persona del peligro con diseño.',ex:'Reactivar la redundancia de ventilación.'},
+  {k:4,n:'Controles administrativos',d:'Cambiar cómo se trabaja: protocolos, turnos, rotación.',ex:'Turnos de vigilancia de máximo 8 h; protocolo de respuesta.'},
+  {k:5,n:'Equipo de protección',d:'Lo último: proteger a la persona.',ex:'Oxígeno o mascarilla portátil.'}
+];
+var PRESETS = { co2:{v:'CO₂ en el módulo',u:'ppm',l:3950}, co2w:{v:'CO₂ promedio 7 días',u:'ppm',l:3290}, custom:{v:'',u:'',l:''} };
+var HEUR = [
+  ['1. Visibilidad','Informa al usuario lo que sucede y evita decisiones basadas en datos viejos.'],
+  ['2. Mundo real','Lenguaje familiar para el operador: minimiza los errores de interpretación.'],
+  ['3. Control','Salidas de emergencia claramente marcadas: interrumpan rápido procesos peligrosos.'],
+  ['4. Consistencia','Estándares predecibles de interacción que permitan responder rápido bajo presión.'],
+  ['5. Prevención','Evitar el error antes de que ocurra: elimina condiciones que inducen al fallo.'],
+  ['6. Reconocimiento','Minimizar la carga de memoria mostrando elementos, acciones y opciones a la vista.'],
+  ['7. Flexibilidad','Incluir aceleradores (atajos) para usuarios expertos, manteniendo la interfaz simple para novatos.'],
+  ['8. Minimalismo','Eliminar información irrelevante, ya que cada unidad extra de información compite con la relevante.'],
+  ['9. Recuperación','Los mensajes de error deben ser claros, en lenguaje humano y sugerir soluciones.'],
+  ['10. Ayuda','Ayuda y documentación fáciles de buscar, centradas en la tarea y con pasos concretos.']
+];
+/* ---- Ejemplos de evento ---- */
+var MARS = {
+  title:'CO₂ acumulado en el módulo de descanso', when:'Sol 5 · turno nocturno', type:'rezagado',
+  pel:'Acumulación de dióxido de carbono (CO₂) en el módulo cerrado.',
+  ame:'Falla del sistema de ventilación de soporte vital durante el turno nocturno.',
+  vul:'Tripulante fatigado, con privación de sueño y baja atención.',
+  rie:'Alta probabilidad de cometer un error grave (ignorar una alarma) y severidad crítica.',
+  dan:'El astronauta sufre un síncope, dolor de cabeza severo y afectación motriz.',
+  C:15,E:6,P:6, preset:'co2', grVar:'CO₂ en el módulo', grUnit:'ppm', grReal:4300, grLim:3950,
+  ctrl:[2,3], ctrlDesc:'Sustitución de filtros de CO₂ y control de ingeniería reactivando la redundancia de ventilación, en lugar de solo apagar la alarma.'
+};
+var EST = {
+  title:'CO₂ y alarma silenciada en la estación remota', when:'Viernes', type:'rezagado',
+  pel:'CO₂ interior que sube durante la semana (de 900 a 1,900 ppm).',
+  ame:'El ventilador 2 falla desde el miércoles y el jueves se silencia una alarma repetida.',
+  vul:'Personas que duermen cada vez menos (de 7.2 a 5.4 h) y un operador saturado de avisos.',
+  rie:'Probabilidad alta de exposición prolongada sin que nadie actúe; severidad moderada.',
+  dan:'Dos personas con dolor de cabeza.',
+  C:5,E:6,P:6, preset:'co2', grVar:'CO₂ en el módulo', grUnit:'ppm', grReal:1900, grLim:3950,
+  ctrl:[2,3,4], ctrlDesc:'Se cambió el filtro (sustituir); reparar el ventilador 2 (ingeniería) y no silenciar alarmas sin revisar la causa (administrativo).'
+};
+/* ---- Bitácoras ---- */
+var LOG = [
+  {s:1,co2:2100,sl:7.1,rr:14,al:1,n:'—',k:''},
+  {s:2,co2:2500,sl:6.7,rr:15,al:2,n:'—',k:''},
+  {s:3,co2:3100,sl:6.0,rr:17,al:5,n:'“El ventilador 2 hace ruido”',k:'lead'},
+  {s:4,co2:3700,sl:5.6,rr:19,al:9,n:'“Silenciamos una alarma repetida”',k:'lead'},
+  {s:5,co2:4300,sl:5.0,rr:22,al:12,n:'“Síncope de un tripulante en el turno nocturno; dos con dolor de cabeza”',k:'lag'},
+  {s:6,co2:2900,sl:6.3,rr:16,al:3,n:'“Se sustituyeron los filtros y se reactivó la ventilación redundante”',k:''},
+  {s:7,co2:2200,sl:6.9,rr:14,al:1,n:'—',k:''}
+];
+var LOG2 = [
+  {d:'Lunes',co2:900,sl:7.2,al:1,n:'—',k:''},
+  {d:'Martes',co2:1100,sl:6.8,al:2,n:'—',k:''},
+  {d:'Miércoles',co2:1500,sl:6.1,al:5,n:'“El ventilador 2 hace ruido”',k:'lead'},
+  {d:'Jueves',co2:1700,sl:5.9,al:9,n:'“Silenciamos una alarma repetida”',k:'lead'},
+  {d:'Viernes',co2:1900,sl:5.4,al:12,n:'“Dos personas con dolor de cabeza”',k:'lag'},
+  {d:'Sábado',co2:1200,sl:6.5,al:3,n:'“Se cambió el filtro”',k:''},
+  {d:'Domingo',co2:1000,sl:7.0,al:1,n:'—',k:''}
+];
+var LADDER = [
+  {n:'Peligro',c:'#4e8fe6',def:'Fuente potencial de daño.',mars:MARS.pel,ask:'¿Qué <b>cosa o condición</b> de su escenario podría hacer daño, aunque hoy no pase nada?'},
+  {n:'Amenaza',c:'#2a66e6',def:'Ese peligro, manifestándose en un contexto.',mars:MARS.ame,ask:'¿<b>Cuándo y cómo</b> se activa su peligro? Piensen en turnos, fallas y momentos concretos.'},
+  {n:'Vulnerabilidad',c:'#d7e64b',def:'Qué tan susceptible es quien se expone.',mars:MARS.vul,ask:'¿<b>Quién</b> está expuesto y qué lo hace más frágil hoy: sueño, fatiga, condición física?'},
+  {n:'Riesgo',c:'#ef6a5a',def:'Probabilidad del daño × su severidad.',mars:MARS.rie,ask:'¿<b>Qué tan probable</b> es un error y <b>qué tan grave</b> sería? Aquí entran GP y GR.'},
+  {n:'Daño',c:'#ef6a5a',def:'Lo que efectivamente ocurrió.',mars:MARS.dan,ask:'Si llegaron aquí, el dato es <b>rezagado</b>. ¿Qué señal pudo avisar antes?'}
+];
+/* ---- Ejemplos para las cédulas ---- */
+var EXAMPLES = {
+  1:{name:'Ejemplo 1 · Hábitat en Marte (CO₂)', kv:{
+    c1_tarea:'Turno nocturno de soporte vital en el módulo de descanso',
+    c1_r1_pel:'CO₂ acumulado en el módulo cerrado', c1_r1_ame:'Falla la ventilación de soporte vital durante el turno nocturno', c1_r1_vul:'Tripulante de guardia: fatigado, con privación de sueño y baja atención', c1_r1_dan:'Síncope, dolor de cabeza severo y afectación motriz',
+    c1_r2_pel:'Alarmas repetidas (fatiga de alarmas)', c1_r2_ame:'Se silencian sin revisar la causa cuando suenan muchas veces de noche', c1_r2_vul:'Quien vigila solo y cansado: deja de distinguir una alarma real', c1_r2_dan:'Una alarma real ignorada y exposición prolongada al CO₂',
+    c1_r3_pel:'Ruido y vibración del ventilador 2', c1_r3_ame:'Se vuelve constante cuando el ventilador se degrada', c1_r3_vul:'Toda la tripulación, porque duerme junto al módulo', c1_r3_dan:'Sueño fragmentado, fatiga y alarmas que no se escuchan',
+    c1_r4_pel:'Filtros de CO₂ saturados (recursos limitados)', c1_r4_ame:'No hay repuesto a la mano o el mantenimiento se atrasa', c1_r4_vul:'Toda la tripulación: nadie puede salir del hábitat', c1_r4_dan:'Soporte vital degradado durante varios soles',
+    c1_r5_pel:'Ciclo de luz alterado (el sol marciano dura 24 h 39 min)', c1_r5_ame:'Turnos nocturnos rotativos sin luz adecuada', c1_r5_vul:'Quien cambia de turno: su reloj biológico no se ajusta', c1_r5_dan:'Desregulación del sueño y tiempo de reacción más lento',
+    c2_p_1:'2', c2_s_1:'Grave', c2_p_2:'2', c2_s_2:'Moderada', c2_p_3:'1', c2_s_3:'Moderada', c2_p_4:'1', c2_s_4:'Grave', c2_p_5:'1', c2_s_5:'Leve',
+    c2_pr1_pel:'CO₂ acumulado en el módulo cerrado', c2_pr1_ctrl:'2', c2_pr1_why:'Sustituir los filtros saturados y, como ingeniería, reactivar la redundancia de ventilación: actúan en la fuente y en el medio, no en la persona.',
+    c2_pr2_pel:'Alarmas repetidas (fatiga de alarmas)', c2_pr2_ctrl:'3', c2_pr2_why:'Ingeniería: pocas alarmas bien jerarquizadas en ORBITAL (solo lo crítico suena) y protocolo de no silenciar sin revisar la causa.',
+    c2_pr3_pel:'Filtros de CO₂ saturados (recursos limitados)', c2_pr3_ctrl:'4', c2_pr3_why:'Administrativo: calendario de cambio de filtros e inventario mínimo de repuestos visible en el panel.',
+    c4_T:'Vigilar el soporte vital de noche, responder alarmas y cambiar filtros. Mentalmente: atención sostenida durante horas.',
+    c4_U:'Con privación de sueño, dolor de cabeza leve y respiración agitada; ánimo bajo por el aislamiento.',
+    c4_C:'Sensores de CO₂ y ventilación, alarmas; ORBITAL muestra la tendencia contra el límite NASA y contra la línea base de cada tripulante.',
+    c4_E:'Hábitat confinado en Marte: ~20 min de retraso por mensaje, sin ayuda inmediata y con repuestos limitados.',
+    c4_I:'Si la ventilación falla (C) mientras el tripulante está fatigado (U), la alarma se silencia (T) y nadie en la Tierra puede intervenir a tiempo (E). El sistema debe avisar antes, con pocas alarmas y lectura simple.'
+  }, ar:[{code:'T-02',date:'Sol 3',v:{fat:3,dol:2,ani:3,sue:4},near:'Casi no escuché la alarma del ventilador 2'},{code:'T-02',date:'Sol 5',v:{fat:5,dol:4,ani:4,sue:5},near:'Me mareé al levantarme en el turno nocturno'}]},
+  2:{name:'Ejemplo 2 · Estación remota (bitácora del taller)', kv:{
+    c1_tarea:'Operación semanal de una estación remota',
+    c1_r1_pel:'CO₂ interior que sube durante la semana', c1_r1_ame:'El ventilador 2 falla desde el miércoles y nadie lo repara', c1_r1_vul:'Quienes duermen en la estación: el sueño baja de 7.2 a 5.4 h', c1_r1_dan:'Dolor de cabeza en dos personas (viernes)',
+    c1_r2_pel:'Alarmas del sistema que se multiplican (de 1 a 12)', c1_r2_ame:'El jueves se silencia una alarma repetida', c1_r2_vul:'El operador de turno, saturado de avisos', c1_r2_dan:'Se ignora la causa y el CO₂ sigue subiendo',
+    c1_r3_pel:'Ruido del ventilador 2', c1_r3_ame:'Desde el miércoles, todo el día', c1_r3_vul:'Quien descansa cerca del equipo', c1_r3_dan:'Sueño de peor calidad e irritabilidad',
+    c1_r4_pel:'Mantenimiento atrasado (filtro)', c1_r4_ame:'El filtro se cambia hasta el sábado', c1_r4_vul:'Toda la tripulación', c1_r4_dan:'Varios días de exposición innecesaria',
+    c1_r5_pel:'Aislamiento y confinamiento', c1_r5_ame:'Semanas sin rotación de personal', c1_r5_vul:'Personas con ánimo bajo o conflictos previos', c1_r5_dan:'Menor motivación y convivencia tensa',
+    c2_p_1:'2', c2_s_1:'Moderada', c2_p_2:'2', c2_s_2:'Moderada', c2_p_3:'1', c2_s_3:'Leve', c2_p_4:'1', c2_s_4:'Moderada', c2_p_5:'1', c2_s_5:'Moderada',
+    c2_pr1_pel:'CO₂ interior que sube durante la semana', c2_pr1_ctrl:'2', c2_pr1_why:'Sustituir el filtro (lo que funcionó el sábado) y reparar el ventilador 2 como control de ingeniería.',
+    c2_pr2_pel:'Alarmas del sistema que se multiplican (de 1 a 12)', c2_pr2_ctrl:'3', c2_pr2_why:'Ingeniería: jerarquizar alarmas para que la de ventilación no se pierda; administrativo: prohibido silenciar sin registrar la causa.',
+    c2_pr3_pel:'Mantenimiento atrasado (filtro)', c2_pr3_ctrl:'4', c2_pr3_why:'Administrativo: revisión de filtros cada 3 días anotada en la bitácora.',
+    c4_T:'Operar la estación, dormir por turnos y atender las alarmas del sistema.',
+    c4_U:'Duermen cada vez menos (de 7.2 a 5.4 h); dos personas con dolor de cabeza el viernes.',
+    c4_C:'Sensor de CO₂, sistema de alarmas y una bitácora en papel que nadie cruza con el sueño.',
+    c4_E:'Estación remota: confinada y lejos de ayuda especializada.',
+    c4_I:'El ventilador falla (C) → sube el CO₂ (E) → duermen peor (U) → silencian la alarma (T) → aparece el daño. Nadie cruzó los datos hasta el viernes: el sistema debe cruzarlos por ellos.'
+  }, ar:[{code:'E-01',date:'Miércoles',v:{fat:2,dol:1,ani:2,sue:3},near:'El ventilador 2 no me dejó dormir'},{code:'E-01',date:'Jueves',v:{fat:4,dol:2,ani:3,sue:4},near:'Silenciamos una alarma repetida'}]}
+};
+
+/* =================== UTILIDADES =================== */
+function $(s,r){return (r||document).querySelector(s);}
+function $$(s,r){return [].slice.call((r||document).querySelectorAll(s));}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function fmt(n,d){ if(n==null||isNaN(n)) return '—'; return Number(n).toLocaleString('es-MX',{maximumFractionDigits:d==null?2:d,minimumFractionDigits:d==null?0:d}); }
+function uid(){ return 'e'+Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+var toastT; function toast(m){ var t=$('#toast'); t.textContent=m; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(function(){t.classList.remove('on')},2200); }
+function lsGet(k,d){ try{ var v=localStorage.getItem(k); return v?JSON.parse(v):d; }catch(e){ return d; } }
+function lsSet(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
+var savedT; function showSaved(){ var s=$('#savedMsg'); s.classList.add('show'); clearTimeout(savedT); savedT=setTimeout(function(){s.classList.remove('show')},1400); }
+function matrixHTML(sev, pi){
+  var h='<div></div><div class="hd">Baja</div><div class="hd">Media</div><div class="hd">Alta</div>';
+  SEVS.forEach(function(s){
+    h+='<div class="sv">'+s+'</div>';
+    MATRIX[s].forEach(function(c,i){ h+='<div class="c-'+c+(s===sev&&i===pi?' pick':'')+'">'+c.charAt(0).toUpperCase()+c.slice(1)+'</div>'; });
+  });
+  return h;
+}
+
+/* =================== CONTENIDO GENERADO =================== */
+var stairIdx=0;
+function renderStairs(){
+  $('#stairs').innerHTML = LADDER.map(function(l,i){
+    return '<button type="button" class="stair'+(i===stairIdx?' on':'')+'" data-i="'+(i+1)+'" style="--c:'+l.c+'" aria-pressed="'+(i===stairIdx)+'">'+
+      '<span class="n">'+(i+1)+'</span><span class="nm">'+l.n+'</span><span class="df">'+l.def+'</span></button>';
+  }).join('');
+  var l=LADDER[stairIdx];
+  $('#stairDetail').style.setProperty('--c', l.c);
+  $('#stairDetail').innerHTML =
+    '<div class="lvl">Escalón '+(stairIdx+1)+' de 5</div><h3>'+l.n+'</h3><div class="def">'+l.def+'</div>'+
+    '<div class="mars"><div class="ml">En el hábitat de Marte</div><p>'+esc(l.mars)+'</p></div>'+
+    '<div class="ask">Para su proyecto: '+l.ask+'</div>'+
+    '<div class="nav"><button type="button" class="btn" id="stPrev"'+(stairIdx===0?' disabled':'')+'>← Anterior</button>'+
+    (stairIdx<4?'<button type="button" class="btn prime" id="stNext">Siguiente escalón →</button>':'<button type="button" class="btn prime" data-goto="b-terminos">Ver el dato →</button>')+'</div>';
+}
+document.addEventListener('click', function(e){
+  var s=e.target.closest('.stair'); if(s){ stairIdx=+s.getAttribute('data-i')-1; renderStairs(); return; }
+  if(e.target.closest('#stNext')){ stairIdx=Math.min(4,stairIdx+1); renderStairs(); }
+  if(e.target.closest('#stPrev')){ stairIdx=Math.max(0,stairIdx-1); renderStairs(); }
+});
+function chart(svg, key, opts){
+  var W=640, H=+svg.getAttribute('viewBox').split(' ')[3], L=46, R=12, T=12, B=24;
+  var vals=LOG.map(function(d){return d[key]}), max=opts.max, min=opts.min;
+  var x=function(i){ return L + (i+0.5)*(W-L-R)/LOG.length; };
+  var y=function(v){ return T + (H-T-B)*(1-(v-min)/(max-min)); };
+  var bw=(W-L-R)/LOG.length, h='';
+  LOG.forEach(function(d,i){ if(d.k) h+='<rect x="'+(L+i*bw)+'" y="'+T+'" width="'+bw+'" height="'+(H-T-B)+'" fill="'+(d.k==='lag'?'rgba(239,106,90,.18)':'rgba(242,193,78,.13)')+'"/>'; });
+  opts.ticks.forEach(function(t){ h+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+y(t)+'" y2="'+y(t)+'" stroke="rgba(156,193,242,.12)"/><text x="'+(L-8)+'" y="'+(y(t)+4)+'" fill="#a9bbd6" font-size="11" text-anchor="end" font-family="Overpass">'+fmt(t)+'</text>'; });
+  if(opts.limit){ h+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+y(opts.limit)+'" y2="'+y(opts.limit)+'" stroke="#ef6a5a" stroke-width="2" stroke-dasharray="6 5"/><text x="'+(W-R-4)+'" y="'+(y(opts.limit)-6)+'" fill="#ef6a5a" font-size="11" text-anchor="end" font-family="Archivo" font-weight="700">límite '+fmt(opts.limit)+'</text>'; }
+  if(opts.bars){ LOG.forEach(function(d,i){ var bh=y(min)-y(d[key]); h+='<rect x="'+(x(i)-bw*0.28)+'" y="'+y(d[key])+'" width="'+(bw*0.56)+'" height="'+bh+'" rx="4" fill="'+opts.color+'"/>'; }); }
+  else { h+='<polyline fill="none" stroke="'+opts.color+'" stroke-width="2.5" stroke-linejoin="round" points="'+vals.map(function(v,i){return x(i)+','+y(v)}).join(' ')+'"/>';
+    LOG.forEach(function(d,i){ var over=opts.limit&&d[key]>=opts.limit; h+='<circle cx="'+x(i)+'" cy="'+y(d[key])+'" r="4.5" fill="'+(over?'#ef6a5a':opts.color)+'" stroke="#0a1a33" stroke-width="2"/>'; }); }
+  LOG.forEach(function(d,i){
+    h+='<text x="'+x(i)+'" y="'+(y(d[key])-9)+'" fill="#f4f8ff" font-size="11" text-anchor="middle" font-family="Archivo" font-weight="700">'+fmt(d[key],opts.dec)+'</text>';
+    h+='<text x="'+x(i)+'" y="'+(H-6)+'" fill="#a9bbd6" font-size="11" text-anchor="middle" font-family="Overpass">Sol '+d.s+'</text>';
+  });
+  svg.innerHTML=h;
+}
+function renderStatic(){
+  chart($('#chCO2'),'co2',{min:1500,max:5000,ticks:[2000,3000,4000],limit:3950,color:'#4e8fe6'});
+  chart($('#chSleep'),'sl',{min:0,max:8,ticks:[0,4,8],bars:true,dec:1,color:'rgba(156,193,242,.55)'});
+  chart($('#chResp'),'rr',{min:10,max:25,ticks:[12,18,24],color:'#d7e64b'});
+  $('#logtbl tbody').innerHTML = LOG.map(function(d){
+    return '<tr class="'+d.k+'"><td>'+d.s+(d.k==='lead'?' <span class="tag t-lead">aviso</span>':d.k==='lag'?' <span class="tag t-lag">daño</span>':'')+'</td><td class="num">'+fmt(d.co2)+'</td><td class="num">'+fmt(d.sl,1)+'</td><td class="num">'+d.rr+'</td><td class="num">'+d.al+'</td><td class="note">'+esc(d.n)+'</td></tr>';
+  }).join('');
+  $('#logtbl2 tbody').innerHTML = LOG2.map(function(d){
+    return '<tr data-k2="'+d.k+'"><td>'+d.d+'<span class="t2"></span></td><td class="num">'+fmt(d.co2)+'</td><td class="num">'+fmt(d.sl,1)+'</td><td class="num">'+d.al+'</td><td class="note">'+esc(d.n)+'</td></tr>';
+  }).join('');
+  var gp=MARS.C*MARS.E*MARS.P, gb=gpBand(gp), gr=MARS.grReal/MARS.grLim, rb=grBand(gr);
+  $('#exGP').textContent=fmt(gp);
+  $('#exGPband').innerHTML='<span class="tag '+gb.cls+'">'+gb.lbl+'</span> <span style="color:var(--mute);font-size:.84rem">'+gb.txt+'</span>';
+  $('#exGR').textContent=fmt(gr,2);
+  $('#exGRband').innerHTML='<span class="tag '+rb.cls+'">'+rb.lbl+'</span>';
+  $('#exMatrix').innerHTML=matrixHTML(sevFromC(MARS.C), probFromP(MARS.P));
+  $('#matrixBlank').innerHTML=matrixHTML(null,null);
+  $('#exPyr').innerHTML = CONTROLS.map(function(c){
+    var used = MARS.ctrl.indexOf(c.k)>=0;
+    return '<div class="plevel pl'+c.k+'"><span class="pn">'+c.k+'</span><span>'+c.n+' <span class="pd">· '+c.d+'</span></span>'+(used?'<span class="pm">✓ Caso Marte: '+esc(c.ex)+'</span>':'<span></span>')+'</div>';
+  }).join('') + '<div style="display:flex;justify-content:space-between;font-family:Archivo;font-weight:800;font-size:.74rem;color:var(--mute);margin-top:2px"><span>▲ Más eficaz</span><span>Menos eficaz ▼</span></div>';
+  var tnames={C:'C · Consecuencias',E:'E · Exposición',P:'P · Probabilidad'};
+  $('#fineTables').innerHTML=['C','E','P'].map(function(k){
+    return '<div class="card"><div class="kk">'+tnames[k]+'</div><table class="tbl scaletbl" style="margin-top:6px"><tbody>'+FINE[k].map(function(o){return '<tr><td>'+fmt(o.v)+'</td><td>'+o.t+'</td></tr>';}).join('')+'</tbody></table></div>';
+  }).join('');
+  $('#fineBands').innerHTML=[300,150,40].map(function(v){var b=gpBand(v);return '<div><span class="tag '+b.cls+'">'+b.lbl+'</span>'+b.txt+'</div>';}).join('');
+  $('#heurList').innerHTML=HEUR.map(function(h){return '<div><span class="hp">'+h[0]+'</span><p>'+h[1]+'</p></div>';}).join('');
+}
+$('#btnInsight').addEventListener('click', function(){ $('#insight').classList.toggle('on'); });
+$('#btnInsight2').addEventListener('click', function(){
+  var on=$('#insight2').classList.toggle('on');
+  $$('#logtbl2 tr[data-k2]').forEach(function(tr){ var k=tr.getAttribute('data-k2'); tr.className=on?k:''; tr.querySelector('.t2').innerHTML=on&&k?(k==='lead'?' <span class="tag t-lead">aviso</span>':' <span class="tag t-lag">daño</span>'):''; });
+});
+
+/* ---- Cédulas: filas generadas ---- */
+var NROWS=6;
+(function(){
+  var h='';
+  for(var i=1;i<=NROWS;i++){
+    h+='<tr><td class="idx">'+i+'</td>'+
+      '<td data-l="Peligro"><textarea data-k="c1_r'+i+'_pel" aria-label="Peligro '+i+'"></textarea></td>'+
+      '<td data-l="Amenaza"><textarea data-k="c1_r'+i+'_ame" aria-label="Amenaza '+i+'"></textarea></td>'+
+      '<td data-l="¿Quién es vulnerable? Y por qué"><textarea data-k="c1_r'+i+'_vul" aria-label="Vulnerable '+i+'"></textarea></td>'+
+      '<td data-l="Daño posible"><textarea data-k="c1_r'+i+'_dan" aria-label="Daño posible '+i+'"></textarea></td></tr>';
+  }
+  $('#c1rows').innerHTML=h;
+  var p='';
+  for(var j=1;j<=NROWS;j++){
+    p+='<div class="prow" data-row="'+j+'"><span class="pi">'+j+'</span><span class="pt" data-c2name="'+j+'">—</span>'+
+      '<select data-k="c2_p_'+j+'" aria-label="Probabilidad del peligro '+j+'"><option value="">Probabilidad</option><option value="0">Baja</option><option value="1">Media</option><option value="2">Alta</option></select>'+
+      '<select data-k="c2_s_'+j+'" aria-label="Severidad del peligro '+j+'"><option value="">Severidad</option><option>Leve</option><option>Moderada</option><option>Grave</option></select>'+
+      '<span class="lv lv-none" data-c2lv="'+j+'">—</span></div>';
+  }
+  $('#c2placer').innerHTML=p;
+  var q='';
+  for(var k=1;k<=3;k++){
+    q+='<tr><td class="idx">'+k+'</td><td><textarea data-k="c2_pr'+k+'_pel" aria-label="Peligro prioridad '+k+'" style="min-height:70px"></textarea></td>'+
+      '<td><select data-k="c2_pr'+k+'_ctrl" aria-label="Control prioridad '+k+'" style="margin-bottom:6px"><option value="">Nivel de control…</option>'+CONTROLS.map(function(c){return '<option value="'+c.k+'">'+c.k+' · '+c.n+'</option>';}).join('')+'</select>'+
+      '<textarea data-k="c2_pr'+k+'_why" aria-label="Por qué prioridad '+k+'" placeholder="Qué harán y por qué"></textarea></td></tr>';
+  }
+  $('#c2prio').innerHTML=q;
+})();
+var scalesDef=[['fat','Fatiga','Nada','Mucha'],['dol','Dolor','Nada','Mucho'],['ani','Ánimo','Muy bueno','Muy bajo'],['sue','Sueño','Muy bueno','Muy malo']];
+$('#arScales').innerHTML = scalesDef.map(function(s){
+  var b=''; for(var i=1;i<=5;i++) b+='<label><input type="radio" name="ar_'+s[0]+'" value="'+i+'" aria-label="'+s[1]+' '+i+'"><span class="b">'+i+'</span></label>';
+  return '<div class="scale"><span class="sn">'+s[1]+'</span><span class="se l">'+s[2]+'</span>'+b+'<span class="se">'+s[3]+'</span></div>';
+}).join('');
+
+function c1Name(i){ var e=$('[data-k="c1_r'+i+'_pel"]'); return e?e.value.trim():''; }
+function c2Level(i){
+  var p=$('[data-k="c2_p_'+i+'"]').value, s=$('[data-k="c2_s_'+i+'"]').value;
+  if(p===''||!s) return null; return MATRIX[s][+p];
+}
+function syncCedulas(){
+  var eq=($('[data-k="equipo"]').value||'').trim()||'—';
+  $$('.eqecho').forEach(function(e){ e.textContent=eq; });
+  var cells={}; var any=false;
+  for(var i=1;i<=NROWS;i++){
+    var name=c1Name(i), row=$('.prow[data-row="'+i+'"]');
+    row.style.display=name?'':'none'; if(name) any=true;
+    $('[data-c2name="'+i+'"]').textContent=name||'—';
+    var lv=c2Level(i), lvEl=$('[data-c2lv="'+i+'"]');
+    lvEl.className='lv '+(lv?'lv-'+lv:'lv-none'); lvEl.textContent=lv?lv.charAt(0).toUpperCase()+lv.slice(1):'—';
+    if(name&&lv){ var key=$('[data-k="c2_s_'+i+'"]').value+'|'+$('[data-k="c2_p_'+i+'"]').value; (cells[key]=cells[key]||[]).push(i); }
+  }
+  if(!any) $('#c2placer').setAttribute('data-empty','1'); else $('#c2placer').removeAttribute('data-empty');
+  var emptyMsg=$('#c2empty'); if(!any&&!emptyMsg){ $('#c2placer').insertAdjacentHTML('beforeend','<div class="empty" id="c2empty">Escriban peligros en la cédula 1 y aparecerán aquí para ubicarlos.</div>'); } else if(any&&emptyMsg){ emptyMsg.remove(); }
+  var h='<div></div><div class="hd">Baja</div><div class="hd">Media</div><div class="hd">Alta</div>';
+  SEVS.forEach(function(s){
+    h+='<div class="sv">'+s+'</div>';
+    MATRIX[s].forEach(function(c,pi){ var pins=(cells[s+'|'+pi]||[]).map(function(n){return '<span class="pin" title="'+esc(c1Name(n))+'">'+n+'</span>';}).join('');
+      h+='<div class="c-'+c+'">'+c.charAt(0).toUpperCase()+c.slice(1)+'<span class="pins">'+pins+'</span></div>'; });
+  });
+  $('#c2matrix').innerHTML=h;
+  /* consejo de prioridades */
+  var adv=$('#c2advice'), msgs=[];
+  for(var k=1;k<=3;k++){
+    var pel=($('[data-k="c2_pr'+k+'_pel"]').value||'').trim(), ctrl=+$('[data-k="c2_pr'+k+'_ctrl"]').value||0;
+    if(!pel||!ctrl) continue;
+    var idx=null; for(var j=1;j<=NROWS;j++){ if(c1Name(j)&&c1Name(j)===pel) idx=j; }
+    var lvl=idx?c2Level(idx):null;
+    if(lvl==='alto'&&ctrl>=4) msgs.push('Prioridad '+k+' está en <b>Alto</b> y su control es de nivel '+ctrl+'. ¿Pueden eliminar, sustituir o usar ingeniería?');
+  }
+  if(msgs.length){ adv.className='advice warn on'; adv.innerHTML=msgs.join('<br>'); } else { adv.className='advice'; adv.innerHTML=''; }
+}
+$('#btnSuggest').addEventListener('click', function(){
+  var rank={alto:3,medio:2,bajo:1}, sevr={Grave:3,Moderada:2,Leve:1}, list=[];
+  for(var i=1;i<=NROWS;i++){ var n=c1Name(i), lv=c2Level(i); if(n&&lv) list.push({n:n,r:rank[lv]*10+sevr[$('[data-k="c2_s_'+i+'"]').value]}); }
+  if(!list.length){ toast('Primero ubiquen los peligros en la matriz'); return; }
+  list.sort(function(a,b){return b.r-a.r});
+  var used=[1,2,3].map(function(k){return ($('[data-k="c2_pr'+k+'_pel"]').value||'').trim();}), filled=0;
+  for(var k=1;k<=3;k++){
+    var el=$('[data-k="c2_pr'+k+'_pel"]'); if(el.value.trim()) continue;
+    var next=list.filter(function(x){return used.indexOf(x.n)<0;})[0]; if(!next) break;
+    el.value=next.n; used.push(next.n); kvTouch(el); filled++;
+  }
+  syncCedulas(); toast(filled?'Se sugirieron '+filled+' prioridades (de Alto a Bajo)':'Las tres prioridades ya tienen peligro');
+});
+
+/* =================== CÉDULAS · ESTADO + SYNC (clave/valor) =================== */
+var KVK='riesgo_cedulas_v1', KVTOOL='riesgo_cedulas';
+function kvCollect(){ var m={}; $$('[data-k]').forEach(function(e){ m[e.getAttribute('data-k')]=e.value; }); return m; }
+function kvRestore(m){ if(!m) return; $$('[data-k]').forEach(function(e){ var k=e.getAttribute('data-k'); if(k in m) e.value=m[k]||''; }); }
+var kvSaveT; function kvSave(){ clearTimeout(kvSaveT); kvSaveT=setTimeout(function(){ lsSet(KVK,kvCollect()); showSaved(); },400); }
+/* cada quien su propia cédula: las claves se guardan como clave~~persona */
+var KVSEP='~~';
+function _rslug(n){ return (String(n||'').toLowerCase().replace(/[^a-z0-9]+/g,'')).slice(0,24) || 'anon'; }
+function _rme(){ return _rslug(window.Sync&&Sync.getName?Sync.getName():''); }
+function kvKey(base){ return base+KVSEP+_rme(); }
+var kvPushT={}, kvLast={};
+function kvPush(baseKey,val,now){
+  var key=kvKey(baseKey);
+  kvLast[key]=Date.now();
+  if(!(window.Sync&&Sync.isConnected())) return;
+  clearTimeout(kvPushT[key]);
+  var f=function(){ Sync.post({op:'set',tool:KVTOOL,key:key,value:val}).catch(function(){}); };
+  if(now) f(); else kvPushT[key]=setTimeout(f,600);
+}
+function kvTouch(el){ kvSave(); kvPush(el.getAttribute('data-k'), el.value, true); }
+document.addEventListener('input', function(e){ var t=e.target; if(t.matches&&t.matches('[data-k]')){ kvSave(); kvPush(t.getAttribute('data-k'),t.value); syncCedulas(); } });
+document.addEventListener('change', function(e){ var t=e.target; if(t.matches&&t.matches('[data-k]')){ kvSave(); kvPush(t.getAttribute('data-k'),t.value,true); syncCedulas(); if(t.tagName==='SELECT') t.blur(); } });
+var kvFirst=true;
+function kvPull(){
+  if(!(window.Sync&&Sync.isConnected())) return;
+  Sync.read(KVTOOL).then(function(j){
+    if(!j||!j.ok||!j.rows) return;
+    var changed=false;
+    var suf=KVSEP+_rme();
+    j.rows.forEach(function(r){
+      var key=String(r.key||''); if(!key) return;
+      var si=key.indexOf(KVSEP), base=key;
+      if(si>=0){ if(key.slice(si+KVSEP.length)!==_rme()) return; base=key.slice(0,si); } /* de otra persona: no la pongo en mi cédula */
+      if(kvLast[key]&&Date.now()-kvLast[key]<10000) return;
+      var el=$('[data-k="'+base+'"]'); if(!el||el===document.activeElement) return;
+      var v=r.value==null?'':String(r.value); if(el.value!==v){ el.value=v; changed=true; }
+    });
+    if(changed){ lsSet(KVK,kvCollect()); syncCedulas(); }
+    if(kvFirst){ kvFirst=false; var tengo=j.rows.some(function(r){ var k=String(r.key||''); return k.slice(k.length-suf.length)===suf; }); if(!tengo){ var m=kvCollect(), items=[]; for(var k in m){ if(m[k]) items.push({key:kvKey(k),value:m[k]}); } if(items.length) Sync.post({op:'bulkset',tool:KVTOOL,items:items}).catch(function(){}); } }
+  }).catch(function(){});
+}
+
+/* ---- botón Enviar: sube MI cédula completa y refresca el Sheet al instante ---- */
+(function(){
+  var sendBtn=document.getElementById('sendBtn'), sendT;
+  if(!sendBtn) return;
+  function lab(txt,bg){ sendBtn.textContent=txt; if(bg) sendBtn.style.background=bg; }
+  sendBtn.addEventListener('click', function(){
+    this.blur();
+    if(!(window.Sync&&Sync.isConnected()&&Sync.getName())){ lab('Pon tu nombre arriba ⚙️','#f2c14e'); clearTimeout(sendT); sendT=setTimeout(function(){lab('Enviar mi cédula','var(--lime)')},2200); return; }
+    var m=kvCollect(), items=[]; for(var k in m){ if(m[k]) items.push({key:kvKey(k),value:m[k]}); }
+    items.push({key:kvKey('_enviado'),value:new Date().toLocaleString('es-MX')});
+    lab('Enviando…','#9cc1f2');
+    Sync.post({op:'bulkset',tool:KVTOOL,items:items})
+      .then(function(){ return Sync.post({op:'views'}); })
+      .then(function(){ lab('Enviado ✓','#4ccb8f'); clearTimeout(sendT); sendT=setTimeout(function(){lab('Enviar mi cédula','var(--lime)')},2200); })
+      .catch(function(){ lab('Error, reintenta','#ef6a5a'); clearTimeout(sendT); sendT=setTimeout(function(){lab('Enviar mi cédula','var(--lime)')},2200); });
+  });
+})();
+
+/* ---- Ejemplos: ver y copiar a campos vacíos ---- */
+var CED_KEYS={c1:/^c1_/, c2:/^c2_/, c4:/^c4_/};
+var exModal=$('#exmodal');
+function exHTML(n,ced){
+  var ex=EXAMPLES[n], kv=ex.kv;
+  if(ced==='c1'){
+    var rows=''; for(var i=1;i<=NROWS;i++){ if(!kv['c1_r'+i+'_pel']) continue; rows+='<tr><td><b>'+i+'</b></td><td><b>'+esc(kv['c1_r'+i+'_pel'])+'</b></td><td>'+esc(kv['c1_r'+i+'_ame'])+'</td><td>'+esc(kv['c1_r'+i+'_vul'])+'</td><td>'+esc(kv['c1_r'+i+'_dan'])+'</td></tr>'; }
+    return '<p class="ms"><b style="color:var(--white)">Tarea elegida:</b> '+esc(kv.c1_tarea)+'</p><div class="tblwrap"><table class="tbl"><thead><tr><th>#</th><th>Peligro</th><th>Amenaza</th><th>¿Quién es vulnerable?</th><th>Daño posible</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+  }
+  if(ced==='c2'){
+    var r2=''; for(var j=1;j<=NROWS;j++){ if(!kv['c1_r'+j+'_pel']) continue; var lv=MATRIX[kv['c2_s_'+j]][+kv['c2_p_'+j]]; r2+='<tr><td><b>'+j+'</b></td><td>'+esc(kv['c1_r'+j+'_pel'])+'</td><td>'+PROBS[+kv['c2_p_'+j]]+'</td><td>'+kv['c2_s_'+j]+'</td><td><span class="tag '+(lv==='alto'?'t-crit':lv==='medio'?'t-warn':'t-mute')+'">'+lv+'</span></td></tr>'; }
+    var pr=''; for(var k=1;k<=3;k++){ pr+='<tr><td><b>'+k+'</b></td><td>'+esc(kv['c2_pr'+k+'_pel'])+'</td><td><b>'+CONTROLS[+kv['c2_pr'+k+'_ctrl']-1].n+'</b> — '+esc(kv['c2_pr'+k+'_why'])+'</td></tr>'; }
+    return '<div class="tblwrap"><table class="tbl"><thead><tr><th>#</th><th>Peligro</th><th>Probabilidad</th><th>Severidad</th><th>Nivel</th></tr></thead><tbody>'+r2+'</tbody></table></div>'+
+      '<h4 style="margin-top:14px">Prioridades y control elegido</h4><div class="tblwrap"><table class="tbl"><thead><tr><th>#</th><th>Peligro</th><th>Control elegido y por qué</th></tr></thead><tbody>'+pr+'</tbody></table></div>';
+  }
+  if(ced==='c3'){
+    return '<div class="tblwrap"><table class="tbl"><thead><tr><th>Código</th><th>Fecha</th><th>Fatiga</th><th>Dolor</th><th>Ánimo</th><th>Sueño</th><th>¿Algo estuvo a punto de salir mal?</th></tr></thead><tbody>'+
+      ex.ar.map(function(a){return '<tr><td><b>'+a.code+'</b></td><td>'+a.date+'</td><td>'+a.v.fat+'</td><td>'+a.v.dol+'</td><td>'+a.v.ani+'</td><td>'+a.v.sue+'</td><td>'+esc(a.near)+'</td></tr>';}).join('')+
+      '</tbody></table></div><p class="ms" style="margin-top:10px">El segundo reporte sube varios puntos sobre la línea base de esa persona: es un <b style="color:var(--warn)">indicador adelantado</b>.</p>';
+  }
+  if(ced==='c4'){
+    var L={T:'T · Tareas',U:'U · Usuario',C:'C · Automatización',E:'E · Entorno',I:'I · Interacciones'};
+    return '<div class="tblwrap"><table class="tbl"><tbody>'+['T','U','C','E','I'].map(function(x){return '<tr><td style="width:150px"><b>'+L[x]+'</b></td><td>'+esc(kv['c4_'+x])+'</td></tr>';}).join('')+'</tbody></table></div>';
+  }
+  return '';
+}
+function openEx(n,ced){
+  $('#exttl').textContent=EXAMPLES[n].name+' · '+({c1:'Cédula 1',c2:'Cédula 2',c3:'Cédula 3',c4:'Cédula 4'})[ced];
+  $('#exsub').textContent='Úsenlo como punto de partida y luego cámbienlo por su escenario.';
+  $('#exbody').innerHTML=exHTML(n,ced);
+  $('#exactions').innerHTML='<button type="button" class="btn prime" data-copyex="'+n+'" data-ced="'+ced+'">'+(ced==='c3'?'Agregar estos autorreportes de ejemplo':'Copiar a campos vacíos')+'</button><button type="button" class="btn" id="exclose2">Cerrar</button>';
+  exModal.classList.add('open'); $('#exclose').focus();
+}
+function closeEx(){ exModal.classList.remove('open'); }
+$('#exclose').addEventListener('click', closeEx);
+exModal.addEventListener('click', function(e){ if(e.target===exModal||e.target.id==='exclose2') closeEx(); });
+document.addEventListener('click', function(e){
+  var b=e.target.closest('[data-showex]'); if(b){ openEx(b.getAttribute('data-showex'), b.getAttribute('data-ced')); return; }
+  var c=e.target.closest('[data-copyex]'); if(!c) return;
+  var n=c.getAttribute('data-copyex'), ced=c.getAttribute('data-ced'), ex=EXAMPLES[n], filled=0;
+  if(ced==='c3'){
+    ex.ar.forEach(function(a,i){ var r={id:uid(),ts:Date.now()+i,code:a.code,date:a.date,v:Object.assign({},a.v),near:a.near,author:'Ejemplo '+n}; store.reports[r.id]=r; push('autorreporte',r); });
+    renderReports(); closeEx(); toast('Se agregaron 2 autorreportes de ejemplo'); return;
+  }
+  var re=CED_KEYS[ced]; var keys=Object.keys(ex.kv).filter(function(k){ return re.test(k) || (ced==='c1'&&k==='c1_tarea'); });
+  if(ced==='c2'){ /* la matriz necesita los peligros de la cédula 1 */
+    var noPel=true; for(var i=1;i<=NROWS;i++){ if(c1Name(i)) noPel=false; }
+    if(noPel) keys=keys.concat(Object.keys(ex.kv).filter(function(k){return /^c1_/.test(k);}));
+  }
+  keys.forEach(function(k){ var el=$('[data-k="'+k+'"]'); if(el&&!el.value.trim()){ el.value=ex.kv[k]; kvTouch(el); filled++; } });
+  syncCedulas(); closeEx();
+  toast(filled?('Se llenaron '+filled+' campos vacíos; lo que ya tenían no se tocó'):'Todos los campos ya tenían texto: no se cambió nada');
+});
+
+/* =================== PANEL · FORMULARIO =================== */
+function fillSelect(sel, arr){ sel.innerHTML='<option value="">— Elijan —</option>'+arr.map(function(o){return '<option value="'+o.v+'">'+fmt(o.v)+' · '+o.t+'</option>';}).join(''); }
+fillSelect($('#fC'),FINE.C); fillSelect($('#fE'),FINE.E); fillSelect($('#fP'),FINE.P);
+$('#ctrlOpts').innerHTML = CONTROLS.map(function(c){ return '<label class="ctrlopt"><input type="checkbox" name="fCtrl" value="'+c.k+'"><span><b>'+c.k+' · '+c.n+'</b> — '+c.d+'</span></label>'; }).join('');
+var editingCustom=false;
+function applyPreset(){
+  var p=PRESETS[$('#fPreset').value];
+  if($('#fPreset').value!=='custom'){ $('#fVar').value=p.v; $('#fUnit').value=p.u; $('#fLim').value=p.l; }
+  else if(!editingCustom){ $('#fVar').value=''; $('#fUnit').value=''; $('#fLim').value=''; }
+  calc();
+}
+$('#fPreset').addEventListener('change', function(){ editingCustom=false; applyPreset(); });
+function num(id){ var v=$(id).value; return v===''?null:Number(v); }
+function current(){
+  var C=num('#fC'),E=num('#fE'),P=num('#fP'),real=num('#fReal'),lim=num('#fLim');
+  return {C:C,E:E,P:P,GP:(C!=null&&E!=null&&P!=null)?C*E*P:null, real:real,lim:lim,GR:(real!=null&&lim)?real/lim:null,
+          ctrl:$$('input[name=fCtrl]:checked').map(function(i){return +i.value})};
+}
+function calc(){
+  var c=current();
+  if(c.GP!=null){ var b=gpBand(c.GP); $('#gpVal').textContent=fmt(c.GP); $('#gpVal').style.color=b.color; $('#gpTxt').innerHTML='<span class="tag '+b.cls+'">'+b.lbl+'</span><br>'+b.txt; }
+  else { $('#gpVal').textContent='—'; $('#gpVal').style.color=''; $('#gpTxt').textContent='Elijan C, E y P.'; }
+  if(c.GR!=null){ var r=grBand(c.GR); $('#grVal').textContent=fmt(c.GR,2); $('#grVal').style.color=r.color;
+    $('#grTxt').innerHTML='<span class="tag '+r.cls+'">'+r.lbl+'</span><br>'+fmt(c.real)+' ÷ '+fmt(c.lim)+' '+esc($('#fUnit').value)+' · '+r.txt;
+    $('#grBar').style.width=Math.min(100,c.GR/1.5*100)+'%'; $('#grBar').style.background=r.color; }
+  else { $('#grVal').textContent='—'; $('#grVal').style.color=''; $('#grTxt').textContent=(c.lim?'Escriban el valor medido.':'Escriban el valor medido y el límite.'); $('#grBar').style.width='0'; }
+  $('#fMatrix').innerHTML=matrixHTML(c.C!=null?sevFromC(c.C):null, c.P!=null?probFromP(c.P):null);
+  $$('.ctrlopt').forEach(function(l){ l.classList.toggle('sel', l.querySelector('input').checked); });
+  var adv=$('#ctrlAdvice'), best=c.ctrl.length?Math.min.apply(null,c.ctrl):null, crit=(c.GP!=null&&c.GP>200)||(c.GR!=null&&c.GR>=1);
+  var txtDesc=($('#fCtrlDesc').value||'').toLowerCase();
+  if(/silenci|apagar la alarma|apagamos la alarma|ignorar la alarma/.test(txtDesc) && (best==null||best>=4) && !/en lugar de|en vez de|no solo|sin revisar|no silenciar/.test(txtDesc)){ adv.className='advice warn on'; adv.innerHTML='Silenciar o apagar una alarma <b>no es un control</b>: la causa sigue ahí. Elijan un nivel que actúe sobre la fuente o el medio.'; }
+  else if(best==null){ adv.className='advice'; adv.innerHTML=''; }
+  else if(best>=4 && crit){ adv.className='advice warn on'; adv.innerHTML='Este evento es <b>crítico</b> y el control más alto que eligieron es de nivel '+best+'. ¿Pueden <b>eliminar, sustituir</b> o poner un <b>control de ingeniería</b>? Los niveles 4 y 5 dependen de que la persona no falle.'; }
+  else if(best>=4){ adv.className='advice warn on'; adv.innerHTML='Los controles de nivel '+best+' son los menos eficaces. Úsenlos como complemento de uno más alto si es posible.'; }
+  else { adv.className='advice ok on'; adv.innerHTML='Buen nivel: actúan '+(best===1?'sobre la fuente':best===2?'cambiando la fuente':'en el medio')+', no solo en la persona.'; }
+}
+['#fC','#fE','#fP','#fReal','#fLim','#fUnit','#fVar','#fCtrlDesc'].forEach(function(id){ $(id).addEventListener('input',calc); $(id).addEventListener('change',calc); });
+['#fLim','#fVar','#fUnit'].forEach(function(id){ $(id).addEventListener('input',function(){ if($('#fPreset').value!=='custom'){ var p=PRESETS[$('#fPreset').value]; if(String($(id).value)!==String(id==='#fLim'?p.l:id==='#fVar'?p.v:p.u)){ $('#fPreset').value='custom'; editingCustom=true; } } }); });
+$('#ctrlOpts').addEventListener('change',calc);
+$('#fDan').addEventListener('input', function(){ if(this.value.trim()){ $('input[name=fType][value=rezagado]').checked=true; } });
+
+var editingId=null;
+function clearErrs(){ $$('[data-err]').forEach(function(e){e.textContent=''}); $('#formErr').textContent=''; }
+function clearForm(){
+  ['#fTitle','#fWhen','#fPel','#fAme','#fVul','#fRie','#fDan','#fReal','#fCtrlDesc'].forEach(function(id){ $(id).value=''; });
+  ['#fC','#fE','#fP'].forEach(function(id){ $(id).value=''; });
+  $('input[name=fType][value=adelantado]').checked=true;
+  $$('input[name=fCtrl]').forEach(function(c){c.checked=false});
+  $('#fPreset').value='co2'; editingId=null; editingCustom=false;
+  $('#formTitle').textContent='Nuevo evento'; $('#btnSave').textContent='Guardar evento'; clearErrs();
+  applyPreset();
+}
+function fillForm(ev){
+  $('#fTitle').value=ev.title||''; $('#fWhen').value=ev.when||'';
+  $$('input[name=fType]').forEach(function(r){ r.checked=(r.value===(ev.type||'adelantado')); });
+  $('#fPel').value=ev.pel||''; $('#fAme').value=ev.ame||''; $('#fVul').value=ev.vul||''; $('#fRie').value=ev.rie||''; $('#fDan').value=ev.dan||'';
+  $('#fC').value=ev.C!=null?String(ev.C):''; $('#fE').value=ev.E!=null?String(ev.E):''; $('#fP').value=ev.P!=null?String(ev.P):'';
+  $('#fPreset').value=ev.preset||'custom'; editingCustom=(ev.preset==='custom');
+  $('#fVar').value=ev.grVar||''; $('#fUnit').value=ev.grUnit||''; $('#fReal').value=ev.grReal!=null?ev.grReal:''; $('#fLim').value=ev.grLim!=null?ev.grLim:'';
+  $$('input[name=fCtrl]').forEach(function(c){ c.checked=(ev.ctrl||[]).indexOf(+c.value)>=0; });
+  $('#fCtrlDesc').value=ev.ctrlDesc||'';
+  calc();
+}
+function readForm(){
+  var c=current();
+  return { title:$('#fTitle').value.trim(), when:$('#fWhen').value.trim(), type:($('input[name=fType]:checked')||{}).value||'adelantado',
+    pel:$('#fPel').value.trim(), ame:$('#fAme').value.trim(), vul:$('#fVul').value.trim(), rie:$('#fRie').value.trim(), dan:$('#fDan').value.trim(),
+    C:c.C,E:c.E,P:c.P,GP:c.GP, preset:$('#fPreset').value, grVar:$('#fVar').value.trim(), grUnit:$('#fUnit').value.trim(), grReal:c.real, grLim:c.lim, GR:c.GR,
+    ctrl:c.ctrl, ctrlDesc:$('#fCtrlDesc').value.trim() };
+}
+$('#btnFillExample').addEventListener('click', function(){ clearForm(); fillForm(MARS); toast('Formulario lleno con el caso Marte'); });
+$('#btnFillExample2').addEventListener('click', function(){ clearForm(); fillForm(EST); toast('Formulario lleno con la estación remota'); });
+$('#btnClear').addEventListener('click', clearForm);
+$('#btnLoadExample').addEventListener('click', function(){ clearForm(); fillForm(MARS); go(indexOfId('g-ev1')); });
+$('#btnSave').addEventListener('click', function(){
+  var ev=readForm(); clearErrs();
+  var miss1=[]; if(!ev.title) miss1.push('un título'); if(!ev.pel) miss1.push('el peligro');
+  if(ev.type==='rezagado'&&!ev.dan) miss1.push('el daño (o márquenlo como aviso)');
+  if(miss1.length){ $('[data-err="1"]').textContent='Falta '+miss1.join(', ')+'.'; $('#formErr').textContent='Falta información en el paso 1.'; go(indexOfId('g-ev1')); return; }
+  if(ev.GP==null){ $('[data-err="2"]').textContent='Falta elegir C, E y P.'; go(indexOfId('g-ev2')); return; }
+  if(ev.grReal!=null&&!ev.grLim){ $('[data-err="3"]').textContent='Falta el límite para calcular GR.'; go(indexOfId('g-ev3')); return; }
+  if(editingId){ ev.id=editingId; ev.author=(store.events[editingId]||{}).author; ev.ts=(store.events[editingId]||{}).ts; updateEvent(ev); toast('Evento actualizado'); }
+  else { ev.id=uid(); ev.ts=Date.now(); addEvent(ev); toast('Evento guardado'); }
+  clearForm(); go(indexOfId('g-lista'));
+});
+$('#btnNewEv').addEventListener('click', function(){ if(editingId) clearForm(); });
+
+/* =================== EVENTOS Y AUTORREPORTES · SYNC =================== */
+var LSK='riesgo_orbital_v1', TOOL='riesgo';
+var store=lsGet(LSK,{events:{},reports:{}}); store.events=store.events||{}; store.reports=store.reports||{};
+function persist(){ lsSet(LSK,store); showSaved(); }
+function author(){ return (window.Sync&&Sync.getName())||''; }
+function online(){ return !!(window.Sync&&Sync.isConnected()); }
+function push(kind,obj){
+  obj._pending=true; persist(); if(!online()) return;
+  var clean=JSON.parse(JSON.stringify(obj)); delete clean._pending; delete clean._synced;
+  Sync.post({op:'add',tool:TOOL,id:obj.id,zone:kind,value:JSON.stringify(clean)}).then(function(j){ if(j&&j.ok){ obj._pending=false; obj._synced=true; persist(); } }).catch(function(){});
+}
+function remove(kind,id){
+  var coll=kind==='evento'?store.events:store.reports, o=coll[id];
+  delete coll[id]; persist(); renderAll();
+  if(o&&o._synced&&online()) Sync.post({op:'del',tool:TOOL,id:id}).catch(function(){});
+}
+function addEvent(ev){ ev.author=ev.author||author(); store.events[ev.id]=ev; push('evento',ev); renderAll(); }
+function updateEvent(ev){
+  var old=store.events[ev.id]; store.events[ev.id]=ev;
+  if(old&&old._synced&&online()){ Sync.post({op:'del',tool:TOOL,id:ev.id}).then(function(){ push('evento',ev); }).catch(function(){ push('evento',ev); }); }
+  else push('evento',ev);
+  renderAll();
+}
+function pull(){
+  if(!online()) return;
+  Sync.read(TOOL).then(function(j){
+    if(!j||!j.ok||!j.rows) return;
+    var seen={evento:{},autorreporte:{}};
+    j.rows.forEach(function(r){
+      var kind=String(r.zone||''); if(!seen[kind]) return;
+      var o; try{ o=JSON.parse(r.value); }catch(e){ return; }
+      o.id=String(r.id); o._synced=true; o._pending=false; seen[kind][o.id]=1;
+      (kind==='evento'?store.events:store.reports)[o.id]=o;
+    });
+    [['evento',store.events],['autorreporte',store.reports]].forEach(function(p){
+      Object.keys(p[1]).forEach(function(id){ var o=p[1][id]; if(seen[p[0]][id]) return;
+        if(o._synced&&!o._pending) delete p[1][id]; else if(o._pending) push(p[0],o); });
+    });
+    lsSet(LSK,store); renderAll();
+  }).catch(function(){});
+}
+
+/* =================== RENDER PANEL =================== */
+var filter='all';
+$$('.fchip').forEach(function(b){ b.addEventListener('click', function(){ filter=b.getAttribute('data-f'); $$('.fchip').forEach(function(x){x.classList.toggle('on',x===b)}); renderEvents(); }); });
+function isCrit(ev){ return (ev.GP!=null&&ev.GP>200)||(ev.GR!=null&&ev.GR>=1); }
+function evCard(ev, example){
+  var gb=ev.GP!=null?gpBand(ev.GP):null, rb=ev.GR!=null?grBand(ev.GR):null;
+  var color=isCrit(ev)?'var(--crit)':(gb&&gb.cls==='t-warn')||(rb&&rb.cls==='t-warn')?'var(--warn)':'var(--line)';
+  var best=(ev.ctrl||[]).length?Math.min.apply(null,ev.ctrl):null;
+  var sev=ev.C!=null?sevFromC(ev.C):null, pi=ev.P!=null?probFromP(ev.P):null, cell=sev&&pi!=null?MATRIX[sev][pi]:null;
+  var row=function(k,v){ return v?'<dt>'+k+'</dt><dd>'+esc(v)+'</dd>':''; };
+  return '<div class="ev'+(example?' example':'')+'" style="--ec:'+color+'">'+
+    '<div class="eh"><h4>'+esc(ev.title)+'</h4>'+(ev.type==='rezagado'?'<span class="tag t-lag">✚ Rezagado</span>':'<span class="tag t-lead">⚠ Adelantado</span>')+(example?'<span class="tag t-mute">Ejemplo</span>':'')+'</div>'+
+    '<div class="meta">'+esc(ev.when||'')+(ev.author?' · '+esc(ev.author):'')+(ev._pending&&online()?' · subiendo…':'')+'</div>'+
+    '<div class="kv"><span>GP <b>'+fmt(ev.GP)+'</b> '+(gb?'<span class="tag '+gb.cls+'">'+(ev.GP>200?'inmediata':ev.GP>85?'urgente':'sin demora')+'</span>':'')+'</span>'+
+      '<span>GR <b>'+(ev.GR!=null?fmt(ev.GR,2):'—')+'</b> '+(rb?'<span class="tag '+rb.cls+'">'+(ev.GR>=1?'excede':ev.GR>=0.5?'vigilar':'ok')+'</span>':'')+'</span>'+
+      '<span>Matriz <b>'+(cell?cell.charAt(0).toUpperCase()+cell.slice(1):'—')+'</b></span></div>'+
+    '<details><summary>Escalera y control</summary><dl>'+row('Peligro',ev.pel)+row('Amenaza',ev.ame)+row('Vulnerab.',ev.vul)+row('Riesgo',ev.rie)+row('Daño',ev.dan)+
+      (ev.GP!=null?'<dt>Fine</dt><dd>'+fmt(ev.C)+' × '+fmt(ev.E)+' × '+fmt(ev.P)+' = '+fmt(ev.GP)+'</dd>':'')+
+      (ev.GR!=null?'<dt>GR</dt><dd>'+esc(ev.grVar)+': '+fmt(ev.grReal)+' ÷ '+fmt(ev.grLim)+' '+esc(ev.grUnit)+' = '+fmt(ev.GR,2)+'</dd>':'')+
+      (best?'<dt>Control</dt><dd>'+(ev.ctrl||[]).slice().sort().map(function(k){return k+' · '+CONTROLS[k-1].n}).join(', ')+(ev.ctrlDesc?' — '+esc(ev.ctrlDesc):'')+'</dd>':'')+'</dl></details>'+
+    (example?'<div class="acts"><button type="button" data-act="useex" data-ex="'+example+'">Usar como plantilla</button></div>':
+      '<div class="acts"><button type="button" data-act="edit" data-id="'+esc(ev.id)+'">Editar</button><button type="button" data-act="del" data-id="'+esc(ev.id)+'">Borrar</button></div>')+'</div>';
+}
+function withCalc(e){ return Object.assign({},e,{GP:e.C*e.E*e.P,GR:e.grReal/e.grLim}); }
+function renderEvents(){
+  var all=Object.keys(store.events).map(function(k){return store.events[k]}).sort(function(a,b){ return (b.GP||0)-(a.GP||0)||(b.ts||0)-(a.ts||0); });
+  $('#tTotal').textContent=all.length;
+  $('#tLead').textContent=all.filter(function(e){return e.type!=='rezagado'}).length;
+  $('#tLag').textContent=all.filter(function(e){return e.type==='rezagado'}).length;
+  $('#tCrit').textContent=all.filter(isCrit).length;
+  var list=all.filter(function(e){ return filter==='all'||(filter==='crit'?isCrit(e):(filter==='rezagado'?e.type==='rezagado':e.type!=='rezagado')); });
+  var h=list.map(function(e){return evCard(e,false)}).join('');
+  if(!all.length) h='<div class="empty">Aún no registran eventos. Empiecen con el ejemplo o con algo que hayan notado en su escenario.</div>';
+  else if(!list.length) h='<div class="empty">Ningún evento con este filtro.</div>';
+  var exs=[[withCalc(MARS),'marte'],[withCalc(EST),'estacion']].filter(function(x){ var e=x[0]; return filter==='all'||(filter==='crit'?isCrit(e):(filter==='rezagado'?e.type==='rezagado':e.type!=='rezagado')); });
+  $('#evList').innerHTML=h+exs.map(function(x){return evCard(x[0],x[1])}).join('');
+}
+$('#evList').addEventListener('click', function(e){
+  var b=e.target.closest('[data-act]'); if(!b) return;
+  var act=b.getAttribute('data-act'), id=b.getAttribute('data-id');
+  if(act==='useex'){ clearForm(); fillForm(b.getAttribute('data-ex')==='estacion'?EST:MARS); go(indexOfId('g-ev1')); }
+  if(act==='edit'){ var ev=store.events[id]; if(!ev) return; clearForm(); fillForm(ev); editingId=id; $('#formTitle').textContent='Editar evento'; $('#btnSave').textContent='Guardar cambios'; go(indexOfId('g-ev1')); }
+  if(act==='del'){ if(confirm('¿Borrar este evento para todo el equipo?')) remove('evento',id); }
+});
+
+/* Autorreporte */
+$('#btnAR').addEventListener('click', function(){
+  var code=$('#arCode').value.trim().toUpperCase(), vals={}, miss=[];
+  scalesDef.forEach(function(s){ var c=$('input[name=ar_'+s[0]+']:checked'); if(c) vals[s[0]]=+c.value; else miss.push(s[1].toLowerCase()); });
+  if(!code){ $('#arErr').textContent='Escriban el código del tripulante.'; return; }
+  if(miss.length){ $('#arErr').textContent='Marquen un número en: '+miss.join(', ')+'.'; return; }
+  $('#arErr').textContent='';
+  var r={id:uid(),ts:Date.now(),code:code,date:$('#arDate').value.trim(),v:vals,near:$('#arNear').value.trim(),author:author()};
+  store.reports[r.id]=r; push('autorreporte',r);
+  scalesDef.forEach(function(s){ $$('input[name=ar_'+s[0]+']').forEach(function(i){i.checked=false}); });
+  $('#arNear').value=''; renderReports(); toast('Autorreporte guardado');
+});
+function arSum(r){ return (r.v.fat||0)+(r.v.dol||0)+(r.v.ani||0)+(r.v.sue||0); }
+function reportRows(){
+  var all=Object.keys(store.reports).map(function(k){return store.reports[k]}).sort(function(a,b){return a.ts-b.ts});
+  var hist={}, rows=[];
+  all.forEach(function(r){
+    var prev=hist[r.code]||[], base=prev.length?prev.reduce(function(a,b){return a+b},0)/prev.length:null, s=arSum(r);
+    var high=Object.keys(r.v).some(function(k){return r.v[k]>=4});
+    rows.push({r:r,s:s,base:base,flag:r.near?'near':(base!=null&&s-base>=2?'base':(high?'high':''))});
+    hist[r.code]=prev.concat([s]);
+  });
+  return rows;
+}
+function renderReports(){
+  var rows=reportRows().reverse();
+  $('#arList').innerHTML = rows.slice(0,12).map(function(x){
+    var r=x.r, tag;
+    if(x.flag==='near') tag='<span class="tag t-lead">⚠ casi-incidente</span>';
+    else if(x.flag==='base') tag='<span class="tag t-lead">⚠ +'+fmt(x.s-x.base,1)+' sobre su línea base</span>';
+    else if(x.flag==='high') tag='<span class="tag t-lead">⚠ escala en 4–5</span>';
+    else tag='<span class="tag t-ok">en su línea base</span>';
+    if(x.flag==='near'&&x.base!=null&&x.s-x.base>=2) tag+=' <span class="tag t-lead">+'+fmt(x.s-x.base,1)+' sobre su línea base</span>';
+    return '<div class="ar"><span class="ac">'+esc(r.code)+'</span><span class="av">'+esc(r.date||'')+' · F'+r.v.fat+' D'+r.v.dol+' Á'+r.v.ani+' S'+r.v.sue+'</span>'+tag+
+      (r.near?'<span class="av" style="flex-basis:100%">“'+esc(r.near)+'”</span>':'')+'<button type="button" data-ardel="'+esc(r.id)+'">Borrar</button></div>';
+  }).join('') || '<div class="empty">Sin autorreportes todavía. Son indicadores adelantados: avisan antes del daño.</div>';
+}
+$('#arList').addEventListener('click', function(e){ var b=e.target.closest('[data-ardel]'); if(b&&confirm('¿Borrar este autorreporte?')) remove('autorreporte',b.getAttribute('data-ardel')); });
+function renderAll(){ renderEvents(); renderReports(); }
+
+/* =================== EXPORTAR =================== */
+function buildRows(){
+  var m=kvCollect(), rows=[['Sección','Campo','Valor','Detalle']];
+  rows.push(['Cédula 1','Equipo',m.equipo||'','']); rows.push(['Cédula 1','Tarea elegida',m.c1_tarea||'','']);
+  for(var i=1;i<=NROWS;i++){ if(m['c1_r'+i+'_pel']) rows.push(['Cédula 1 · peligro '+i, m['c1_r'+i+'_pel'], 'Amenaza: '+(m['c1_r'+i+'_ame']||''), 'Vulnerable: '+(m['c1_r'+i+'_vul']||'')+' | Daño posible: '+(m['c1_r'+i+'_dan']||'')]); }
+  for(var j=1;j<=NROWS;j++){ if(m['c1_r'+j+'_pel']){ var lv=c2Level(j); rows.push(['Cédula 2 · matriz', m['c1_r'+j+'_pel'], 'Prob: '+(m['c2_p_'+j]!==''&&m['c2_p_'+j]!=null?PROBS[+m['c2_p_'+j]]:'')+' · Sev: '+(m['c2_s_'+j]||''), lv?'Nivel: '+lv:'']); } }
+  for(var k=1;k<=3;k++){ if(m['c2_pr'+k+'_pel']) rows.push(['Cédula 2 · prioridad '+k, m['c2_pr'+k+'_pel'], m['c2_pr'+k+'_ctrl']?CONTROLS[+m['c2_pr'+k+'_ctrl']-1].n:'', m['c2_pr'+k+'_why']||'']); }
+  reportRows().forEach(function(x){ var r=x.r; rows.push(['Cédula 3 · autorreporte', r.code+' · '+(r.date||''), 'F'+r.v.fat+' D'+r.v.dol+' Á'+r.v.ani+' S'+r.v.sue, (r.near?'Casi-incidente: '+r.near+' | ':'')+(x.flag?'aviso':'en línea base')]); });
+  ['T','U','C','E','I'].forEach(function(x){ rows.push(['Cédula 4','Lienzo · '+x, m['c4_'+x]||'','']); });
+  Object.keys(store.events).map(function(k){return store.events[k]}).sort(function(a,b){return (b.GP||0)-(a.GP||0)}).forEach(function(e){
+    rows.push(['Evento ('+e.type+')', e.title, 'GP='+fmt(e.GP)+' · GR='+(e.GR!=null?fmt(e.GR,2):'—'), 'Peligro: '+e.pel+' | Amenaza: '+e.ame+' | Vulnerabilidad: '+e.vul+' | Riesgo: '+e.rie+' | Daño: '+e.dan+' | Control: '+(e.ctrl||[]).join(',')+' '+e.ctrlDesc]);
+  });
+  return rows;
+}
+function csvEsc(s){ s=(s==null?'':String(s)); return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s; }
+function exportCSV(){
+  var rows=buildRows().map(function(r){return r.map(csvEsc).join(',')}).join('\r\n');
+  var blob=new Blob(['﻿'+rows],{type:'text/csv;charset=utf-8'});
+  var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='riesgo-orbital.csv'; document.body.appendChild(a); a.click(); a.remove();
+}
+function copyTSV(btn){
+  var rows=buildRows().map(function(r){return r.map(function(s){return String(s==null?'':s).replace(/[\t\n\r]+/g,' ')}).join('\t')}).join('\n');
+  function done(ok){ var t=btn.innerHTML; btn.textContent=ok?'Copiado ✓':'Copia manual'; setTimeout(function(){btn.innerHTML=t},1500); }
+  if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(rows).then(function(){done(true)},function(){done(false)}); }
+  else { try{ var ta=document.createElement('textarea'); ta.value=rows; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); done(true);}catch(e){done(false);} }
+}
+$('#csvBtn').onclick=exportCSV; $('#csvBtn2').onclick=exportCSV;
+$('#copyBtn').onclick=function(){copyTSV(this)}; $('#copyBtn2').onclick=function(){copyTSV(this)};
+
+/* =================== NAVEGACIÓN =================== */
+var slides=$$('.slide'), N=slides.length, idx=0;
+var prog=$('#prog'), cur=$('#cur'), prevB=$('#prev'), nextB=$('#next'), tchips=$$('.tchip');
+$('#total').textContent=String(N).padStart(2,'0');
+function pad(n){return String(n+1).padStart(2,'0')}
+function indexOfId(id){ for(var q=0;q<N;q++){ if(slides[q].id===id) return q; } return -1; }
+function go(n,noHash){
+  n=Math.max(0,Math.min(N-1,n));
+  if(n===idx && slides[idx].classList.contains('active')) return;
+  slides[idx].classList.remove('active'); idx=n; slides[idx].classList.add('active'); slides[idx].scrollTop=0;
+  prog.style.width=(idx/(N-1)*100)+'%'; cur.textContent=pad(idx);
+  prevB.disabled=idx===0; nextB.disabled=idx===N-1;
+  var st=slides[idx].getAttribute('data-step');
+  tchips.forEach(function(c){ var on=st!==null&&c.getAttribute('data-step')===st; c.classList.toggle('on',on); if(on&&c.scrollIntoView){ try{c.scrollIntoView({block:'nearest',inline:'nearest'});}catch(e){} } });
+  if(!noHash){ try{ history.replaceState(null,'','#'+slides[idx].id); }catch(e){} }
+}
+function next(){go(idx+1)} function prev(){go(idx-1)}
+nextB.addEventListener('click',function(){next();this.blur();});
+prevB.addEventListener('click',function(){prev();this.blur();});
+document.addEventListener('click', function(e){
+  var g=e.target.closest('[data-goto]'); if(g){ e.preventDefault(); var t=indexOfId(g.getAttribute('data-goto')); if(t>=0) go(t); if(g.blur) g.blur(); }
+});
+var kh=$('#keyhint');
+function typing(t){ if(!t||!t.tagName) return false; var tag=t.tagName; return tag==='TEXTAREA'||tag==='SELECT'||t.isContentEditable||(tag==='INPUT'&&t.type!=='button'&&t.type!=='submit'); }
+document.addEventListener('keydown', function(e){
+  if(exModal.classList.contains('open')){ if(e.key==='Escape') closeEx(); return; }
+  if(e.ctrlKey||e.metaKey||e.altKey) return;
+  if(typing(e.target)){ if(e.key==='Escape'){ e.target.blur(); kh.classList.remove('gone'); } return; }
+  var onBtn=e.target&&(e.target.tagName==='BUTTON'||e.target.tagName==='A'||e.target.tagName==='SUMMARY');
+  if(e.key==='ArrowRight'||e.key==='PageDown'||(e.key===' '&&!e.shiftKey&&!onBtn)){e.preventDefault();next();kh.classList.add('gone')}
+  else if(e.key==='ArrowLeft'||e.key==='PageUp'||(e.key===' '&&e.shiftKey&&!onBtn)){e.preventDefault();prev();kh.classList.add('gone')}
+  else if(e.key==='Home'){go(0)} else if(e.key==='End'){go(N-1)}
+  else if(e.key==='f'||e.key==='F'){toggleFs()}
+});
+document.addEventListener('change', function(e){ var t=e.target; if(t.type==='checkbox'||t.type==='radio') t.blur(); });
+var tx=0,ty=0,tOk=false;
+$('#deck').addEventListener('touchstart',function(e){ tOk=!(e.target.closest('input,textarea,select,button,.tblwrap,.ced,.rmatrix')); tx=e.changedTouches[0].clientX; ty=e.changedTouches[0].clientY; },{passive:true});
+$('#deck').addEventListener('touchend',function(e){ if(!tOk) return; var dx=e.changedTouches[0].clientX-tx, dy=e.changedTouches[0].clientY-ty; if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)){ dx<0?next():prev(); kh.classList.add('gone'); } },{passive:true});
+function toggleFs(){ if(!document.fullscreenElement){ (document.documentElement.requestFullscreen||function(){}).call(document.documentElement); } else { (document.exitFullscreen||function(){}).call(document); } }
+$('#fs').addEventListener('click',function(){toggleFs();this.blur();});
+window.addEventListener('hashchange', function(){ var t=indexOfId((location.hash||'').slice(1)); if(t>=0&&t!==idx) go(t,true); });
+
+/* =================== INIT =================== */
+renderStairs(); renderStatic();
+kvRestore(lsGet(KVK,null)); syncCedulas();
+applyPreset(); renderAll();
+(function(){ var h=(location.hash||'').slice(1), map={aprender:'a-marte',panel:'g-ev1'}; var t=indexOfId(map[h]||h); go(t>=0?t:0,true); if(t<=0) go(0,true); })();
+if(window.Sync){
+  Sync.mountBar($('#syncbar'));
+  Sync.onContext(function(){ kvFirst=true; pull(); kvPull(); });
+  setInterval(function(){ pull(); kvPull(); }, 9000);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Descripción del Proyecto · [ Nombre del proyecto ]</title>
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png">
+<link rel="shortcut icon" href="favicon.ico">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="description" content="Plantilla de descripción de proyecto: qué es, el problema, la solución y el equipo, con enlaces a los resultados (insights, pitch y repositorio). Parte del HCD Kit." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;800;900&family=Overpass:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --navy-900:#071428;--navy-800:#0a1a33;--navy-700:#0d2244;--navy-600:#102a55;
+    --royal:#1e52c8;--royal-bright:#2a66e6;--blue-soft:#4e8fe6;--blue-pale:#9cc1f2;
+    --lime:#d7e64b;--white:#f4f8ff;--mute:#a9bbd6;--line:rgba(156,193,242,.16);
+    --card:rgba(18,38,74,.6);--ok:#4ccb8f;--warn:#f2c14e;--crit:#ef6a5a;
+    --maxw:980px;--r:18px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:"Overpass",system-ui,sans-serif;background:var(--navy-900);color:var(--white);line-height:1.65;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  h1,h2,h3{font-family:"Archivo",sans-serif;letter-spacing:-.01em}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+  .eyebrow{font-family:"Archivo";font-weight:800;text-transform:uppercase;letter-spacing:.14em;font-size:.74rem;color:var(--lime);display:inline-flex;align-items:center;gap:10px}
+  .eyebrow::before{content:"";width:26px;height:2px;background:var(--lime);display:inline-block}
+  section{position:relative;padding:60px 0}
+  .divline{height:1px;background:var(--line);max-width:var(--maxw);margin:0 auto}
+  .rings{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+  .rings span{position:absolute;border-radius:50%;border:1px solid rgba(120,160,230,.10)}
+  .inner{position:relative;z-index:1}
+  .numtag{font-family:"Archivo";font-weight:900;color:var(--lime);font-size:1.4rem}
+  h2{font-size:clamp(1.7rem,3.6vw,2.4rem);font-weight:900;line-height:1.06;margin:10px 0 18px}
+  p{color:var(--mute);margin-bottom:14px;font-size:1.02rem}
+  p b,li b{color:var(--white);font-weight:600}
+  em{color:var(--blue-soft);font-style:normal}
+
+  /* editable marker */
+  .ph{color:var(--lime);background:rgba(215,230,75,.08);border:1px dashed rgba(215,230,75,.4);border-radius:6px;padding:1px 7px;font-size:.92em;font-style:normal}
+  .fill{color:var(--blue-pale);font-style:italic}
+
+  /* top back link */
+  .topback{position:sticky;top:0;z-index:30;background:rgba(7,20,40,.82);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .topback .tin{max-width:var(--maxw);margin:0 auto;padding:11px 24px;display:flex;align-items:center;gap:12px}
+  .topback a{font-family:"Archivo";font-weight:800;font-size:.78rem;color:var(--blue-pale);text-decoration:none;display:inline-flex;align-items:center;gap:7px}
+  .topback a:hover{color:var(--white)}
+
+  /* HERO */
+  .hero{background:
+      radial-gradient(1000px 620px at 82% 12%, rgba(30,82,200,.42), transparent 60%),
+      radial-gradient(800px 500px at 8% 92%, rgba(20,50,130,.34), transparent 60%),
+      linear-gradient(180deg,var(--navy-800),var(--navy-900));padding:70px 0 54px}
+  .brandmark{display:flex;align-items:center;gap:14px;margin-bottom:30px}
+  .logo-ring{width:44px;height:44px;flex:0 0 auto}
+  .brandmark .bt small{display:block;font-size:.58rem;letter-spacing:.3em;color:var(--mute);font-weight:700;font-family:"Archivo"}
+  .brandmark .bt b{font-size:.98rem;letter-spacing:.04em;font-family:"Archivo";font-weight:900;text-transform:uppercase}
+  .hero h1{font-weight:900;font-size:clamp(2.6rem,6.4vw,4.6rem);line-height:.96;margin:14px 0 10px}
+  .hero h1 .hl{color:var(--lime)}
+  .hero .tag{font-family:"Archivo";font-weight:700;color:var(--blue-soft);font-size:clamp(1.05rem,2vw,1.4rem);margin-bottom:28px}
+
+  .team{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:22px 24px;margin-bottom:24px}
+  .team .lbl{font-family:"Archivo";font-weight:800;text-transform:uppercase;letter-spacing:.1em;font-size:.72rem;color:var(--lime);margin-bottom:6px}
+  .team .tname{font-family:"Archivo";font-weight:900;font-size:1.5rem;margin-bottom:14px}
+  .team .members{display:flex;flex-wrap:wrap;gap:8px}
+  .member{display:inline-flex;align-items:center;gap:8px;background:rgba(30,82,200,.16);border:1px solid var(--line);border-radius:999px;padding:7px 14px;font-size:.88rem;color:var(--white)}
+  .member b{width:7px;height:7px;border-radius:50%;background:var(--blue-soft);display:inline-block}
+
+  /* RESULTS LINK ROW */
+  .reslabel{font-family:"Archivo";font-weight:800;text-transform:uppercase;letter-spacing:.1em;font-size:.72rem;color:var(--blue-soft);margin:0 0 10px}
+  .linkrow{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:6px}
+  .lnk{display:inline-flex;align-items:center;gap:9px;background:rgba(10,26,51,.5);border:1px solid var(--line);border-radius:12px;padding:11px 17px;text-decoration:none;color:var(--blue-pale);font-family:"Archivo";font-weight:700;font-size:.86rem;transition:.2s}
+  .lnk:hover{border-color:var(--blue-soft);color:var(--white)}
+  .lnk.prime{background:var(--lime);color:#071428;border-color:var(--lime)}
+  .lnk.pending{opacity:.6;border-style:dashed;cursor:default;color:var(--mute)}
+  .lnk.pending:hover{border-color:var(--line);color:var(--mute)}
+  .lnk .mini{font-size:.62rem;font-family:"Archivo";font-weight:800;letter-spacing:.04em;border:1px solid currentColor;border-radius:6px;padding:1px 5px;opacity:.8}
+
+  /* content */
+  .lead-block{font-size:1.14rem;color:var(--blue-pale);max-width:68ch;line-height:1.6}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:24px}
+  .card h3{font-size:1.12rem;font-weight:800;margin-bottom:8px;display:flex;align-items:center;gap:10px}
+  .card p{margin:0;font-size:.96rem}
+  .sphere{border-top:4px solid var(--blue-soft)}
+  .sphere.mind{border-top-color:var(--lime)}
+  .feat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px}
+  .feat .ic{font-size:1.4rem;margin-bottom:8px}
+  .feat h4{font-family:"Archivo";font-weight:800;font-size:.98rem;margin-bottom:6px}
+  .feat p{font-size:.9rem;margin:0}
+  .sub{font-family:"Archivo";font-weight:800;text-transform:uppercase;letter-spacing:.1em;font-size:.74rem;color:var(--blue-soft);margin:26px 0 12px}
+  ul.clean{list-style:none;display:grid;gap:10px;margin-bottom:12px}
+  ul.clean li{padding-left:22px;position:relative;color:var(--mute);font-size:.98rem}
+  ul.clean li::before{content:"";position:absolute;left:4px;top:10px;width:7px;height:7px;border-radius:50%;background:var(--lime)}
+
+  .flow{display:flex;flex-direction:column;gap:12px}
+  .step{display:flex;gap:16px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+  .step .k{font-family:"Archivo";font-weight:900;color:var(--lime);font-size:.76rem;letter-spacing:.08em;text-transform:uppercase;background:rgba(215,230,75,.1);border:1px solid rgba(215,230,75,.3);border-radius:8px;padding:5px 10px;flex:0 0 auto;white-space:nowrap}
+  .step p{margin:0;font-size:.95rem}
+  .step p b{color:var(--white)}
+
+  .stack{display:flex;flex-wrap:wrap;gap:9px}
+  .tech{background:rgba(10,26,51,.5);border:1px solid var(--line);border-radius:10px;padding:8px 13px;font-size:.84rem;color:var(--blue-pale)}
+  .tech b{color:var(--white)}
+
+  .value{background:linear-gradient(135deg,var(--navy-600),var(--navy-700));border:1px solid var(--line);border-left:4px solid var(--lime);border-radius:var(--r);padding:30px}
+  .value p{font-family:"Archivo";font-weight:600;font-size:clamp(1.15rem,2.3vw,1.6rem);line-height:1.34;color:var(--white);margin:0}
+  .value p .hl{color:var(--lime)}
+
+  /* how-to note for whoever fills this */
+  .guide{background:linear-gradient(90deg,rgba(215,230,75,.1),transparent);border:1px solid rgba(215,230,75,.3);border-radius:14px;padding:16px 20px;margin-bottom:26px;font-size:.95rem;color:var(--mute)}
+  .guide b{color:var(--lime)}
+
+  footer{padding:44px 0;text-align:center;color:var(--mute);font-size:.82rem;border-top:1px solid var(--line)}
+  footer .logo-ring{width:36px;height:36px;margin:0 auto 12px;display:block}
+
+  @media(max-width:760px){
+    .grid2,.grid3{grid-template-columns:1fr}
+    .step{flex-direction:column;gap:10px}
+    .step .k{align-self:flex-start}
+  }
+</style>
+</head>
+<body>
+
+<!-- BACK TO KIT -->
+<nav class="topback">
+  <div class="tin">
+    <a href="index.html">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M20 12H4M10 6l-6 6 6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Volver al HCD Kit
+    </a>
+  </div>
+</nav>
+
+<!-- HERO + EQUIPO -->
+<header class="hero">
+  <div class="rings">
+    <span style="width:700px;height:700px;top:-140px;right:-180px"></span>
+    <span style="width:1020px;height:1020px;top:-300px;right:-340px"></span>
+  </div>
+  <div class="wrap inner">
+    <div class="brandmark">
+      <span class="logo-ring"><svg viewBox="0 0 48 48" fill="none"><circle cx="22" cy="26" r="16" stroke="#f4f8ff" stroke-width="2.4"/><path d="M34 14 C 30 10, 24 9, 20 11" stroke="#d7e64b" stroke-width="2.4" stroke-linecap="round"/><circle cx="35" cy="13" r="2.4" fill="#ef6a5a"/></svg></span>
+      <span class="bt"><small>[ Evento / contexto · editable ]</small><b>Descripción del proyecto</b></span>
+    </div>
+
+    <div class="eyebrow">Reto · <span class="ph">[ Nombre del reto ]</span></div>
+    <h1><span class="ph">[ Nombre del proyecto ]</span></h1>
+    <div class="tag"><span class="fill">Una frase que capture la esencia de tu solución</span></div>
+
+    <div class="team">
+      <div class="lbl">Equipo</div>
+      <div class="tname">🧩 <span class="ph">[ Nombre del equipo ]</span></div>
+      <div class="members">
+        <span class="member"><b></b><span class="fill">Integrante 1</span></span>
+        <span class="member"><b></b><span class="fill">Integrante 2</span></span>
+        <span class="member"><b></b><span class="fill">Integrante 3</span></span>
+        <span class="member"><b></b><span class="fill">+ …</span></span>
+      </div>
+    </div>
+
+    <!-- RESULTADOS -->
+    <div class="reslabel">Resultados del proyecto</div>
+    <div class="linkrow">
+      <a class="lnk prime" href="insights.html">📊 Insights &amp; requerimientos →</a>
+      <a class="lnk prime" href="pitch-jurado.html">🎬 Pitch final (jurado / stakeholders) →</a>
+      <a class="lnk pending" href="#" onclick="return false" title="Aún no disponible: aquí irá el enlace al repositorio del prototipo"><span class="mini">PENDIENTE</span> 💻 Repositorio del prototipo</a>
+    </div>
+    <p style="margin-top:10px;font-size:.82rem;color:var(--mute)">El enlace al repositorio queda marcado pero inactivo hasta que exista el prototipo. Al tenerlo, reemplaza el <code style="color:var(--blue-pale)">href="#"</code> por su URL y quita la clase <code style="color:var(--blue-pale)">pending</code>.</p>
+  </div>
+</header>
+
+<!-- GUÍA PARA QUIEN LLENA -->
+<section style="padding-top:40px;padding-bottom:0">
+  <div class="wrap inner">
+    <div class="guide">
+      <b>📝 Esta es una plantilla.</b> Sustituye los marcadores <span class="ph">[ así ]</span> y los textos en <span class="fill">cursiva</span> por el contenido de tu proyecto. La estructura de abajo (resumen → problema → solución → motor → propuesta visual → valor → referencias) es una guía; conserva las secciones que te sirvan y borra las que no. Los <em>botones de resultados</em> ya apuntan a Insights y al Pitch final de esta misma plataforma.
+    </div>
+  </div>
+</section>
+
+<!-- RESUMEN -->
+<section style="padding-top:20px">
+  <div class="wrap inner">
+    <span class="numtag">01</span>
+    <div class="eyebrow" style="margin-top:8px">Resumen</div>
+    <h2>Qué es <span class="ph">[ Nombre del proyecto ]</span></h2>
+    <p class="lead-block"><span class="fill">En uno o dos párrafos: qué es tu solución, para quién, qué problema resuelve y qué la hace distinta. Escríbelo como se lo contarías a alguien que llega por primera vez — sin jerga, directo al valor.</span></p>
+  </div>
+</section>
+<div class="divline"></div>
+
+<!-- PROBLEMA -->
+<section>
+  <div class="rings"><span style="width:900px;height:900px;top:-220px;left:-320px"></span></div>
+  <div class="wrap inner">
+    <span class="numtag">02</span>
+    <div class="eyebrow" style="margin-top:8px">El problema</div>
+    <h2><span class="fill">El problema que atacas, en una frase potente</span></h2>
+    <p><span class="fill">Describe el contexto y por qué el problema importa. ¿A quién afecta? ¿Qué pasa hoy sin tu solución? Aquí es donde conectas lo que descubriste en el Mapa de empatía y en Aterrizar el reto.</span></p>
+    <p><span class="fill">Un segundo párrafo opcional para matizar el problema o acotar su alcance.</span></p>
+  </div>
+</section>
+<div class="divline"></div>
+
+<!-- SOLUCIÓN -->
+<section>
+  <div class="wrap inner">
+    <span class="numtag">03</span>
+    <div class="eyebrow" style="margin-top:8px">Nuestra solución</div>
+    <h2><span class="fill">Cómo lo resuelves</span></h2>
+    <p><span class="fill">Explica tu enfoque. Si tu solución tiene dos o más pilares, úsalos como tarjetas:</span></p>
+    <div class="grid2">
+      <div class="card sphere">
+        <h3>🧩 <span class="fill">Pilar / componente 1</span></h3>
+        <p><span class="fill">Qué hace este componente y por qué es clave para resolver el problema.</span></p>
+      </div>
+      <div class="card sphere mind">
+        <h3>🧠 <span class="fill">Pilar / componente 2</span></h3>
+        <p><span class="fill">Qué aporta el segundo componente y cómo complementa al primero.</span></p>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="divline"></div>
+
+<!-- MOTOR / CÓMO FUNCIONA -->
+<section>
+  <div class="rings"><span style="width:1000px;height:1000px;top:-260px;right:-360px"></span></div>
+  <div class="wrap inner">
+    <span class="numtag">04</span>
+    <div class="eyebrow" style="margin-top:8px">Cómo funciona</div>
+    <h2><span class="fill">El flujo o el motor de tu solución</span></h2>
+    <p><span class="fill">Si tu proyecto tiene un proceso o pipeline, descríbelo paso a paso:</span></p>
+    <div class="flow">
+      <div class="step"><span class="k">Paso 1</span><p><span class="fill">Qué ocurre primero.</span></p></div>
+      <div class="step"><span class="k">Paso 2</span><p><span class="fill">Qué sigue.</span></p></div>
+      <div class="step"><span class="k">Paso 3</span><p><span class="fill">Y después.</span></p></div>
+      <div class="step"><span class="k">Paso 4</span><p><span class="fill">El cierre del flujo.</span></p></div>
+    </div>
+  </div>
+</section>
+<div class="divline"></div>
+
+<!-- PROPUESTA VISUAL / FEATURES -->
+<section>
+  <div class="wrap inner">
+    <span class="numtag">05</span>
+    <div class="eyebrow" style="margin-top:8px">La propuesta</div>
+    <h2><span class="fill">Características o pantallas clave</span></h2>
+    <p><span class="fill">Enumera las funciones o pantallas más importantes. Cambia los íconos y textos:</span></p>
+    <div class="grid3">
+      <div class="feat"><div class="ic">✨</div><h4><span class="fill">Feature 1</span></h4><p><span class="fill">Descripción breve.</span></p></div>
+      <div class="feat"><div class="ic">🚦</div><h4><span class="fill">Feature 2</span></h4><p><span class="fill">Descripción breve.</span></p></div>
+      <div class="feat"><div class="ic">📈</div><h4><span class="fill">Feature 3</span></h4><p><span class="fill">Descripción breve.</span></p></div>
+      <div class="feat"><div class="ic">🧭</div><h4><span class="fill">Feature 4</span></h4><p><span class="fill">Descripción breve.</span></p></div>
+      <div class="feat"><div class="ic">🌍</div><h4><span class="fill">Feature 5</span></h4><p><span class="fill">Descripción breve.</span></p></div>
+      <div class="feat"><div class="ic">📋</div><h4><span class="fill">Feature 6</span></h4><p><span class="fill">Descripción breve.</span></p></div>
+    </div>
+  </div>
+</section>
+<div class="divline"></div>
+
+<!-- ALCANCE + STACK -->
+<section>
+  <div class="wrap inner">
+    <span class="numtag">06</span>
+    <div class="eyebrow" style="margin-top:8px">Alcance y tecnología</div>
+    <h2><span class="fill">Qué construiste y con qué</span></h2>
+    <p><span class="fill">Define el alcance realista (MVP) y las decisiones técnicas. Lista tu stack:</span></p>
+    <div class="sub">Stack tecnológico</div>
+    <div class="stack">
+      <span class="tech"><b><span class="fill">Tecnología 1</span></b></span>
+      <span class="tech"><b><span class="fill">Tecnología 2</span></b></span>
+      <span class="tech"><b><span class="fill">Tecnología 3</span></b></span>
+      <span class="tech"><b><span class="fill">Tecnología 4</span></b></span>
+    </div>
+  </div>
+</section>
+<div class="divline"></div>
+
+<!-- VALOR -->
+<section>
+  <div class="wrap inner">
+    <span class="numtag">07</span>
+    <div class="eyebrow" style="margin-top:8px">Propuesta de valor</div>
+    <h2>Lo que nos distingue</h2>
+    <div class="value">
+      <p><span class="fill">La frase que resume por qué tu proyecto importa y qué cambia frente a lo que existe. Es la idea que quieres que el jurado o el stakeholder recuerde.</span></p>
+    </div>
+  </div>
+</section>
+<div class="divline"></div>
+
+<!-- REFERENCIAS -->
+<section>
+  <div class="wrap inner">
+    <span class="numtag">08</span>
+    <div class="eyebrow" style="margin-top:8px">Referencias</div>
+    <h2>En qué nos basamos</h2>
+    <p style="margin-bottom:22px"><span class="fill">Fuentes, estudios o documentos que fundamentan tus decisiones. Un proyecto con base se defiende mejor.</span></p>
+    <ul class="clean">
+      <li><span class="fill">Referencia o fuente 1 — autor / institución</span></li>
+      <li><span class="fill">Referencia o fuente 2 — autor / institución</span></li>
+      <li><span class="fill">Referencia o fuente 3 — autor / institución</span></li>
+    </ul>
+  </div>
+</section>
+
+<footer>
+  <span class="logo-ring"><svg viewBox="0 0 48 48" fill="none"><circle cx="22" cy="26" r="16" stroke="#9cc1f2" stroke-width="2.4"/><path d="M34 14 C 30 10, 24 9, 20 11" stroke="#d7e64b" stroke-width="2.4" stroke-linecap="round"/><circle cx="35" cy="13" r="2.4" fill="#ef6a5a"/></svg></span>
+  <span class="ph">[ Nombre del proyecto ]</span> · Descripción del proyecto — generada con el HCD Kit<br/>
+  Plantilla reutilizable · sustituye los marcadores por tu contenido
+</footer>
+
+</body>
+</html>

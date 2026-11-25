@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ORBITAL · Mapa de empatía (Katya E.)</title>
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png">
+<link rel="shortcut icon" href="favicon.ico">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="description" content="Mapa de empatía colaborativo para Katya E., paso a paso: una zona por diapositiva, con ejemplos y votación. Cada quien agrega notas desde su dispositivo y se sincroniza en Google. NASA Space Apps CDMX 2026." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;800;900&family=Overpass:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --navy-900:#071428;--navy-800:#0a1a33;--navy-700:#0d2244;--navy-600:#102a55;
+    --royal:#1e52c8;--royal-bright:#2a66e6;--blue-soft:#4e8fe6;--blue-pale:#9cc1f2;
+    --lime:#d7e64b;--white:#f4f8ff;--mute:#a9bbd6;--line:rgba(156,193,242,.16);
+    --card:rgba(18,38,74,.6);--ok:#4ccb8f;--warn:#f2c14e;--crit:#ef6a5a;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:"Overpass",system-ui,sans-serif;background:var(--navy-900);color:var(--white);line-height:1.55;-webkit-font-smoothing:antialiased;overflow:hidden}
+  h1,h2,h3,h4,h5{font-family:"Archivo",sans-serif;letter-spacing:-.01em}
+  a{color:var(--blue-soft)}
+  .deck{position:fixed;inset:0;background:radial-gradient(1200px 760px at 82% 12%, rgba(30,82,200,.32), transparent 60%),radial-gradient(900px 640px at 6% 96%, rgba(20,50,130,.3), transparent 60%),linear-gradient(180deg,var(--navy-800),var(--navy-900))}
+  .slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-start;padding:clamp(70px,10vh,96px) clamp(22px,6vw,96px) clamp(88px,12vh,110px);opacity:0;visibility:hidden;transform:scale(.985);transition:opacity .45s ease,transform .55s cubic-bezier(.2,.7,.2,1),visibility .45s;overflow-y:auto}
+  .slide.active{opacity:1;visibility:visible;transform:none;z-index:2}
+  .sin{width:100%;max-width:1100px;margin:auto}
+  .rings{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+  .rings span{position:absolute;border-radius:50%;border:1px solid rgba(120,160,230,.10)}
+  .r{opacity:0;transform:translateY(22px);transition:opacity .55s cubic-bezier(.2,.7,.2,1),transform .55s cubic-bezier(.2,.7,.2,1)}
+  .slide.active .r{opacity:1;transform:none;transition-delay:var(--d,0s)}
+  .eyebrow{font-family:"Archivo";font-weight:800;text-transform:uppercase;letter-spacing:.14em;font-size:clamp(.66rem,1.1vw,.76rem);color:var(--lime);display:inline-flex;align-items:center;gap:10px}
+  .eyebrow::before{content:"";width:26px;height:2px;background:var(--lime);display:inline-block}
+  h2.title{font-size:clamp(1.7rem,4.2vw,3rem);font-weight:900;line-height:1.03;margin:8px 0 12px}
+  .sub{color:var(--mute);font-size:clamp(.98rem,1.6vw,1.12rem);max-width:74ch}
+  .sub b{color:var(--white)}
+  .hl{color:var(--lime)} em{color:var(--blue-soft);font-style:normal}
+  .src{color:var(--mute);font-size:.74rem;margin-top:12px;opacity:.85}
+  .callout{margin-top:16px;background:rgba(215,230,75,.08);border-left:3px solid var(--lime);border-radius:0 12px 12px 0;padding:13px 17px;color:var(--mute);font-size:.95rem}
+  .callout b{color:var(--lime)}
+  .banner{display:flex;gap:12px;align-items:flex-start;background:rgba(239,106,90,.1);border:1px solid rgba(239,106,90,.3);border-radius:14px;padding:15px 18px;margin-top:16px;font-size:.95rem;color:var(--white)}
+  .banner b{color:#ffb4a8}
+  .btn{cursor:pointer;font-family:"Archivo";font-weight:800;font-size:.85rem;border-radius:11px;padding:11px 17px;border:1px solid var(--line);background:rgba(10,26,51,.6);color:var(--white);transition:.2s;display:inline-flex;align-items:center;gap:8px;text-decoration:none}
+  .btn:hover{border-color:var(--lime);color:var(--lime)}
+  .btn.prime{background:var(--lime);color:#071428;border-color:var(--lime)}
+  .btn.prime:hover{color:#071428;filter:brightness(1.05)}
+  .btnrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+  .brandmark{display:flex;align-items:center;gap:14px;margin-bottom:28px}
+  .logo-ring{width:48px;height:48px;flex:0 0 auto}
+  .brandmark small{display:block;font-size:.6rem;letter-spacing:.3em;color:var(--mute);font-weight:700;font-family:"Archivo"}
+  .brandmark b{font-size:1rem;letter-spacing:.04em;font-family:"Archivo";font-weight:900;text-transform:uppercase}
+  .hero h1{font-weight:900;font-size:clamp(2.3rem,6.6vw,4.6rem);line-height:.98;margin:12px 0 18px}
+  .hero .lead{color:var(--blue-pale);font-size:clamp(1.02rem,2vw,1.3rem);max-width:62ch}
+
+  .g2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:16px}
+  .g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:clamp(14px,2vw,20px)}
+  .card .ic{font-size:1.4rem}
+  .card h4{font-size:clamp(.98rem,1.5vw,1.12rem);font-weight:800;margin:6px 0 6px}
+  .card p{color:var(--mute);font-size:clamp(.88rem,1.35vw,.98rem)}
+  .card p b{color:var(--white)}
+  .kk{font-family:"Archivo";font-weight:800;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--c,var(--blue-soft))}
+  .numq{font-family:"Archivo";font-weight:900;color:var(--lime);font-size:clamp(1.5rem,3vw,2.1rem);line-height:1}
+
+  /* persona */
+  .persona{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 22px;margin-top:16px}
+  .persona .av{width:72px;height:72px;flex:0 0 auto}
+  .persona h3{font-size:1.3rem;font-weight:800}
+  .persona .meta{color:var(--blue-soft);font-size:.9rem;font-weight:600;margin:4px 0 8px}
+  .persona .desc{color:var(--mute);font-size:.95rem}
+  .persona .srcp{color:var(--mute);opacity:.72;font-size:.8rem;margin-top:8px}
+
+  /* steps dinámica */
+  .steps3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px}
+  .stepc{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;border-top:3px solid var(--c,var(--lime))}
+  .stepc .n{font-family:"Archivo";font-weight:900;color:var(--c,var(--lime));font-size:1.4rem}
+  .stepc h4{font-size:1.02rem;font-weight:800;margin:4px 0 4px}
+  .stepc p{color:var(--mute);font-size:.9rem}
+
+  /* zona (llenado) */
+  .zonegrid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(18px,3vw,36px);margin-top:14px;align-items:start}
+  .zhead{display:flex;align-items:center;gap:12px}
+  .zicon{width:52px;height:52px;border-radius:14px;background:var(--zc,#4e8fe6);color:#071428;display:flex;align-items:center;justify-content:center;font-size:1.6rem;flex:0 0 auto}
+  .zq{color:var(--blue-pale);font-size:clamp(1rem,1.8vw,1.22rem);font-weight:600;margin:12px 0 10px}
+  ul.prompts{list-style:none;display:grid;gap:9px;margin-bottom:14px}
+  ul.prompts li{color:var(--mute);font-size:clamp(.9rem,1.4vw,1rem);padding-left:20px;position:relative;line-height:1.45}
+  ul.prompts li::before{content:"";position:absolute;left:0;top:9px;width:7px;height:7px;border-radius:50%;background:var(--zc,#4e8fe6)}
+  .exline{display:flex;gap:10px;align-items:flex-start;font-size:.9rem;margin-bottom:7px}
+  .exline .mk{font-family:"Archivo";font-weight:900;flex:0 0 auto}
+  .exline.good .mk{color:var(--ok)} .exline.bad .mk{color:var(--crit)}
+  .exline .tx{color:var(--blue-pale)} .exline.bad .tx{color:var(--mute)}
+  .exline .why{color:var(--mute);opacity:.8}
+  .addrow{display:flex;gap:8px;margin-bottom:12px}
+  .addrow input{flex:1;background:rgba(7,20,40,.55);border:1px solid var(--line);border-radius:10px;color:var(--white);font-family:"Overpass";font-size:.96rem;padding:11px 13px}
+  .addrow input:focus{outline:none;border-color:var(--lime)}
+  .addrow button{flex:0 0 auto;padding:0 16px;border:none;border-radius:10px;background:var(--lime);color:#071428;font-family:"Archivo";font-weight:800;font-size:.9rem;cursor:pointer}
+  .notes{display:flex;flex-direction:column;gap:9px;min-height:40px;max-height:46vh;overflow:auto}
+  .note{background:rgba(7,20,40,.55);border:1px solid var(--line);border-radius:12px;padding:10px 13px}
+  .note .nt{font-size:.94rem;color:var(--white);line-height:1.4;white-space:pre-wrap;word-break:break-word}
+  .note .nf{display:flex;align-items:center;gap:10px;margin-top:8px;font-size:.74rem;color:var(--mute)}
+  .note .au{font-family:"Archivo";font-weight:700;color:var(--blue-pale)}
+  .note .sp{flex:1}
+  .note .vote{cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--mute);border-radius:999px;padding:4px 11px;font-size:.76rem;font-family:"Archivo";font-weight:800;transition:.15s}
+  .note .vote:hover{border-color:var(--lime);color:var(--lime)}
+  .note .vote.hot{border-color:rgba(215,230,75,.5);color:var(--lime);background:rgba(215,230,75,.1)}
+  .note .del{cursor:pointer;border:none;background:transparent;color:var(--mute);font-size:.9rem;opacity:.6}
+  .note .del:hover{color:var(--crit);opacity:1}
+  .empty{color:var(--mute);opacity:.6;font-size:.86rem;font-style:italic;padding:6px 2px}
+  .zcount{font-family:"Archivo";font-weight:800;font-size:.76rem;color:var(--mute);margin-bottom:8px}
+
+  textarea{width:100%;min-height:90px;background:rgba(7,20,40,.55);border:1px solid var(--line);border-radius:12px;color:var(--white);font-family:"Overpass";font-size:1rem;padding:12px 14px;resize:vertical}
+  textarea:focus{outline:none;border-color:var(--lime)}
+
+  /* priorizar */
+  .rank{display:grid;gap:10px;margin-top:14px}
+  .rankrow{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px}
+  .rankrow .pos{font-family:"Archivo";font-weight:900;color:var(--lime);font-size:1.2rem;width:28px;text-align:center}
+  .rankrow .zt{font-family:"Archivo";font-weight:800;font-size:.68rem;text-transform:uppercase;letter-spacing:.05em;color:var(--blue-pale)}
+  .rankrow .vt{font-family:"Archivo";font-weight:900;color:var(--lime)}
+  .povbox{background:linear-gradient(135deg,rgba(30,82,200,.26),var(--navy-700));border:1px solid var(--line);border-radius:16px;padding:clamp(18px,2.6vw,26px);margin-top:14px}
+  .povbox .tpl{font-family:"Archivo";font-weight:700;color:var(--blue-pale);font-size:1.05rem;margin-bottom:12px}
+  .povbox .tpl em{color:var(--lime)}
+
+  /* chrome */
+  .prog{position:fixed;top:0;left:0;height:3px;background:var(--lime);width:0;z-index:40;transition:width .4s ease;box-shadow:0 0 12px rgba(215,230,75,.5)}
+  .tbar{position:fixed;top:0;left:0;right:0;z-index:35;background:rgba(7,20,40,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .tin{padding:9px 16px;display:flex;align-items:center;gap:6px;overflow-x:auto;scrollbar-width:none}
+  .tin::-webkit-scrollbar{display:none}
+  .tchip{flex:0 0 auto;font-family:"Archivo";font-weight:800;font-size:.72rem;color:var(--mute);background:transparent;cursor:pointer;padding:7px 11px;border-radius:999px;border:1px solid var(--line);white-space:nowrap;transition:.2s}
+  .tchip:hover{color:var(--white);border-color:var(--blue-soft)}
+  .tchip.on{color:#071428;background:var(--lime);border-color:var(--lime)}
+  .tin .sp{flex:1 0 8px}
+  .srcpill{flex:0 0 auto;display:inline-flex;align-items:center;gap:7px;font-family:"Archivo";font-weight:800;font-size:.72rem;color:var(--mute);border:1px solid var(--line);border-radius:999px;padding:6px 11px;white-space:nowrap}
+  .srcpill .dot{width:8px;height:8px;border-radius:50%;background:#7f8ca3}
+  .srcpill .dot.ok{background:var(--ok);box-shadow:0 0 8px rgba(76,203,143,.6)} .srcpill .dot.loc{background:var(--warn)}
+  .hud{position:fixed;bottom:18px;right:20px;display:flex;align-items:center;gap:10px;z-index:30}
+  .hud button{width:44px;height:44px;border-radius:12px;border:1px solid var(--line);background:rgba(10,26,51,.85);color:var(--white);cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .hud button:hover{border-color:var(--lime);color:var(--lime)}
+  .hud button:disabled{opacity:.3;cursor:default}
+  .counter{font-family:"Archivo";font-weight:800;font-size:.82rem;color:var(--mute);letter-spacing:.08em;padding:0 6px;min-width:62px;text-align:center}
+  .counter b{color:var(--lime)}
+  .hint-key{position:fixed;bottom:20px;left:20px;z-index:30;color:var(--mute);font-size:.72rem;font-family:"Archivo";font-weight:700;letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;gap:8px;background:rgba(7,20,40,.9);border:1px solid var(--line);border-radius:12px;padding:7px 11px}
+  .hint-key kbd{background:rgba(10,26,51,.8);border:1px solid var(--line);border-radius:6px;padding:2px 7px;font-family:"Archivo";font-size:.72rem}
+  .hint-key.gone{opacity:0;transition:opacity .6s;pointer-events:none}
+  .toast{position:fixed;left:50%;bottom:80px;transform:translateX(-50%) translateY(20px);background:var(--lime);color:#071428;font-family:"Archivo";font-weight:800;font-size:.86rem;padding:11px 18px;border-radius:12px;opacity:0;transition:.3s;z-index:70;pointer-events:none}
+  .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  @media(max-width:900px){
+    .g2,.g3,.steps3,.zonegrid{grid-template-columns:1fr}
+    .persona{grid-template-columns:1fr}
+    .hint-key{display:none}
+    .slide{padding:66px 18px 92px}
+    .notes{max-height:38vh}
+  }
+</style>
+</head>
+<body>
+<div class="prog" id="prog"></div>
+<nav class="tbar"><div class="tin" id="tin">
+  <button type="button" class="tchip" data-goto="portada" data-step="0">Inicio</button>
+  <button type="button" class="tchip" data-goto="s-que" data-step="0">¿Qué es?</button>
+  <button type="button" class="tchip" data-goto="s-persona" data-step="0">Katya</button>
+  <button type="button" class="tchip" data-goto="z-dice" data-step="Z">Las 6 zonas</button>
+  <button type="button" class="tchip" data-goto="s-priorizar" data-step="P">Votar</button>
+  <button type="button" class="tchip" data-goto="s-pov" data-step="P">Definir</button>
+  <span class="sp"></span>
+  <span class="srcpill" id="srcPill"><i class="dot"></i><span class="tl" id="srcTxt">Local</span></span>
+</div></nav>
+
+<div class="deck" id="deck">
+
+<!-- PORTADA -->
+<section class="slide active" id="portada">
+  <div class="rings"><span style="width:620px;height:620px;top:-120px;right:-160px"></span><span style="width:940px;height:940px;top:-260px;right:-320px"></span></div>
+  <div class="sin hero" style="position:relative;z-index:1">
+    <div class="brandmark r"><span class="logo-ring"><svg viewBox="0 0 48 48" fill="none"><circle cx="22" cy="26" r="16" stroke="#f4f8ff" stroke-width="2.4"/><path d="M34 14 C 30 10, 24 9, 20 11" stroke="#d7e64b" stroke-width="2.4" stroke-linecap="round"/><circle cx="35" cy="13" r="2.4" fill="#ef6a5a"/></svg></span><span><small>NASA Space Apps · CDMX 2026 · Equipo ORBITAL</small><b>Empatizar · Mapa de empatía</b></span></div>
+    <div class="eyebrow r" style="--d:.1s">Paso previo · diseñar para alguien concreto</div>
+    <h1 class="r" style="--d:.2s">Mapa de empatía — Katya E.</h1>
+    <p class="lead r" style="--d:.3s">No diseñamos para “un astronauta” genérico, sino para alguien concreto, aislada y sin médico al otro lado de la línea. Llénenlo juntos, una zona a la vez; se guarda solo y se sincroniza en Google.</p>
+    <div class="btnrow r" style="--d:.42s"><button type="button" class="btn prime" data-goto="s-que">Empezar →</button><a class="btn" href="proyecto.html">← Descripción del proyecto</a></div>
+  </div>
+</section>
+
+<!-- CÓMO USAR -->
+<section class="slide" id="s-como" data-step="0">
+  <div class="sin">
+    <div class="eyebrow r">Antes de empezar</div>
+    <h2 class="title r" style="--d:.08s">Cómo usar esta presentación</h2>
+    <div class="g3">
+      <div class="card r" style="--d:.15s"><div class="ic">⌨️</div><h4>Avancen en orden</h4><p>Con las <b>flechas</b>, deslizando en el celular o con la barra de arriba. <b>Esc</b> los saca de un campo; <b>F</b> pone pantalla completa.</p></div>
+      <div class="card r" style="--d:.22s"><div class="ic">✍️</div><h4>Llenen en equipo</h4><p>En cada zona, <b>cada quien agrega notas</b> desde su dispositivo. Se guardan solas y se sincronizan con el equipo.</p></div>
+      <div class="card r" style="--d:.29s"><div class="ic">📊</div><h4>Alimenta a Insights</h4><p>Lo que escriban aquí aparece en el Google Sheet y en la presentación de <b>Insights</b> para los mentores.</p></div>
+    </div>
+    <div id="syncbar" class="r" style="--d:.36s;margin-top:18px"></div>
+    <p class="sub r" style="--d:.42s;margin-top:10px;font-size:.92rem">Pon tu nombre y conéctate (⚙️) para que todos agreguen notas a la vez. Sin conectar, las notas se guardan en este dispositivo.</p>
+  </div>
+</section>
+
+<!-- QUÉ ES -->
+<section class="slide" id="s-que" data-step="0">
+  <div class="sin">
+    <div class="eyebrow r">El método</div>
+    <h2 class="title r" style="--d:.08s">¿Qué es un mapa de empatía?</h2>
+    <p class="sub r" style="--d:.12s">Una herramienta para <b>ponernos en los zapatos de una persona</b> antes de diseñar. Se parte en seis zonas; cada una responde una pregunta distinta sobre ella. Al final, de ahí sale <b>una necesidad</b> (no una solución).</p>
+    <div class="g3">
+      <div class="card r" style="--d:.18s"><div class="kk" style="--c:#4e8fe6">Lo externo · observable</div><h4>🗣️ Dice · 🏃 Hace</h4><p>Lo que sale de ella: frases y acciones que cualquiera notaría.</p></div>
+      <div class="card r" style="--d:.24s"><div class="kk" style="--c:#2a66e6">Lo interno · invisible</div><h4>💭 Piensa · ❤️ Siente</h4><p>Lo que no se ve: creencias y emociones. Aquí se empatiza de verdad.</p></div>
+      <div class="card r" style="--d:.3s"><div class="kk" style="--c:#f2c14e">El balance</div><h4>⚡ Dolores · 🌱 Ganancias</h4><p>Qué le estorba y qué desea. De los <b>dolores</b> más votados sale la necesidad.</p></div>
+    </div>
+    <div class="callout r" style="--d:.36s"><b>Una nota, una idea.</b> Escriban corto y en las palabras de Katya, no en las de ustedes. Las ideas de solución (“una app”, “un dashboard”) aún no van aquí: eso es el paso de Aterrizar.</div>
+  </div>
+</section>
+
+<!-- PERSONA -->
+<section class="slide" id="s-persona" data-step="0">
+  <div class="sin">
+    <div class="eyebrow r">¿Para quién diseñamos?</div>
+    <h2 class="title r" style="--d:.08s">Katya E.</h2>
+    <div class="persona r" style="--d:.14s">
+      <div class="av"><svg viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="16" fill="#0a1a33" stroke="#9cc1f2" stroke-width="1.5"/><circle cx="24" cy="24" r="10" fill="none" stroke="#4e8fe6" stroke-width="1.5"/><path d="M18 22a6 6 0 0112 0" stroke="#d7e64b" stroke-width="1.6" stroke-linecap="round"/></svg></div>
+      <div>
+        <h3>Katya E. · 30 años</h3>
+        <div class="meta">Ingeniera electrónica y comunicadora científica · Guadalajara, México · misión a Marte (~18 meses)</div>
+        <div class="desc">UCLA · NASA JPL (Europa Clipper) · vuelo suborbital NS-21 (2022). Competente con la tecnología, pero <b style="color:var(--white)">no es clínica</b>. Sin médico a bordo; delay de hasta 20 min con la Tierra. Su miedo: <b style="color:var(--white)">no notar algo serio a tiempo</b>.</div>
+        <div class="srcp">Persona inspirada en la trayectoria pública de Katya Echazarreta (Wikipedia). Lo que dice, piensa y siente son hipótesis del equipo, no declaraciones suyas.</div>
+      </div>
+    </div>
+    <div class="callout r" style="--d:.22s">Todo lo que escriban debe sonar a <b>esta</b> persona en <b>esta</b> condición, no a un astronauta de película.</div>
+  </div>
+</section>
+
+<!-- ESCENARIO -->
+<section class="slide" id="s-escenario" data-step="0">
+  <div class="sin">
+    <div class="eyebrow r">El momento concreto</div>
+    <h2 class="title r" style="--d:.08s">El escenario para arrancar</h2>
+    <p class="sub r" style="--d:.12s">Empatizar es más fácil con un momento específico. Lean este escenario, imagínenlo y empaticen con esa duda antes de escribir. Pueden <b>ajustarlo</b> en equipo.</p>
+    <div class="banner r" style="--d:.18s">🎬 <div><b>Escenario:</b> a Katya le empieza a doler el pecho durante el turno nocturno. Nadie a bordo es médico y Houston está a 20 min. Recuerden que el <b>estrés crónico</b> también causa dolor de pecho y migrañas: no sabe si es grave o no.</div></div>
+    <label class="kk r" style="--d:.24s;display:block;margin:18px 0 6px">Escenario del equipo (editable)</label>
+    <textarea class="r" id="escenario" style="--d:.26s" placeholder="Describan en una o dos frases el momento concreto que van a empatizar…"></textarea>
+    <p class="src">Se guarda y se sincroniza con el equipo, igual que las notas.</p>
+  </div>
+</section>
+
+<!-- DINÁMICA -->
+<section class="slide" id="s-dinamica" data-step="0">
+  <div class="sin">
+    <div class="eyebrow r">Cómo llenar cada zona</div>
+    <h2 class="title r" style="--d:.08s">La dinámica, en tres movimientos</h2>
+    <div class="steps3">
+      <div class="stepc r" style="--d:.15s;--c:#4e8fe6"><div class="n">1</div><h4>En silencio</h4><p>Cada quien escribe sus propias notas, <b>una idea por nota</b>, sin comentar todavía. Así no se contagian las ideas.</p></div>
+      <div class="stepc r" style="--d:.22s;--c:#d7e64b"><div class="n">2</div><h4>Agrupar y leer</h4><p>Lean en voz alta. Las notas parecidas quedan juntas; no se borran las repetidas, se votan.</p></div>
+      <div class="stepc r" style="--d:.29s;--c:#f2c14e"><div class="n">3</div><h4>Votar 👍</h4><p>Marquen las notas que más pesan, sobre todo en <b>Dolores</b>. De las más votadas sale la necesidad.</p></div>
+    </div>
+    <div class="callout r" style="--d:.36s">En las seis diapositivas que siguen, la <b>guía queda a la izquierda</b> y el <b>tablero en vivo a la derecha</b>. Escriban ahí mismo.</div>
+    <div class="btnrow r" style="--d:.42s"><button type="button" class="btn prime" data-goto="z-dice">Empezar por “Dice” →</button></div>
+  </div>
+</section>
+
+<div data-gen="zones"></div>
+
+<!-- PRIORIZAR -->
+<section class="slide" id="s-priorizar" data-step="P">
+  <div class="sin">
+    <div class="eyebrow r">Converger</div>
+    <h2 class="title r" style="--d:.08s">Lo que más pesa (votos)</h2>
+    <p class="sub r" style="--d:.12s">Las notas más votadas de todo el tablero. Los <b>dolores</b> de arriba son los candidatos a convertirse en la necesidad de Katya.</p>
+    <div class="rank r" style="--d:.16s" id="rank"></div>
+  </div>
+</section>
+
+<!-- POV -->
+<section class="slide" id="s-pov" data-step="P">
+  <div class="sin">
+    <div class="eyebrow r">Definir</div>
+    <h2 class="title r" style="--d:.08s">La necesidad de Katya (POV)</h2>
+    <p class="sub r" style="--d:.12s">De los dolores más votados sale <b>una necesidad</b> y <b>un porqué</b>. Esta frase es el puente al taller de “Aterrizar el reto”.</p>
+    <div class="povbox r" style="--d:.16s">
+      <div class="tpl">Katya necesita <em>[necesidad]</em> porque <em>[insight]</em>.</div>
+      <textarea id="pov" placeholder="Katya necesita… porque…"></textarea>
+      <div id="povHint" style="color:var(--mute);font-size:.86rem;margin-top:10px"></div>
+    </div>
+    <div class="btnrow r" style="--d:.24s"><a class="btn prime" href="aterrizar.html">Continuar: Aterrizar el reto →</a><a class="btn" href="insights.html">📊 Ver Insights</a><a class="btn" href="riesgo.html">⚠️ Evaluación de riesgos</a></div>
+  </div>
+</section>
+
+</div>
+
+<div class="hud">
+  <button id="prev" aria-label="Anterior"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <span class="counter"><b id="cur">01</b> / <span id="total">00</span></span>
+  <button id="next" aria-label="Siguiente"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <button id="sendBtn" type="button" style="width:auto;padding:0 16px;height:44px;font-family:Archivo,sans-serif;font-weight:800;font-size:.78rem;letter-spacing:.02em;color:#071428;background:var(--lime);border:none;border-radius:12px;cursor:pointer">Enviar mis respuestas</button>
+  <button id="fs" aria-label="Pantalla completa"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 9V5a1 1 0 011-1h4M20 9V5a1 1 0 00-1-1h-4M4 15v4a1 1 0 001 1h4M20 15v4a1 1 0 01-1 1h-4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</div>
+<div class="hint-key" id="keyhint"><kbd>←</kbd><kbd>→</kbd> navega · <kbd>Esc</kbd> sale del campo · <kbd>F</kbd> pantalla completa</div>
+<div class="toast" id="toast"></div>
+
+<script src="sync.js"></script>
+<script>
+var ZONES=[
+  {k:'dice',t:'Dice',ic:'🗣️',c:'#4e8fe6',q:'¿Qué diría Katya en voz alta?',
+    prompts:['¿Qué le comentaría a un compañero de tripulación?','¿Qué reportaría —o no— a Tierra?','Frases textuales, entre comillas.'],
+    good:['“¿Esto es normal o debería preocuparme?”'], goodWhy:'es una frase textual, con sus palabras',
+    bad:['“Está estresada”'], badWhy:'eso es un sentimiento, va en “Siente”'},
+  {k:'piensa',t:'Piensa',ic:'💭',c:'#2a66e6',q:'¿Qué piensa pero no dice?',
+    prompts:['¿Qué le preocupa en silencio?','¿Qué cree sobre pedir ayuda?','¿Qué duda no comparte?'],
+    good:['“No quiero alarmar a Tierra por nada.”'], goodWhy:'es una creencia que no diría en voz alta',
+    bad:['“Revisa sus signos”'], badWhy:'eso es una acción, va en “Hace”'},
+  {k:'hace',t:'Hace',ic:'🏃',c:'#d7e64b',q:'¿Qué hace? (acciones observables)',
+    prompts:['¿Qué hace cuando aparece el síntoma?','¿A quién recurre o qué revisa?','Verbos: busca, anota, ignora, espera…'],
+    good:['Minimiza molestias para no hacer drama.'], goodWhy:'es un comportamiento que se puede observar',
+    bad:['Siente miedo'], badWhy:'eso es una emoción, va en “Siente”'},
+  {k:'siente',t:'Siente',ic:'❤️',c:'#ef6a5a',q:'¿Qué emociones la mueven?',
+    prompts:['¿Qué siente cuando la decisión le queda grande?','¿Qué teme que pase?','Una emoción por nota: miedo, alivio, culpa…'],
+    good:['Incertidumbre y aislamiento.'], goodWhy:'nombra emociones concretas',
+    bad:['Debería existir un protocolo'], badWhy:'eso es una idea/solución, no una emoción'},
+  {k:'dolores',t:'Dolores',ic:'⚡',c:'#f2c14e',q:'¿Qué le duele, teme o estorba?',
+    prompts:['¿Qué le da miedo que ocurra?','¿Qué le frustra de lo que hay hoy?','¿Qué obstáculo le impide decidir?'],
+    good:['Un número crudo sin contexto le genera ansiedad.'], goodWhy:'es un dolor real, no una solución',
+    bad:['Le falta una app bonita'], badWhy:'eso ya es una solución; describan el dolor, no el remedio'},
+  {k:'ganancias',t:'Ganancias',ic:'🌱',c:'#4ccb8f',q:'¿Qué desea? ¿Qué sería un éxito?',
+    prompts:['¿Cómo sería un buen día para Katya?','¿Qué querría sentir al decidir?','¿Qué resultado la haría confiar?'],
+    good:['Confianza para decidir sola y a tiempo.'], goodWhy:'es un deseo, un resultado esperado',
+    bad:['Un dashboard con gráficas'], badWhy:'eso es una solución; describan el deseo, no la herramienta'}
+];
+var ZORDER={}; ZONES.forEach(function(z,i){ ZORDER[z.k]=i; });
+var ZMETA={}; ZONES.forEach(function(z){ ZMETA[z.k]=z; });
+var TOOL='empatia';
+/* escenario y POV: cada quien el suyo (clave~~persona). Las notas ya son por persona. */
+var PP_SEP='~~';
+function _slug(n){ return (String(n||'').toLowerCase().replace(/[^a-z0-9]+/g,'')).slice(0,24) || 'anon'; }
+function _me(){ return _slug(window.Sync&&Sync.getName?Sync.getName():''); }
+var LS_NOTES='empatia_notes_v1', LS_MINE='empatia_mine_v1', LS_POV='empatia_pov_v1', LS_ESC='empatia_escenario_v1';
+var ESC_DEFAULT='A Katya le empieza a doler el pecho durante el turno nocturno. Nadie a bordo es médico y Houston está a 20 min; el estrés crónico también causa dolor de pecho, así que no sabe si es grave.';
+
+/* ---- utils ---- */
+function $(s,r){return (r||document).querySelector(s);} function $$(s,r){return [].slice.call((r||document).querySelectorAll(s));}
+function lget(k,d){ try{var v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d} }
+function lset(k,v){ try{localStorage.setItem(k,JSON.stringify(v))}catch(e){} }
+function uid(){ return 'n'+Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+var toastT; function toast(m){ var t=$('#toast'); t.textContent=m; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(function(){t.classList.remove('on')},1800); }
+var mine=lget(LS_MINE,{});
+function connected(){ return window.Sync && Sync.isConnected(); }
+
+/* ---- genera las 6 diapositivas de zona ---- */
+(function(){
+  var html=ZONES.map(function(z,i){
+    var li=z.prompts.map(function(p){return '<li>'+p+'</li>'}).join('');
+    return '<section class="slide" id="z-'+z.k+'" data-step="Z"><div class="sin">'+
+      '<div class="eyebrow r">Zona '+(i+1)+' de 6 · empatizar</div>'+
+      '<div class="zonegrid">'+
+        '<div class="r" style="--d:.1s">'+
+          '<div class="zhead"><span class="zicon" style="--zc:'+z.c+'">'+z.ic+'</span><h2 class="title" style="margin:0;font-size:clamp(1.6rem,3.4vw,2.4rem)">'+z.t+'</h2></div>'+
+          '<div class="zq">'+z.q+'</div>'+
+          '<ul class="prompts" style="--zc:'+z.c+'">'+li+'</ul>'+
+          '<div class="exline good"><span class="mk">✓</span><span><span class="tx">'+z.good[0]+'</span> <span class="why">— '+z.goodWhy+'</span></span></div>'+
+          '<div class="exline bad"><span class="mk">✗</span><span><span class="tx">'+z.bad[0]+'</span> <span class="why">— '+z.badWhy+'</span></span></div>'+
+        '</div>'+
+        '<div class="r" style="--d:.18s">'+
+          '<div class="zcount" id="count_'+z.k+'"></div>'+
+          '<div class="addrow"><input type="text" data-zone="'+z.k+'" placeholder="Agregar una nota…" maxlength="160"><button type="button" data-add="'+z.k+'">Agregar</button></div>'+
+          '<div class="notes" id="notes_'+z.k+'"></div>'+
+        '</div>'+
+      '</div></div></section>';
+  }).join('');
+  var ph=$('[data-gen="zones"]'); ph.insertAdjacentHTML('beforebegin',html); ph.remove();
+})();
+
+/* ---- data layer ---- */
+var CUR={notes:[],pov:'',esc:''}, firstEsc=true;
+function localNotes(){ return lget(LS_NOTES,[]); }
+function setSrc(kind){ var p=$('#srcPill'); p.querySelector('.dot').className='dot'+(kind==='ok'?' ok':kind==='loc'?' loc':''); $('#srcTxt').textContent=kind==='ok'?'Equipo':'Este dispositivo'; }
+
+function renderNotes(){
+  ZONES.forEach(function(z){
+    var box=$('#notes_'+z.k); if(!box) return;
+    var list=CUR.notes.filter(function(n){return n.zone===z.k}).sort(function(a,b){ return (Number(b.votes||0)-Number(a.votes||0))||String(a.id).localeCompare(String(b.id)); });
+    var cnt=$('#count_'+z.k); if(cnt) cnt.textContent=list.length?(list.length+' nota'+(list.length>1?'s':'')+' · toquen 👍 para votar'):'Aún sin notas: escriban la primera.';
+    if(!list.length){ box.innerHTML='<div class="empty">Sin notas aún. Escriban en silencio, una idea por nota.</div>'; return; }
+    box.innerHTML='';
+    list.forEach(function(n){
+      var isMine=mine[n.id]||(window.Sync&&n.author&&Sync.getName()&&n.author===Sync.getName());
+      var card=document.createElement('div'); card.className='note';
+      card.innerHTML='<div class="nt"></div><div class="nf"><span class="au"></span><span class="sp"></span>'+
+        '<button class="vote'+(Number(n.votes)>0?' hot':'')+'" data-vote="'+n.id+'">👍 '+(Number(n.votes)||0)+'</button>'+
+        (isMine?'<button class="del" data-del="'+n.id+'" title="Borrar">✕</button>':'')+'</div>';
+      card.querySelector('.nt').textContent=n.value;
+      card.querySelector('.au').textContent=n.author||'anónimo';
+      box.appendChild(card);
+    });
+  });
+  renderRank();
+}
+function renderRank(){
+  var box=$('#rank'); if(!box) return;
+  var top=CUR.notes.slice().filter(function(n){return (Number(n.votes)||0)>0}).sort(function(a,b){return (Number(b.votes)||0)-(Number(a.votes)||0)}).slice(0,8);
+  if(!top.length){ box.innerHTML='<div class="empty">Todavía nadie vota. Regresen a las zonas y marquen 👍 las notas que más pesan.</div>'; }
+  else box.innerHTML=top.map(function(n,i){ var z=ZMETA[n.zone]||{t:n.zone,c:'#4e8fe6'}; return '<div class="rankrow"><span class="pos">'+(i+1)+'</span><span><span class="zt" style="color:'+z.c+'">'+z.ic+' '+z.t+'</span><br>'+n.value.replace(/</g,'&lt;')+'</span><span class="vt">👍 '+(Number(n.votes)||0)+'</span></div>'; }).join('');
+  var dolores=CUR.notes.filter(function(n){return n.zone==='dolores'}).sort(function(a,b){return (Number(b.votes)||0)-(Number(a.votes)||0)}).slice(0,2).map(function(n){return n.value;});
+  var hint=$('#povHint'); if(hint) hint.innerHTML=dolores.length?'Dolores más votados para inspirar la necesidad: '+dolores.map(function(d){return '<b style="color:var(--blue-pale)">“'+d.replace(/</g,'&lt;')+'”</b>'}).join(' · '):'Voten los dolores en las zonas para ver aquí los candidatos.';
+}
+function syncText(){
+  var p=$('#pov'); if(p&&document.activeElement!==p&&p.value!==CUR.pov) p.value=CUR.pov;
+  var e=$('#escenario'); if(e&&document.activeElement!==e&&e.value!==CUR.esc) e.value=CUR.esc;
+}
+
+function refresh(){
+  if(connected()){
+    setSrc('ok');
+    Sync.read(TOOL).then(function(j){
+      if(!j||!j.ok||!j.rows) return;
+      CUR.notes=j.rows.filter(function(r){return r.id&&r.zone}).map(function(r){return {id:String(r.id),zone:String(r.zone),author:String(r.author||''),value:String(r.value||''),votes:Number(r.votes)||0}});
+      var myPov='pov'+PP_SEP+_me(), myEsc='escenario'+PP_SEP+_me();
+      var pov=j.rows.filter(function(r){return r.key===myPov})[0]; if(pov) CUR.pov=String(pov.value||''); /* solo el mío */
+      var es=j.rows.filter(function(r){return r.key===myEsc})[0];
+      if(es){ CUR.esc=String(es.value||''); firstEsc=false; }
+      else if(firstEsc){ firstEsc=false; if(!CUR.esc) CUR.esc=ESC_DEFAULT; } /* arranca con el default localmente */
+      renderNotes(); syncText();
+    }).catch(function(){ loadLocal(); });
+  } else { loadLocal(); }
+}
+function loadLocal(){ setSrc('loc'); CUR.notes=localNotes(); CUR.pov=lget(LS_POV,''); CUR.esc=lget(LS_ESC,ESC_DEFAULT); renderNotes(); syncText(); }
+
+function addNote(zone,text){
+  text=(text||'').trim(); if(!text) return;
+  if(connected()){ Sync.post({op:'add',tool:TOOL,zone:zone,value:text}).then(function(j){ if(j&&j.id){mine[j.id]=1;lset(LS_MINE,mine);} refresh(); }).catch(function(){}); }
+  else { var n=localNotes(); var id=uid(); n.push({id:id,zone:zone,author:(window.Sync?Sync.getName():'')||'yo',value:text,votes:0}); lset(LS_NOTES,n); mine[id]=1; lset(LS_MINE,mine); CUR.notes=n; renderNotes(); }
+}
+function voteNote(id){
+  if(connected()){ Sync.post({op:'vote',id:id,delta:1}).then(refresh).catch(function(){}); }
+  else { var n=localNotes(); n.forEach(function(x){if(x.id===id)x.votes=(Number(x.votes)||0)+1}); lset(LS_NOTES,n); CUR.notes=n; renderNotes(); }
+}
+function delNote(id){
+  if(connected()){ Sync.post({op:'del',id:id}).then(refresh).catch(function(){}); }
+  else { var n=localNotes().filter(function(x){return x.id!==id}); lset(LS_NOTES,n); CUR.notes=n; renderNotes(); }
+}
+
+/* ---- eventos del tablero ---- */
+document.addEventListener('click',function(e){
+  var a=e.target.closest('[data-add]'); if(a){ var z=a.getAttribute('data-add'); var inp=$('input[data-zone="'+z+'"]'); addNote(z,inp.value); inp.value=''; inp.focus(); return; }
+  var v=e.target.closest('[data-vote]'); if(v){ voteNote(v.getAttribute('data-vote')); return; }
+  var d=e.target.closest('[data-del]'); if(d){ if(confirm('¿Borrar esta nota?')) delNote(d.getAttribute('data-del')); return; }
+});
+document.addEventListener('keydown',function(e){
+  if(e.key==='Enter'&&e.target.matches&&e.target.matches('input[data-zone]')){ e.preventDefault(); var z=e.target.getAttribute('data-zone'); addNote(z,e.target.value); e.target.value=''; }
+});
+
+/* ---- POV y escenario (debounce) ---- */
+var povT,escT;
+$('#pov').addEventListener('input',function(){ CUR.pov=this.value; lset(LS_POV,this.value); if(connected()){ clearTimeout(povT); var val=this.value; povT=setTimeout(function(){ Sync.post({op:'set',tool:TOOL,key:'pov'+PP_SEP+_me(),value:val}).catch(function(){}); },600); } });
+$('#escenario').addEventListener('input',function(){ CUR.esc=this.value; lset(LS_ESC,this.value); if(connected()){ clearTimeout(escT); var val=this.value; escT=setTimeout(function(){ Sync.post({op:'set',tool:TOOL,key:'escenario'+PP_SEP+_me(),value:val}).catch(function(){}); },600); } });
+
+/* ---- botón Enviar: sube mi escenario + POV y refresca el Sheet al instante ---- */
+(function(){
+  var sendBtn=document.getElementById('sendBtn'), sendT;
+  if(!sendBtn) return;
+  function lab(txt,bg){ sendBtn.textContent=txt; if(bg) sendBtn.style.background=bg; }
+  sendBtn.addEventListener('click', function(){
+    this.blur();
+    if(!connected() || !(window.Sync&&Sync.getName())){ lab('Pon tu nombre arriba ⚙️','#f2c14e'); clearTimeout(sendT); sendT=setTimeout(function(){lab('Enviar mis respuestas','var(--lime)')},2200); return; }
+    var items=[{key:'escenario'+PP_SEP+_me(),value:CUR.esc||''},{key:'pov'+PP_SEP+_me(),value:CUR.pov||''},{key:'_enviado'+PP_SEP+_me(),value:new Date().toLocaleString('es-MX')}];
+    lab('Enviando…','#9cc1f2');
+    Sync.post({op:'bulkset',tool:TOOL,items:items})
+      .then(function(){ return Sync.post({op:'views'}); })
+      .then(function(){ lab('Enviado ✓','#4ccb8f'); clearTimeout(sendT); sendT=setTimeout(function(){lab('Enviar mis respuestas','var(--lime)')},2200); })
+      .catch(function(){ lab('Error, reintenta','#ef6a5a'); clearTimeout(sendT); sendT=setTimeout(function(){lab('Enviar mis respuestas','var(--lime)')},2200); });
+  });
+})();
+
+/* ---- navegación ---- */
+var slides=$$('.slide'), N=slides.length, idx=0, prog=$('#prog'), cur=$('#cur'), prevB=$('#prev'), nextB=$('#next'), tchips=$$('.tchip');
+$('#total').textContent=String(N).padStart(2,'0');
+function indexOfId(id){ for(var q=0;q<N;q++) if(slides[q].id===id) return q; return -1; }
+function go(n,noHash){ n=Math.max(0,Math.min(N-1,n)); if(n===idx&&slides[idx].classList.contains('active')) return;
+  slides[idx].classList.remove('active'); idx=n; slides[idx].classList.add('active'); slides[idx].scrollTop=0;
+  prog.style.width=(idx/(N-1)*100)+'%'; cur.textContent=String(idx+1).padStart(2,'0'); prevB.disabled=idx===0; nextB.disabled=idx===N-1;
+  var st=slides[idx].getAttribute('data-step'); tchips.forEach(function(c){ c.classList.toggle('on', st!==null&&c.getAttribute('data-step')===st&&c.getAttribute('data-step')!=='0'); });
+  if(!noHash){ try{ history.replaceState(null,'','#'+slides[idx].id); }catch(e){} } }
+function next(){go(idx+1)} function prev(){go(idx-1)}
+nextB.addEventListener('click',function(){next();this.blur()}); prevB.addEventListener('click',function(){prev();this.blur()});
+document.addEventListener('click',function(e){ var g=e.target.closest('[data-goto]'); if(g){ e.preventDefault(); var t=indexOfId(g.getAttribute('data-goto')); if(t>=0) go(t); g.blur(); } });
+var kh=$('#keyhint');
+function typing(t){ if(!t||!t.tagName) return false; var tag=t.tagName; return tag==='TEXTAREA'||t.isContentEditable||(tag==='INPUT'&&t.type!=='button'&&t.type!=='submit'); }
+document.addEventListener('keydown',function(e){ if(e.ctrlKey||e.metaKey||e.altKey) return;
+  if(typing(e.target)){ if(e.key==='Escape'){ e.target.blur(); kh.classList.remove('gone'); } return; }
+  var onBtn=e.target&&(e.target.tagName==='BUTTON'||e.target.tagName==='A');
+  if(e.key==='ArrowRight'||e.key==='PageDown'||(e.key===' '&&!e.shiftKey&&!onBtn)){e.preventDefault();next();kh.classList.add('gone')}
+  else if(e.key==='ArrowLeft'||e.key==='PageUp'||(e.key===' '&&e.shiftKey&&!onBtn)){e.preventDefault();prev();kh.classList.add('gone')}
+  else if(e.key==='Home') go(0); else if(e.key==='End') go(N-1); else if(e.key==='f'||e.key==='F') toggleFs(); });
+var tx=0,ty=0,tOk=false;
+$('#deck').addEventListener('touchstart',function(e){ tOk=!e.target.closest('input,textarea,button,.notes'); tx=e.changedTouches[0].clientX; ty=e.changedTouches[0].clientY; },{passive:true});
+$('#deck').addEventListener('touchend',function(e){ if(!tOk) return; var dx=e.changedTouches[0].clientX-tx, dy=e.changedTouches[0].clientY-ty; if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)){ dx<0?next():prev(); kh.classList.add('gone'); } },{passive:true});
+function toggleFs(){ if(!document.fullscreenElement){ (document.documentElement.requestFullscreen||function(){}).call(document.documentElement); } else { (document.exitFullscreen||function(){}).call(document); } }
+$('#fs').addEventListener('click',function(){toggleFs();this.blur()});
+window.addEventListener('hashchange',function(){ var t=indexOfId((location.hash||'').slice(1)); if(t>=0&&t!==idx) go(t,true); });
+
+/* ---- init ---- */
+(function(){
+  var barEl=$('#syncbar'); if(window.Sync&&barEl) Sync.mountBar(barEl);
+  if(window.Sync){ Sync.onContext(function(){ refresh(); }); }
+  var t=indexOfId((location.hash||'').slice(1)); go(t>=0?t:0,true);
+  refresh();
+  setInterval(function(){ if(connected()) refresh(); },6000);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ORBITAL · Pitch</title>
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png">
+<link rel="shortcut icon" href="favicon.ico">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="description" content="Pitch de ORBITAL para el jurado de NASA Space Apps CDMX 2026: inteligencia de salud para astronautas que aprende la línea base de cada persona, avisa antes del daño y acompaña a decidir. Presentación a pantalla completa con la identidad visual del producto." />
+<link rel="stylesheet" href="assets/fonts.css" />
+<style>
+  :root{
+    /* identidad ORBITAL (mismos tokens del producto) */
+    --bg:#eef1f5; --surface:#ffffff; --surface-soft:#f6f8fc;
+    --ink:#0f2744; --ink-soft:#5b6b84; --hairline:rgba(15,39,68,.1);
+    --orbi:#3b6fe0; --orbi-deep:#1e45b0; --orbi-glow:rgba(59,111,224,.35);
+    --state-ok:#2fb27a; --state-watch:#e0a63b; --state-alert:#e8743b; --state-crit:#e0485a; --state-idle:#8aa0bf;
+    --navy:#071428; --navy-2:#0c203c;
+    --font-display:'Space Grotesk',system-ui,sans-serif; --font-body:'Overpass',system-ui,sans-serif;
+    --ease:cubic-bezier(.2,.7,.2,1);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:var(--font-body);background:var(--bg);color:var(--ink);line-height:1.55;-webkit-font-smoothing:antialiased;overflow:hidden}
+  h1,h2,h3,.display{font-family:var(--font-display);letter-spacing:-.015em;line-height:1.04}
+
+  .deck{position:fixed;inset:0;overflow:hidden;
+    background:radial-gradient(1100px 720px at 84% 8%, rgba(59,111,224,.10), transparent 60%),
+               radial-gradient(900px 620px at 6% 98%, rgba(59,111,224,.08), transparent 60%), var(--bg);
+    transition:background .6s var(--ease)}
+  .deck.on-dark{background:
+      radial-gradient(1200px 820px at 80% 10%, rgba(59,111,224,.28), transparent 60%),
+      radial-gradient(900px 640px at 8% 96%, rgba(30,69,176,.3), transparent 60%),
+      linear-gradient(180deg,var(--navy-2),var(--navy))}
+
+  .slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;
+    padding:clamp(28px,5vh,66px) clamp(26px,7vw,120px) clamp(70px,9vh,96px);
+    opacity:0;visibility:hidden;transform:translateY(14px) scale(.992);
+    transition:opacity .55s var(--ease),transform .65s var(--ease),visibility .55s;overflow-y:auto}
+  .slide.active{opacity:1;visibility:visible;transform:none;z-index:2}
+  .wrap{width:100%;max-width:1120px;margin:auto}
+  .slide.dark{color:#eaf1ff}
+  .slide.dark .ink-soft,.slide.dark .sub{color:#9fb3d6}
+
+  /* reveal */
+  .r{opacity:0;transform:translateY(20px);transition:opacity .6s var(--ease),transform .6s var(--ease)}
+  .slide.active .r{opacity:1;transform:none;transition-delay:var(--d,0s)}
+
+  .eyebrow{font-family:var(--font-display);font-weight:600;text-transform:uppercase;letter-spacing:.16em;
+    font-size:clamp(.64rem,1vw,.76rem);color:var(--orbi);display:inline-flex;align-items:center;gap:11px}
+  .eyebrow::before{content:"";width:26px;height:2px;background:var(--orbi);display:inline-block}
+  .slide.dark .eyebrow{color:#7fa8f0}.slide.dark .eyebrow::before{background:#7fa8f0}
+
+  h2.t{font-size:clamp(1.7rem,4.4vw,3.1rem);font-weight:700;margin:14px 0 16px;max-width:20ch}
+  .sub{color:var(--ink-soft);font-size:clamp(1rem,1.7vw,1.22rem);max-width:66ch}
+  .sub b{color:var(--ink)} .slide.dark .sub b{color:#fff}
+  .hl{color:var(--orbi)} .lead{color:var(--orbi-deep);font-weight:600}
+  .big-time{font-family:var(--font-display);font-weight:700;font-size:clamp(3.2rem,12vw,8rem);letter-spacing:-.04em;line-height:.9;color:var(--ink)}
+  .slide.dark .big-time{color:#fff}
+  .ink-soft{color:var(--ink-soft)}
+  .quiet{font-size:clamp(.82rem,1.2vw,.92rem);color:var(--ink-soft);margin-top:14px;font-style:italic}
+
+  .cols{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(22px,4vw,56px);align-items:center}
+  .cols>*{min-width:0}   /* evita que un video/imagen desborde su columna y se empalme con la otra */
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .three{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .stack{display:grid;gap:14px}
+
+  .card{background:var(--surface);border:1px solid var(--hairline);border-radius:20px;padding:22px 24px;box-shadow:0 12px 36px rgba(15,39,68,.06)}
+  .slide.dark .card{background:rgba(14,32,60,.6);border-color:rgba(159,179,214,.16);box-shadow:0 20px 60px rgba(0,0,0,.3)}
+  .card .k{font-family:var(--font-display);font-weight:600;font-size:.72rem;letter-spacing:.07em;text-transform:uppercase;color:var(--orbi);margin-bottom:8px}
+  .card h3{font-size:clamp(1.05rem,1.9vw,1.28rem);font-weight:600;margin-bottom:8px}
+  .card p{color:var(--ink-soft);font-size:clamp(.9rem,1.35vw,1rem)}
+  .card p b{color:var(--ink)}
+
+  .num{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:start}
+  .num .n{font-family:var(--font-display);font-weight:700;font-size:clamp(1.5rem,3vw,2.1rem);color:var(--orbi);line-height:1;min-width:1.4em}
+  .num h3{font-size:clamp(1.02rem,1.8vw,1.2rem);font-weight:600;margin-bottom:4px}
+  .num p{color:var(--ink-soft);font-size:clamp(.9rem,1.35vw,1rem)}
+  .num p b{color:var(--ink)}
+
+  .chips{display:flex;flex-wrap:wrap;gap:9px;margin-top:4px}
+  .chip{font-size:.86rem;font-weight:500;background:rgba(59,111,224,.1);color:var(--orbi-deep);
+    border:1px solid rgba(59,111,224,.2);border-radius:999px;padding:6px 14px;display:inline-flex;align-items:center;gap:7px}
+  .chip svg{width:15px;height:15px}
+
+  .pill{display:inline-flex;align-items:center;gap:8px;font-family:var(--font-display);font-weight:600;font-size:.74rem;
+    letter-spacing:.04em;border-radius:999px;padding:6px 13px}
+  .pill.ok{background:rgba(47,178,122,.14);color:#1f8f61}
+  .pill.watch{background:rgba(224,166,59,.16);color:#9a6f12}
+  .pill.dot::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+
+  /* media placeholders */
+  .ph{border:1.5px dashed rgba(59,111,224,.4);border-radius:20px;background:
+      repeating-linear-gradient(135deg,rgba(59,111,224,.04) 0 12px,transparent 12px 24px);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--orbi-deep);text-align:center;padding:26px}
+  .ph .lab{font-family:var(--font-display);font-weight:600;font-size:.82rem;letter-spacing:.04em}
+  .ph .hint{font-size:.78rem;color:var(--ink-soft)}
+  .ph.video{aspect-ratio:16/10;min-height:0}
+  .ph.img{aspect-ratio:4/5}
+  .ph svg{width:34px;height:34px;opacity:.7}
+  /* cuando el recurso existe, se rellena y se oculta el placeholder */
+  .ph.filled{border-style:solid;border-color:transparent;background:#0c203c center/cover no-repeat;padding:0;overflow:hidden;position:relative}
+  .ph.filled > *{display:none}
+  .ph.filled img{display:block;width:100%;height:100%;object-fit:cover}
+  /* el video de la demo se ve completo (sin recortar) y sobre fondo oscuro; con controles nativos */
+  .ph.filled video{display:block;width:100%;height:100%;object-fit:contain;background:#0c203c}
+
+  /* measure mini cards (demo) */
+  .meas{display:flex;align-items:baseline;gap:8px}
+  .meas .v{font-family:var(--font-display);font-weight:700;font-size:clamp(1.8rem,3.4vw,2.6rem);letter-spacing:-.02em}
+  .meas .u{font-size:.95rem;color:var(--ink-soft)}
+  .delta{font-size:.86rem;color:var(--ink-soft);margin-top:4px}
+  .delta b{color:var(--state-watch)}
+
+  /* canvases */
+  canvas.orbi{display:block;width:100%;height:100%}
+  .orbi-wrap{position:relative;width:100%;aspect-ratio:1;max-width:min(52vh,560px);margin:auto}
+  .ecg{width:100%;height:60px;display:block}
+
+  /* references */
+  .refs{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}
+  .ref{display:flex;gap:14px;align-items:flex-start;background:var(--surface);border:1px solid var(--hairline);
+    border-radius:14px;padding:13px 16px;text-decoration:none;color:inherit;transition:.2s}
+  .ref:hover{border-color:var(--orbi);box-shadow:0 8px 24px var(--orbi-glow)}
+  .ref .ri{flex:0 0 34px;height:34px;border-radius:9px;background:rgba(59,111,224,.1);color:var(--orbi);display:flex;align-items:center;justify-content:center}
+  .ref .ri svg{width:17px;height:17px}
+  .ref b{display:block;font-size:.95rem;color:var(--ink)}
+  .ref span{font-size:.82rem;color:var(--ink-soft)}
+  .cite{font-size:.86rem;color:var(--ink-soft);line-height:1.5;padding-left:16px;position:relative}
+  .cite::before{content:"";position:absolute;left:0;top:9px;width:6px;height:6px;border-radius:50%;background:var(--orbi)}
+  .cite b{color:var(--ink);font-weight:600}
+
+  .team{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:6px}
+  .member{background:var(--surface);border:1px solid var(--hairline);border-radius:16px;padding:18px 20px;text-align:center}
+  .member .av{width:78px;height:78px;border-radius:50%;background:linear-gradient(135deg,var(--orbi),var(--orbi-deep));margin:0 auto 12px}
+  .gracias{font-family:var(--font-display);font-weight:700;font-size:clamp(2.4rem,5vw,3.4rem);letter-spacing:.02em;color:var(--orbi-deep);display:flex;align-items:center;justify-content:center;min-height:100%}
+  .logo-inline{height:.9em;width:auto;display:inline-block;position:relative;top:.04em}
+  /* anexo · preguntas del jurado */
+  .tag{display:inline-flex;align-items:center;gap:8px;font-family:var(--font-display);font-weight:600;font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;color:var(--orbi);background:rgba(59,111,224,.1);border:1px solid rgba(59,111,224,.22);border-radius:999px;padding:5px 13px;margin-bottom:14px}
+  .qt{font-family:var(--font-display);font-weight:700;font-size:clamp(1.5rem,3.2vw,2.3rem);line-height:1.06;margin-bottom:16px;color:var(--ink)}
+  .slide.dark .qt{color:#fff}
+  .grid6{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .grid4{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+  .ccard{background:var(--surface);border:1px solid var(--hairline);border-radius:16px;padding:16px 18px}
+  .ccard .k{font-family:var(--font-display);font-weight:600;font-size:.66rem;letter-spacing:.06em;text-transform:uppercase;color:var(--orbi);margin-bottom:6px}
+  .ccard h4{font-size:1rem;font-weight:600;margin-bottom:5px;color:var(--ink)}
+  .ccard p{color:var(--ink-soft);font-size:.87rem;line-height:1.42}
+  .ccard p b{color:var(--ink)}
+  .ccard ul{list-style:none;margin-top:4px;display:grid;gap:3px}
+  .ccard li{color:var(--ink-soft);font-size:.85rem;padding-left:14px;position:relative;line-height:1.36}
+  .ccard li::before{content:"";position:absolute;left:0;top:8px;width:5px;height:5px;border-radius:50%;background:var(--orbi)}
+  .ccard li b{color:var(--ink)}
+  /* roadmap */
+  .road{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;position:relative;margin-top:8px}
+  .road::before{content:"";position:absolute;left:4%;right:4%;top:19px;height:2px;background:linear-gradient(90deg,var(--orbi),rgba(59,111,224,.15))}
+  .step{position:relative;display:flex;flex-direction:column;align-items:flex-start}
+  .step .dot2{width:40px;height:40px;border-radius:50%;background:var(--orbi);color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:700;font-size:1rem;box-shadow:0 0 0 6px rgba(59,111,224,.14),0 8px 22px var(--orbi-glow);margin-bottom:14px;position:relative;z-index:1}
+  .step .ccard{width:100%;flex:1}
+  .step .ccard .ico{font-size:1.4rem;margin-bottom:6px}
+  .step .ccard h4{font-size:1.02rem}
+  .step .ccard p{font-size:.88rem}
+  .member b{display:block;font-family:var(--font-display);font-weight:600;font-size:1.02rem}
+  .member span{font-size:.86rem;color:var(--ink-soft)}
+
+  .wordmark{font-family:var(--font-display);font-weight:600;letter-spacing:.42em;padding-left:.42em;color:var(--ink-soft);font-size:.8rem}
+  .slide.dark .wordmark{color:#9fb3d6}
+  .close-mark{font-family:var(--font-display);font-weight:700;font-size:clamp(2.4rem,7vw,5rem);letter-spacing:.14em;padding-left:.14em;color:#fff}
+
+  /* chrome */
+  .prog{position:fixed;top:0;left:0;height:3px;background:var(--orbi);width:0;z-index:40;transition:width .5s var(--ease);box-shadow:0 0 12px var(--orbi-glow)}
+  .hud{position:fixed;bottom:18px;right:22px;display:flex;align-items:center;gap:10px;z-index:40}
+  .hud button{width:42px;height:42px;border-radius:12px;border:1px solid var(--hairline);background:rgba(255,255,255,.7);
+    color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;backdrop-filter:blur(8px)}
+  .hud button:hover{border-color:var(--orbi);color:var(--orbi)}
+  .hud button:disabled{opacity:.32;cursor:default}
+  .counter{font-family:var(--font-display);font-weight:600;font-size:.8rem;color:var(--ink-soft);min-width:58px;text-align:center}
+  .counter b{color:var(--orbi)}
+  .deck.on-dark ~ .hud button{background:rgba(14,32,60,.6);color:#eaf1ff;border-color:rgba(159,179,214,.22)}
+  .deck.on-dark ~ .counter{color:#9fb3d6}
+  .khint{position:fixed;bottom:24px;left:24px;z-index:40;color:var(--ink-soft);font-size:.74rem;font-family:var(--font-display);
+    font-weight:500;letter-spacing:.05em;text-transform:uppercase;display:flex;gap:8px;align-items:center;opacity:.7;transition:opacity .5s}
+  .khint.gone{opacity:0;pointer-events:none}
+  .khint kbd{background:rgba(255,255,255,.7);border:1px solid var(--hairline);border-radius:6px;padding:2px 7px;font-family:var(--font-display);font-size:.7rem}
+
+  @media(max-width:900px){
+    .cols,.two,.three,.team,.refs,.grid6,.grid4,.road{grid-template-columns:1fr}
+    .road::before{display:none}
+    .slide{padding:58px 24px 86px}
+    .khint{display:none}
+  }
+  @media (prefers-reduced-motion: reduce){ .r{transition:none;opacity:1;transform:none} }
+</style>
+</head>
+<body>
+
+<div class="prog" id="prog"></div>
+<div class="deck" id="deck">
+
+  <!-- 1 · GANCHO -->
+  <section class="slide active">
+    <div class="wrap">
+      <div class="cols">
+        <div>
+          <div class="big-time r" style="--d:.15s">02:17</div>
+          <h2 class="t r" style="--d:.25s">Katya está despierta en una nave rumbo a <span class="hl">Marte</span>.</h2>
+          <p class="sub r" style="--d:.35s">Ninguna alarma ha sonado. Todos sus valores están dentro de lo normal.</p>
+          <p class="sub r" style="--d:.46s" style2="margin-top:14px"><br>Pero esta historia empezó <b>seis días antes</b>, con un cambio tan pequeño que nadie lo notó. Ni ella.</p>
+          <div class="chips r" style="--d:.58s" style2="margin-top:20px">
+            <span class="chip">Sabe leer sus números</span>
+            <span class="chip">No sabe si son normales <b style="color:var(--orbi)">&nbsp;para ella</b></span>
+            <span class="chip">Houston, a 20 min</span>
+          </div>
+          <canvas class="ecg r" id="ecg1" style="--d:.7s;margin-top:22px"></canvas>
+        </div>
+        <div class="ph img r" style="--d:.4s" data-img="assets/img/katya">
+          <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.6"/><circle cx="9" cy="10" r="2" stroke="currentColor" stroke-width="1.6"/><path d="M4 18l5-4 4 3 3-3 4 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="lab">Imagen / render — Katya en la nave</span>
+          <span class="hint">coloca <b>assets/img/katya.jpg</b></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 · PROPUESTA -->
+  <section class="slide">
+    <div class="wrap">
+      <div class="cols">
+        <div>
+          <h2 class="t r" style="--d:.15s">Katya es un personaje. <span class="hl">El problema no.</span></h2>
+          <p class="sub r" style="--d:.28s">Por eso creamos <b>ORBITAL</b>: un sistema que</p>
+          <div class="stack r" style="--d:.4s" style2="margin-top:16px">
+            <div class="card"><h3>Aprende qué es normal</h3><p>para <b>cada astronauta</b>, no contra un promedio.</p></div>
+            <div class="card"><h3>Avisa cuándo algo empieza a cambiar</h3><p>una señal clara, <b>a tiempo</b>, antes de los síntomas.</p></div>
+            <div class="card"><h3>Acompaña a entender qué hacer</h3><p>cuando <b>no hay nadie cerca</b>.</p></div>
+          </div>
+        </div>
+        <div>
+          <div class="orbi-wrap r" style="--d:.3s"><canvas class="orbi" id="orbi2"></canvas></div>
+          <p class="sub r" style="--d:.5s" style2="text-align:center">Inteligencia de salud para la exploración espacial — <b>cuerpo y mente</b>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 · ALCANCE -->
+  <section class="slide">
+    <div class="wrap">
+      <h2 class="t r" style="--d:.13s">Dos etapas. Toda la tripulación. Siempre <span class="hl">contra su propio patrón.</span></h2>
+      <div class="chips r" style="--d:.24s" style2="margin-bottom:6px">
+        <span class="chip">🌙 Sueño</span><span class="chip">🫀 Signos vitales</span><span class="chip">🧠 Cognición</span><span class="chip">🌡️ Temperatura</span>
+      </div>
+      <div class="two r" style="--d:.34s" style2="margin-top:14px">
+        <div class="card">
+          <div class="k">Etapa 1 · Prevención</div>
+          <h3>Una banda de lo esperable para cada persona</h3>
+          <p>Con datos de wearables, un modelo de <b>series de tiempo</b> aprende cómo evoluciona cada quien. Cuando una medición se sale de su banda, enciende <b>una sola alarma</b>: clara y a tiempo, antes de los síntomas.</p>
+        </div>
+        <div class="card">
+          <div class="k">Etapa 2 · Asistencia</div>
+          <h3>Un copiloto que cita documento y página</h3>
+          <p>Responde con documentación técnica y referencia la fuente. <b>No diagnostica</b> ni reemplaza a un médico: ayuda a entender y a saber qué consultar.</p>
+        </div>
+      </div>
+      <div class="two r" style="--d:.46s" style2="margin-top:4px">
+        <div class="card"><h3>Corre en la nave</h3><p>Se descarga antes de la misión y opera <b>local y centralizado a bordo</b>, sin internet ni comunicación con la Tierra.</p></div>
+        <div class="card"><h3>Hoy</h3><p>Un <b>MVP</b> para misiones de larga duración.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 · DEMO -->
+  <section class="slide">
+    <div class="wrap">
+      <h2 class="t r" style="--d:.13s">Una esfera tranquila y una sola frase.</h2>
+      <div class="cols" style="align-items:start">
+        <div class="ph video r" style="--d:.26s" data-video="assets/video/demo.mp4" data-poster="assets/video/demo-poster.jpg">
+          <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M10 9l5 3-5 3V9z" fill="currentColor"/></svg>
+          <span class="lab">Video de la demo — recorrido en ORBITAL</span>
+          <span class="hint">coloca <b>assets/video/demo.mp4</b></span>
+        </div>
+        <div class="stack">
+          <div class="card r" style="--d:.34s">
+            <span class="pill watch dot">Tu eficiencia de sueño salió de tu rango</span>
+            <div class="meas" style="margin-top:12px"><span class="v">7.1</span><span class="u">h dormidas · dentro de lo normal</span></div>
+            <div class="delta">Pero tardó <b>51 min en dormirse</b> — 14 más que su media.</div>
+            <p style="margin-top:8px;color:var(--ink-soft)">No la compara con un promedio: <b style="color:var(--ink)">la compara con ella.</b></p>
+          </div>
+          <div class="card r" style="--d:.44s">
+            <div class="k">Perilla → Vitales</div>
+            <div class="meas"><span class="v">68</span><span class="u">lpm</span><span class="v" style="margin-left:18px">119/74</span><span class="u">mmHg</span></div>
+            <div class="delta">Una tabla clínica diría "bien". Pero ambos <b>derivan al alza</b> respecto a su patrón, y ORBITAL lo marca.</div>
+          </div>
+        </div>
+      </div>
+      <p class="sub r" style="--d:.56s" style2="margin-top:16px">No le habla con una alarma: <b>le explica qué ve y le propone una acción concreta.</b></p>
+    </div>
+  </section>
+
+  <!-- 5 · VENTAJA -->
+  <section class="slide">
+    <div class="wrap">
+      <h2 class="t r" style="--d:.13s">Muchos sistemas confirman el daño. <span class="hl">ORBITAL mide antes.</span></h2>
+      <p class="sub r" style="--d:.22s">Tres decisiones.</p>
+      <div class="stack r" style="--d:.32s" style2="margin-top:14px">
+        <div class="num"><div class="n">1</div><div><h3>Partir de la persona, no del promedio.</h3><p>La línea base es individual: cada quien es su propia referencia.</p></div></div>
+        <div class="num"><div class="n">2</div><div><h3>Calma.</h3><p>Un tablero lleno de rojos convierte el monitoreo en <b>otra fuente de estrés</b> — y el estrés y el mal sueño son justo lo que queremos detectar. Por eso está diseñado para transmitir calma: <b>una cosa a la vez</b>, y una perilla que gira para cambiar de tema.</p></div></div>
+        <div class="num"><div class="n">3</div><div><h3>Criterio con fundamento.</h3><p>Nuestras reglas parten de <b>estándares de la NASA</b> referenciados en la documentación, y de gestión de riesgos: indicadores adelantados y comparación contra la <b>línea base</b>, no solo contra el límite.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 · CIERRE (Orbi) -->
+  <section class="slide dark" data-bg="dark">
+    <div class="wrap" style="text-align:center;display:flex;flex-direction:column;align-items:center">
+      <div class="orbi-wrap r" style="--d:.2s;max-width:min(40vh,420px);margin:18px auto 6px"><canvas class="orbi" id="orbi6"></canvas></div>
+      <div class="big-time r" style="--d:.3s">02:17</div>
+      <p class="sub r" style="--d:.42s;margin-top:14px">No sabemos si ORBITAL habría cambiado el desenlace. Lo que sí sabemos es qué habría tenido en la mano: <b>el día 3, no las 02:17.</b></p>
+      <p class="sub r" style="--d:.56s;margin-top:18px;font-size:clamp(1.05rem,2vw,1.4rem)">La exploración espacial no se trata solo de llegar más lejos. Se trata de <span class="hl">cuidar a las personas</span> que hacen posible llegar hasta allá.</p>
+      <p class="lead r" style="--d:.7s;margin-top:18px;color:#7fa8f0">Cuando la Tierra está demasiado lejos, anticiparse puede marcar la diferencia.</p>
+    </div>
+  </section>
+
+  <!-- 7 · EQUIPO -->
+  <section class="slide">
+    <div class="wrap">
+      <h2 class="t r" style="--d:.1s" style2="display:flex;align-items:center;justify-content:center;gap:.35em;flex-wrap:wrap;max-width:none;text-align:center">Nosotros somos <img src="assets/img/logo-orbital.png" alt="ORBITAL" class="logo-inline"></h2>
+      <p class="sub r" style="--d:.2s" style2="text-align:center;margin-left:auto;margin-right:auto">Inteligencia de salud para la exploración espacial — <b>cuerpo y mente</b>.</p>
+      <p class="sub r" style="--d:.26s" style2="font-size:1rem;color:var(--ink-soft);margin-top:-6px;text-align:center;margin-left:auto;margin-right:auto">Equipo <b>Tacos de Asada</b> · IPN — Sistemas Computacionales, IA y Ciencia de Datos.</p>
+      <div class="team r" style="--d:.34s">
+        <div class="member"><div class="av" data-photo="ruben-silva"></div><b>Rubén Silva</b><span>Ingeniero · Programador</span></div>
+        <div class="member"><div class="av" data-photo="grace-rojas"></div><b>Grace Rojas</b><span>Speaker · Investigación e ideación</span></div>
+        <div class="member"><div class="av" data-photo="jonathan-sanchez"></div><b>Jonathan Sánchez</b><span>Speaker · Investigación e ideación</span></div>
+        <div class="member"><div class="av" data-photo="irving-soriano"></div><b>Irving Soriano</b><span>UX · Frontend · Design thinking</span></div>
+        <div class="gracias" style="--d:.6s">GRACIAS</div>
+        <div class="member"><div class="av" data-photo="rodrigo-ramirez"></div><b>Rodrigo Ramírez</b><span>Ingeniero · Programador</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 · Modelo de negocio (1/2) · costos -->
+  <section class="slide">
+    <div class="wrap">
+      <div class="tag r" style="--d:.05s">Pregunta · Modelo de negocio · 1/2</div>
+      <h2 class="qt r" style="--d:.12s">¿Cuánto cuesta construirlo?</h2>
+      <div class="three r" style="--d:.22s">
+        <div class="card"><div class="k">Costo del MVP</div><h3>≈ $0 en efectivo</h3><p>Open-source y corre local. ~210 h-persona (<b>~$42k MXN</b> de valor).</p></div>
+        <div class="card"><div class="k">Capital humano</div><h3>$0.9–1.1M MXN</h3><p>Equipo de 6. Para un piloto: <b>~4 de tiempo completo</b> durante 6 meses.</p></div>
+        <div class="card"><div class="k">Inversión a piloto</div><h3>$105k–165k USD</h3><p>En <b>12–18 meses</b>: equipo, wearables, validación, legal, cómputo y comercial.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9 · Modelo de negocio (2/2) · ingresos -->
+  <section class="slide">
+    <div class="wrap">
+      <div class="tag r" style="--d:.05s">Pregunta · Modelo de negocio · 2/2</div>
+      <h2 class="qt r" style="--d:.12s">¿Cómo genera ingresos y retorno?</h2>
+      <div class="three r" style="--d:.22s">
+        <div class="card"><div class="k">Precio</div><h3>Licencia anual</h3><p>Agencias: <b>$50k–250k USD/año</b><br>Terrestre: <b>$500–2,000 USD/sitio·mes</b><br>Contratos de I+D (no dilutivo)</p></div>
+        <div class="card"><div class="k">Financiamiento</div><h3>No dilutivo primero</h3><p>SECIHTI, incubadora IPN, premios → <b>piloto pagado / LOI</b> → ángel / pre-seed.</p></div>
+        <div class="card"><div class="k">Retorno (ROI)</div><h3>Equilibrio con 4–6 clientes</h3><p>Y por <b>valor evitado</b>: una evacuación o EVA abortada paga años de licencia.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 · Mercado -->
+  <section class="slide">
+    <div class="wrap">
+      <div class="tag r" style="--d:.05s">Pregunta · Mercado</div>
+      <h2 class="qt r" style="--d:.12s">Además de la NASA, ¿dónde más?</h2>
+      <div class="grid4 r" style="--d:.22s">
+        <div class="ccard"><div class="k">Espacio</div><ul><li>Agencias: ESA, CSA, JAXA, ISRO, MBRSC, AEM</li><li>Privado: Axiom, Vast, Sierra, SpaceX, Blue Origin</li><li>Turismo espacial</li></ul></div>
+        <div class="ccard"><div class="k">Entornos análogos (Tierra)</div><ul><li>Estaciones antárticas y polares</li><li>Submarinos y armada</li><li>Offshore, barcos, cruceros</li><li>Minería remota · bases militares</li></ul></div>
+        <div class="ccard"><div class="k">Salud y desempeño</div><ul><li>Telemedicina rural</li><li>Adultos mayores · crónicos</li><li>Salud ocupacional de alto estrés</li><li>Alto rendimiento deportivo</li></ul></div>
+        <div class="ccard"><div class="k">Ángulo México</div><ul><li>Pemex · plataformas en el Golfo</li><li>Minería</li><li>IMSS-Bienestar · comunidades rurales</li><li>Agencia Espacial Mexicana</li></ul></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11 · Decisiones -->
+  <section class="slide">
+    <div class="wrap">
+      <div class="tag r" style="--d:.05s">Pregunta · Proceso</div>
+      <h2 class="qt r" style="--d:.12s">¿Cómo tomamos las decisiones?</h2>
+      <div class="three r" style="--d:.22s">
+        <div class="card"><div class="k">1 · Empatizar</div><h3>Mapa de empatía de Katya E.</h3><p>El dolor no es falta de datos: es falta de contexto y soledad médica.</p></div>
+        <div class="card"><div class="k">2 · Definir</div><h3>Causa raíz + matriz de decisión</h3><p>Calificamos cada idea (1–3) contra dos restricciones: dato de la NASA y prototipo en un día.</p></div>
+        <div class="card"><div class="k">3 · Idear</div><h3>De 7 ideas a 1</h3><p>Ronda en silencio → Dato · Canal · Momento → idea finalista.</p></div>
+      </div>
+      <div class="card r" style="--d:.34s;margin-top:14px"><div class="k">Base técnica</div><p>Fuentes de la NASA (HRP) y <b>gestión de riesgos</b>: matriz probabilidad × severidad, jerarquía de controles, GP = C × E × P (William Fine) y GR = medido ÷ límite. Cada rasgo de ORBITAL es trazable a un eslabón anterior.</p></div>
+    </div>
+  </section>
+
+  <!-- 12 · Diferenciación -->
+  <section class="slide">
+    <div class="wrap">
+      <div class="tag r" style="--d:.05s">Pregunta · Ventaja</div>
+      <h2 class="qt r" style="--d:.12s">¿Qué tenemos que no tienen otros?</h2>
+      <div class="grid6 r" style="--d:.22s">
+        <div class="ccard"><h4>Línea base individual</h4><p>Te comparamos contigo, no con un promedio.</p></div>
+        <div class="ccard"><h4>Cuerpo y mente</h4><p>Triaje ¿cuerpo o mente?, al mismo nivel.</p></div>
+        <div class="ccard"><h4>Mide antes del daño</h4><p>Indicadores adelantados y deriva lenta.</p></div>
+        <div class="ccard"><h4>Calma por diseño</h4><p>No estresar: una cosa a la vez.</p></div>
+        <div class="ccard"><h4>Local y offline</h4><p>Sin nube, a 200 millones de km.</p></div>
+        <div class="ccard"><h4>Asistente con fuentes</h4><p>Traduce y guía citando documento y página; no diagnostica.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 13 · Resiliencia -->
+  <section class="slide">
+    <div class="wrap">
+      <div class="tag r" style="--d:.05s">Pregunta · Resiliencia</div>
+      <h2 class="qt r" style="--d:.12s">¿Y si falla? Cómo lo resuelve la tripulación</h2>
+      <div class="grid6 r" style="--d:.22s">
+        <div class="ccard"><h4>Degrada con gracia</h4><p>Capas independientes: si el asistente cae, la salud sigue.</p></div>
+        <div class="ccard"><h4>Red de seguridad clínica</h4><p>Si el modelo falla, los límites clínicos siguen; nunca anulan un valor peligroso.</p></div>
+        <div class="ccard"><h4>Núcleo determinista</h4><p>Los números se calculan sin IA; el LLM solo redacta y se verifica contra la fuente.</p></div>
+        <div class="ccard"><h4>Local y offline</h4><p>Un corte con la Tierra no lo rompe.</p></div>
+        <div class="ccard"><h4>Reinicio y ajuste simples</h4><p>Se reinicia con un comando; umbrales por archivo, sin tocar código. El estado se guarda.</p></div>
+        <div class="ccard"><h4>Humano + Tierra de respaldo</h4><p>Es orientativo; la tripulación conserva sus protocolos.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 14 · Tecnología -->
+  <section class="slide">
+    <div class="wrap">
+      <div class="tag r" style="--d:.05s">Pregunta · Tecnología</div>
+      <h2 class="qt r" style="--d:.12s">¿Cómo está constituida a nivel de tecnología?</h2>
+      <div class="two r" style="--d:.22s">
+        <div class="card"><div class="k">Motor de salud · series de tiempo</div><p><b>Chronos-2</b> + baseline (media móvil exponencial) aprenden la línea base por persona. <b>Isolation Forest</b> y z-score detectan anomalías y deriva lenta. Capa de límites clínicos e inferencias deterministas con códigos.</p></div>
+        <div class="card"><div class="k">Asistente · RAG + LLM local</div><p>PDFs de la NASA → <b>BGE-M3</b> → índice <b>FAISS</b>. Recupera fragmentos y un <b>LLM local</b> (Qwen vía LM Studio) redacta citando archivo y página. Búsqueda obligatoria: no inventa.</p></div>
+      </div>
+      <div class="two r" style="--d:.32s;margin-top:14px">
+        <div class="card"><div class="k">Backend y entrega</div><p><b>FastAPI</b> expone todo y sirve la interfaz. <b>SSE</b> para datos en vivo y chat. Datos y modelos en archivos locales.</p></div>
+        <div class="card"><div class="k">Local · offline · open-source</div><p>Cero nube, costo de infraestructura casi nulo. El LLM solo traduce; lo que decide es determinista y auditable.</p></div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- 15 · Roadmap -->
+  <section class="slide">
+    <div class="wrap">
+      <div class="tag r" style="--d:.05s">Roadmap</div>
+      <h2 class="qt r" style="--d:.12s">¿Qué sigue para <span class="hl">ORBITAL</span>?</h2>
+      <div class="road r" style="--d:.22s">
+        <div class="step"><div class="dot2">1</div><div class="ccard"><div class="ico">🧠</div><h4>Más baterías cognitivas</h4><p>Integrar más pruebas de evaluación cognitiva: atención, memoria, tiempo de reacción y estado de ánimo.</p></div></div>
+        <div class="step"><div class="dot2">2</div><div class="ccard"><div class="ico">📈</div><h4>Más parámetros que medir</h4><p>Sumar señales como SpO₂, variabilidad cardiaca, actividad y exposición a radiación.</p></div></div>
+        <div class="step"><div class="dot2">3</div><div class="ccard"><div class="ico">📚</div><h4>Más protocolos de salud</h4><p>Alimentar el asistente con más protocolos y guías clínicas, siempre citando la fuente.</p></div></div>
+        <div class="step"><div class="dot2">4</div><div class="ccard"><div class="ico">🎙️</div><h4>Voz a voz</h4><p>Interacción completa <b>speech-to-speech</b>: hablar con Orbi con las manos ocupadas, sin pantalla.</p></div></div>
+        <div class="step"><div class="dot2">5</div><div class="ccard"><div class="ico">⌚</div><h4>Multidispositivo</h4><p>Llevar ORBITAL a <b>móviles, tabletas y smartwatch</b>, sin perder el modo local y offline.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<div class="hud">
+  <button id="prev" aria-label="Anterior"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <span class="counter" hidden><b id="cur">01</b> / <span id="total">08</span></span>
+  <button id="next" aria-label="Siguiente"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <button id="fs" aria-label="Pantalla completa"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 9V5a1 1 0 011-1h4M20 9V5a1 1 0 00-1-1h-4M4 15v4a1 1 0 001 1h4M20 15v4a1 1 0 01-1 1h-4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</div>
+
+<script>
+  // aplicar estilos secundarios de reveals (atributo style2) sin pelear con el inline de --d
+  document.querySelectorAll('[style2]').forEach(function(el){ el.style.cssText += ';' + el.getAttribute('style2'); });
+
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var N = slides.length, i = 0;
+  var deck = document.getElementById('deck'), prog = document.getElementById('prog'), cur = document.getElementById('cur');
+  var prevB = document.getElementById('prev'), nextB = document.getElementById('next'), kh = document.getElementById('khint') || {classList:{add:function(){}}};
+  document.getElementById('total').textContent = String(N).padStart(2,'0');
+  function pad(n){ return String(n+1).padStart(2,'0'); }
+  function go(n){
+    n = Math.max(0, Math.min(N-1, n));
+    if(n===i && slides[i].classList.contains('active')) return;
+    slides[i].classList.remove('active'); i = n; slides[i].classList.add('active'); slides[i].scrollTop = 0;
+    prog.style.width = (i/(N-1)*100)+'%'; cur.textContent = pad(i);
+    prevB.disabled = i===0; nextB.disabled = i===N-1;
+    deck.classList.toggle('on-dark', slides[i].getAttribute('data-bg') === 'dark');
+  }
+  function next(){ go(i+1); } function prev(){ go(i-1); }
+  nextB.onclick = next; prevB.onclick = prev;
+  document.addEventListener('keydown', function(e){
+    if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' '){ e.preventDefault(); next(); kh.classList.add('gone'); }
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){ e.preventDefault(); prev(); kh.classList.add('gone'); }
+    else if(e.key==='Home'){ go(0); } else if(e.key==='End'){ go(N-1); }
+    else if(e.key==='f'||e.key==='F'){ toggleFs(); }
+  });
+  var tx=0,ty=0;
+  deck.addEventListener('touchstart',function(e){ tx=e.changedTouches[0].clientX; ty=e.changedTouches[0].clientY; },{passive:true});
+  deck.addEventListener('touchend',function(e){ var dx=e.changedTouches[0].clientX-tx, dy=e.changedTouches[0].clientY-ty;
+    if(Math.abs(dx)>60 && Math.abs(dx)>Math.abs(dy)){ dx<0?next():prev(); kh.classList.add('gone'); } },{passive:true});
+  function toggleFs(){
+    var d=document, el=d.documentElement;
+    var fsEl=d.fullscreenElement||d.webkitFullscreenElement||d.msFullscreenElement;
+    try{
+      if(!fsEl){ var rq=el.requestFullscreen||el.webkitRequestFullscreen||el.msRequestFullscreen; if(rq){ var pr=rq.call(el); if(pr&&pr.catch) pr.catch(function(){}); } }
+      else { var ex=d.exitFullscreen||d.webkitExitFullscreen||d.msExitFullscreen; if(ex) ex.call(d); }
+    }catch(e){}
+  }
+  document.getElementById('fs').onclick = toggleFs;
+
+  /* ---- Orbi: esfera de puntos conectados (identidad del asistente) ---- */
+  function orbiSphere(canvas, opts){
+    opts = opts || {}; var ctx = canvas.getContext('2d');
+    var N = opts.points || 300, R0 = opts.radius || .78, connect = opts.connect !== false, link = opts.link || .34;
+    var col = opts.color || [59,111,224];
+    var pts = [];
+    for(var k=0;k<N;k++){ var y=1-2*(k+.5)/N, r=Math.sqrt(1-y*y), ph=k*2.399963; pts.push([Math.cos(ph)*r, y, Math.sin(ph)*r]); }
+    // aristas precomputadas (distancia 3D fija): puntos cercanos se conectan
+    var edges=[];
+    if(connect){ for(var a=0;a<N;a++){ for(var b=a+1;b<N;b++){ var dx=pts[a][0]-pts[b][0], dy=pts[a][1]-pts[b][1], dz=pts[a][2]-pts[b][2]; var d=dx*dx+dy*dy+dz*dz; if(d<link*link) edges.push([a,b]); } } }
+    var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches, t0 = performance.now(), raf;
+    function draw(now){
+      var w=canvas.clientWidth, h=canvas.clientHeight, dpr=window.devicePixelRatio||1;
+      if(canvas.width!==w*dpr){ canvas.width=w*dpr; canvas.height=h*dpr; }
+      ctx.setTransform(dpr,0,0,dpr,0,0); ctx.clearRect(0,0,w,h);
+      var t=(now-t0)/1000, cx=w/2, cy=h/2, R=Math.min(w,h)*.35*(1+(reduce?0:.02*Math.sin(t*1.1)));
+      var ry=reduce?0.2:t*.18, cy1=Math.cos(ry), sy=Math.sin(ry), tx=.42, cx1=Math.cos(tx), sx=Math.sin(tx);
+      var cr=col[0], cg=col[1], cb=col[2];
+      var proj = pts.map(function(p){ var x=p[0]*cy1 - p[2]*sy, z=p[0]*sy + p[2]*cy1, y=p[1]*cx1 - z*sx; z=p[1]*sx + z*cx1; return [cx+x*R, cy+y*R, (z+1)/2]; });
+      // halo
+      var g=ctx.createRadialGradient(cx,cy,R*.2,cx,cy,R*1.35); g.addColorStop(0,'rgba('+cr+','+cg+','+cb+',.18)'); g.addColorStop(1,'rgba('+cr+','+cg+','+cb+',0)');
+      ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+      // aristas
+      for(var e=0;e<edges.length;e++){ var A=proj[edges[e][0]], B=proj[edges[e][1]]; var dep=(A[2]+B[2])/2; ctx.strokeStyle='rgba('+cr+','+cg+','+cb+','+(.05+.22*dep)+')'; ctx.lineWidth=.6; ctx.beginPath(); ctx.moveTo(A[0],A[1]); ctx.lineTo(B[0],B[1]); ctx.stroke(); }
+      // puntos
+      for(var p2=0;p2<proj.length;p2++){ var P=proj[p2]; ctx.fillStyle='rgba('+cr+','+cg+','+cb+','+(.2+.8*P[2])+')'; ctx.beginPath(); ctx.arc(P[0],P[1], .6+1.7*P[2], 0, 6.283); ctx.fill(); }
+      raf=requestAnimationFrame(draw);
+    }
+    raf=requestAnimationFrame(draw); return function(){ cancelAnimationFrame(raf); };
+  }
+  var c2=document.getElementById('orbi2'); if(c2) orbiSphere(c2, {points:300, link:.34});
+  var c6=document.getElementById('orbi6'); if(c6) orbiSphere(c6, {points:340, link:.33, color:[126,168,240]});
+
+  /* ---- ECG discreto (animación de salud) ---- */
+  function ecg(canvas, color){
+    var ctx=canvas.getContext('2d');
+    function G(ph,m,wd,a){ return a*Math.exp(-((ph-m)*(ph-m))/(2*wd*wd)); }
+    function f(ph){ return G(ph,.12,.025,.12)+G(ph,.3,.008,-.12)+G(ph,.32,.01,1)+G(ph,.345,.01,-.28)+G(ph,.6,.045,.28); }
+    var raf;
+    function draw(now){
+      var w=canvas.clientWidth, h=canvas.clientHeight, dpr=window.devicePixelRatio||1;
+      if(canvas.width!==w*dpr){ canvas.width=w*dpr; canvas.height=h*dpr; }
+      ctx.setTransform(dpr,0,0,dpr,0,0); ctx.clearRect(0,0,w,h);
+      var t=now/1000, pps=w/3.4, bps=68/60;
+      ctx.beginPath();
+      for(var x=0;x<=w;x+=1){ var tt=t-(w-x)/pps, ph=(tt*bps)%1; var y=h*.62 - f(ph)*h*.52; x?ctx.lineTo(x,y):ctx.moveTo(x,y); }
+      var gr=ctx.createLinearGradient(0,0,w,0); gr.addColorStop(0,color+'00'); gr.addColorStop(.2,color); gr.addColorStop(1,color);
+      ctx.strokeStyle=gr; ctx.lineWidth=1.6; ctx.lineJoin='round'; ctx.stroke();
+      raf=requestAnimationFrame(draw);
+    }
+    raf=requestAnimationFrame(draw);
+  }
+  var e1=document.getElementById('ecg1'); if(e1) ecg(e1, '#3b6fe0');
+
+  /* ---- Cargador de recursos: usa el archivo si existe, si no deja el placeholder ----
+     Nombres fijos (ver assets/README.md). No hay que tocar nada: subes el archivo y aparece. */
+  function tryImage(bases, onok){
+    var exts=['.jpg','.png','.webp'], cands=[]; bases.forEach(function(b){ exts.forEach(function(e){ cands.push(b+e); }); });
+    (function nextC(k){ if(k>=cands.length) return; var im=new Image();
+      im.onload=function(){ onok(cands[k]); }; im.onerror=function(){ nextC(k+1); }; im.src=cands[k]; })(0);
+  }
+  // Imagen de portada (slide 1)
+  document.querySelectorAll('[data-img]').forEach(function(box){
+    tryImage([box.getAttribute('data-img')], function(src){ box.style.backgroundImage='url("'+src+'")'; box.classList.add('filled'); });
+  });
+  // Fotos del equipo (slide 7)
+  document.querySelectorAll('.av[data-photo]').forEach(function(av){
+    tryImage(['assets/img/equipo/'+av.getAttribute('data-photo')], function(src){ av.style.background='#0c203c url("'+src+'") center/cover no-repeat'; });
+  });
+  // Video de la demo (slide 4)
+  document.querySelectorAll('[data-video]').forEach(function(box){
+    var v=document.createElement('video'); v.src=box.getAttribute('data-video'); v.muted=true; v.loop=true; v.playsInline=true; v.autoplay=true; v.preload='metadata';
+    v.controls=true;                       // play/pausa, línea de tiempo y pantalla completa (controles nativos)
+    var poster=box.getAttribute('data-poster'); if(poster) v.setAttribute('poster', poster);
+    v.onloadeddata=function(){ box.classList.add('filled'); box.appendChild(v); v.play().catch(function(){}); };
+    // si el archivo no existe, onloadeddata no dispara y el placeholder se queda
+  });
+
+  go(0);
+</script>
+</body>
+</html>

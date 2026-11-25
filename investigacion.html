@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ORBITAL · Lo que investigamos</title>
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png">
+<link rel="shortcut icon" href="favicon.ico">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="description" content="Presentación de investigación — por qué una misión a Marte, el marco RIDGE de la NASA, resumen de fuentes oficiales (NASA HRP, Agencia Espacial Canadiense), las pruebas cognitivas Cognition y WinSCAT, y qué monitorear en cuerpo y mente. NASA Space Apps CDMX 2026." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;800;900&family=Overpass:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --navy-900:#071428;--navy-800:#0a1a33;--navy-700:#0d2244;--navy-600:#102a55;
+    --royal:#1e52c8;--royal-bright:#2a66e6;--blue-soft:#4e8fe6;--blue-pale:#9cc1f2;
+    --lime:#d7e64b;--white:#f4f8ff;--mute:#a9bbd6;--line:rgba(156,193,242,.16);
+    --card:rgba(18,38,74,.6);--ok:#4ccb8f;--warn:#f2c14e;--crit:#ef6a5a;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:"Overpass",system-ui,sans-serif;background:var(--navy-900);color:var(--white);line-height:1.55;-webkit-font-smoothing:antialiased;overflow:hidden}
+  h1,h2,h3,h4,.display{font-family:"Archivo",sans-serif;letter-spacing:-.01em}
+
+  .deck{position:fixed;inset:0;background:
+      radial-gradient(1200px 760px at 82% 12%, rgba(30,82,200,.32), transparent 60%),
+      radial-gradient(900px 640px at 6% 96%, rgba(20,50,130,.3), transparent 60%),
+      linear-gradient(180deg,var(--navy-800),var(--navy-900))}
+  .slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;
+    padding:clamp(26px,5vh,60px) clamp(22px,6vw,96px);
+    opacity:0;visibility:hidden;transform:scale(.985);
+    transition:opacity .5s ease,transform .6s cubic-bezier(.2,.7,.2,1),visibility .5s;
+    overflow-y:auto}
+  .slide.active{opacity:1;visibility:visible;transform:none;z-index:2}
+  .sin{width:100%;max-width:1080px;margin:auto}
+
+  .rings{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+  .rings span{position:absolute;border-radius:50%;border:1px solid rgba(120,160,230,.10)}
+
+  .r{opacity:0;transform:translateY(26px);
+     transition:opacity .6s cubic-bezier(.2,.7,.2,1),transform .6s cubic-bezier(.2,.7,.2,1)}
+  .slide.active .r{opacity:1;transform:none;transition-delay:var(--d,0s)}
+  .slide.active .pop{animation:pop .6s both;animation-delay:var(--d,0s)}
+  @keyframes pop{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+
+  .eyebrow{font-family:"Archivo";font-weight:800;text-transform:uppercase;letter-spacing:.14em;font-size:clamp(.66rem,1.1vw,.78rem);color:var(--lime);display:inline-flex;align-items:center;gap:10px}
+  .eyebrow::before{content:"";width:26px;height:2px;background:var(--lime);display:inline-block}
+  .numtag{font-family:"Archivo";font-weight:900;color:var(--lime);font-size:clamp(1.3rem,2.4vw,1.7rem);display:block;margin-bottom:6px}
+  h2.title{font-size:clamp(1.7rem,4.4vw,3.1rem);font-weight:900;line-height:1.03;margin:8px 0 14px}
+  .sub{color:var(--mute);font-size:clamp(1rem,1.7vw,1.2rem);max-width:72ch}
+  .hl{color:var(--lime)} em{color:var(--blue-soft);font-style:normal}
+  .note{color:var(--mute);font-size:clamp(.82rem,1.3vw,.92rem);margin-top:16px}
+
+  .brandmark{display:flex;align-items:center;gap:14px;margin-bottom:34px}
+  .logo-ring{width:50px;height:50px;flex:0 0 auto}
+  .brandmark small{display:block;font-size:.6rem;letter-spacing:.3em;color:var(--mute);font-weight:700;font-family:"Archivo"}
+  .brandmark b{font-size:1rem;letter-spacing:.04em;font-family:"Archivo";font-weight:900;text-transform:uppercase}
+  .hero h1{font-weight:900;font-size:clamp(2.4rem,7vw,5rem);line-height:.97;margin:14px 0 22px;max-width:18ch}
+  .hero .lead{color:var(--blue-pale);font-size:clamp(1.05rem,2.1vw,1.35rem);max-width:60ch}
+
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:10px}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px}
+  .stat .big{font-family:"Archivo";font-weight:900;color:var(--lime);font-size:clamp(1.5rem,3vw,2.1rem)}
+  .stat .lbl{color:var(--mute);font-size:.86rem;margin-top:6px}
+  .stat .rtype{font-family:"Archivo";font-weight:800;text-transform:uppercase;letter-spacing:.07em;font-size:.64rem;color:var(--mute);margin-bottom:8px}
+  .stat .who{color:var(--blue-pale);font-weight:600;font-size:.88rem;margin-top:5px}
+
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:8px}
+  .three{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:8px}
+  .scard{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px}
+  .scard .tagk{font-size:.72rem;color:var(--lime);font-family:"Archivo";font-weight:800;letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px}
+  .scard h3{font-size:clamp(1.1rem,2vw,1.35rem);font-weight:800;margin-bottom:10px;display:flex;align-items:center;gap:10px}
+  .scard p{color:var(--mute);font-size:clamp(.9rem,1.4vw,1rem)}
+
+  .statement{background:linear-gradient(135deg,var(--navy-600),var(--navy-700));border:1px solid var(--line);border-left:5px solid var(--lime);border-radius:18px;padding:clamp(28px,4vw,44px)}
+  .statement p{font-family:"Archivo";font-weight:600;font-size:clamp(1.3rem,3.2vw,2.1rem);line-height:1.28}
+  .statement .by{margin-top:18px;color:var(--mute);font-size:.95rem}
+
+  /* RIDGE */
+  .ridge{display:grid;gap:11px;margin-top:20px}
+  .ridgecard{display:grid;grid-template-columns:60px 1fr;gap:18px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 20px}
+  .ridgecard .L{font-family:"Archivo";font-weight:900;font-size:1.8rem;color:var(--lime);text-align:center;background:rgba(215,230,75,.1);border-radius:12px;padding:8px 0}
+  .ridgecard .rt{font-weight:800;font-size:1.02rem}
+  .ridgecard .rd{color:var(--mute);font-size:.9rem;margin-top:2px}
+
+  /* hazard two-column */
+  .haz{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:10px}
+  .col h4{font-size:.76rem;font-family:"Archivo";font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--lime);margin-bottom:14px}
+  .col.b h4{color:var(--blue-soft)}
+  .col ul{list-style:none;display:grid;gap:11px}
+  .col li{color:var(--mute);font-size:clamp(.9rem,1.45vw,1.02rem);padding-left:20px;position:relative;line-height:1.45}
+  .col li::before{content:"";position:absolute;left:0;top:9px;width:7px;height:7px;border-radius:50%;background:var(--lime)}
+  .col.b li::before{background:var(--blue-soft)}
+  .col li b{color:var(--white)}
+
+  .bullets{list-style:none;display:grid;gap:13px;margin-top:10px}
+  .bullets li{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--blue-soft);border-radius:0 12px 12px 0;padding:14px 18px;color:var(--mute);font-size:clamp(.92rem,1.4vw,1.02rem);line-height:1.45}
+  .bullets li b{color:var(--white)}
+  .bullets li em{color:var(--blue-soft)}
+
+  .tip{margin-top:20px;background:rgba(215,230,75,.08);border-left:3px solid var(--lime);border-radius:0 12px 12px 0;padding:14px 18px;font-size:clamp(.88rem,1.4vw,1rem);color:var(--mute);line-height:1.5}
+  .tip b{color:var(--lime)}
+
+  /* matrix */
+  .matrix{overflow:auto;border:1px solid var(--line);border-radius:16px;max-height:62vh;margin-top:18px}
+  table{border-collapse:collapse;width:100%;min-width:680px;font-size:clamp(.82rem,1.3vw,.95rem)}
+  th,td{padding:12px 16px;text-align:left;border-bottom:1px solid var(--line)}
+  thead th{font-family:"Archivo";font-weight:800;font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--blue-soft);background:rgba(10,26,51,.92);position:sticky;top:0}
+  tbody tr:last-child td{border-bottom:none}
+  td.dir{font-weight:600;color:var(--white)}
+  .pill{display:inline-block;padding:4px 10px;border-radius:999px;font-size:.72rem;font-weight:700;font-family:"Archivo"}
+  .p-body{background:rgba(78,143,230,.16);color:var(--blue-soft)}
+  .p-mind{background:rgba(215,230,75,.16);color:var(--lime)}
+  .p-both{background:rgba(76,203,143,.16);color:var(--ok)}
+
+  /* ask / decision */
+  .ask{background:linear-gradient(135deg,rgba(30,82,200,.3),var(--navy-700));border:1px solid var(--line);border-radius:18px;padding:clamp(26px,3.5vw,38px);margin-top:14px}
+  .ask h3{font-size:clamp(1.15rem,2.2vw,1.5rem);font-weight:900;margin-bottom:16px}
+  .optrow{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .opt{background:rgba(7,20,40,.4);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+  .opt .ot{font-family:"Archivo";font-weight:800;font-size:.72rem;letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px}
+  .opt.wide .ot{color:var(--crit)} .opt.focus .ot{color:var(--lime)}
+  .opt p{color:var(--mute);font-size:clamp(.88rem,1.4vw,.98rem)}
+  .opt.focus{border-color:rgba(215,230,75,.45);background:linear-gradient(180deg,rgba(215,230,75,.07),rgba(7,20,40,.4))}
+
+  /* closing */
+  .closing-slide .big{font-family:"Archivo";font-weight:900;font-size:clamp(1.9rem,5vw,3.6rem);line-height:1.06;max-width:20ch}
+  .closing-slide .tag{margin-top:24px;color:var(--mute);font-size:1.02rem}
+
+  /* refs */
+  .reflist{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px;max-height:64vh;overflow:auto}
+  .reflist a{color:var(--mute);font-size:clamp(.8rem,1.3vw,.92rem);text-decoration:none;padding:12px 15px;background:var(--card);border:1px solid var(--line);border-radius:12px;transition:.2s;display:block}
+  .reflist a:hover{border-color:var(--blue-soft);color:var(--white)}
+  .reflist a b{color:var(--white);font-weight:600;display:block;margin-bottom:2px}
+  .reflist a.wide{grid-column:1/-1;background:linear-gradient(90deg,rgba(215,230,75,.12),transparent);border-color:rgba(215,230,75,.4)}
+  .reflist a.wide b{color:var(--lime)}
+
+  /* fuentes oficiales + pruebas cognitivas */
+  .srcline{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:2px 0 14px;font-size:.84rem}
+  .srcline .org{font-family:"Archivo";font-weight:800;font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;background:rgba(78,143,230,.16);color:var(--blue-soft);padding:4px 10px;border-radius:999px}
+  .srcline a{color:var(--blue-pale);text-decoration:none;border-bottom:1px dotted rgba(156,193,242,.5)}
+  .srcline a:hover{color:var(--white)}
+  .srcline .dt{color:var(--mute)}
+  .matrix.fit{max-height:none}
+  .matrix.fit th,.matrix.fit td{padding:9px 14px}
+  .matrix.fit td.dir small{margin-top:1px}
+  td a{color:var(--blue-pale);text-decoration:none;border-bottom:1px dotted rgba(156,193,242,.5)}
+  td a:hover{color:var(--white)}
+  td.dir small{display:block;font-weight:400;color:var(--mute);font-size:.78rem}
+  .reflist .refh{grid-column:1/-1;font-family:"Archivo";font-weight:800;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--lime);margin-top:6px}
+
+  /* CHROME */
+  .prog{position:fixed;top:0;left:0;height:3px;background:var(--lime);width:0;z-index:30;transition:width .4s ease;box-shadow:0 0 12px rgba(215,230,75,.5)}
+  .hud{position:fixed;bottom:18px;right:20px;display:flex;align-items:center;gap:10px;z-index:30}
+  .hud button{width:44px;height:44px;border-radius:12px;border:1px solid var(--line);background:rgba(10,26,51,.7);color:var(--white);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;backdrop-filter:blur(6px)}
+  .hud button:hover{border-color:var(--lime);color:var(--lime)}
+  .hud button:disabled{opacity:.3;cursor:default;border-color:var(--line);color:var(--white)}
+  .counter{font-family:"Archivo";font-weight:800;font-size:.82rem;color:var(--mute);letter-spacing:.08em;padding:0 6px;min-width:62px;text-align:center}
+  .counter b{color:var(--lime)}
+  .hint-key{position:fixed;bottom:24px;left:22px;z-index:30;color:var(--mute);font-size:.76rem;font-family:"Archivo";font-weight:700;letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;gap:8px;opacity:.75}
+  .hint-key kbd{background:rgba(10,26,51,.8);border:1px solid var(--line);border-radius:6px;padding:2px 7px;font-family:"Archivo";font-size:.72rem}
+  .hint-key.gone{opacity:0;transition:opacity .6s;pointer-events:none}
+
+  @media(max-width:820px){
+    .stats{grid-template-columns:1fr 1fr}
+    .two,.three,.haz,.optrow,.reflist{grid-template-columns:1fr}
+    .hint-key{display:none}
+    .slide{padding:62px 22px 80px}
+  }
+</style>
+</head>
+<body>
+
+<div class="prog" id="prog"></div>
+<div class="deck" id="deck">
+
+  <!-- 1 · PORTADA -->
+  <section class="slide hero active">
+    <div class="rings">
+      <span style="width:620px;height:620px;top:-120px;right:-160px"></span>
+      <span style="width:920px;height:920px;top:-240px;right:-300px"></span>
+      <span style="width:1240px;height:1240px;top:-400px;right:-440px"></span>
+    </div>
+    <div class="sin">
+      <div class="brandmark r" style="--d:.05s">
+        <span class="logo-ring"><svg viewBox="0 0 48 48" fill="none"><circle cx="22" cy="26" r="16" stroke="#f4f8ff" stroke-width="2.4"/><path d="M34 14 C 30 10, 24 9, 20 11" stroke="#d7e64b" stroke-width="2.4" stroke-linecap="round"/><circle cx="35" cy="13" r="2.4" fill="#ef6a5a"/></svg></span>
+        <span><small>NASA Space Apps · CDMX 2026 · Equipo ORBITAL</small><b>Lo que investigamos</b></span>
+      </div>
+      <div class="eyebrow r" style="--d:.15s">Investigación · fundamentos del reto</div>
+      <h1 class="r" style="--d:.25s">Por qué el <span class="hl">cuerpo y la mente</span> en una misión larga</h1>
+      <p class="lead r" style="--d:.38s">Una síntesis de lo que dicen la NASA y la literatura sobre la salud en vuelos espaciales de larga duración — y por qué Marte es el escenario que lo justifica todo.</p>
+    </div>
+  </section>
+
+  <!-- 2 · POR QUÉ MARTE -->
+  <section class="slide">
+    <div class="sin">
+      <div class="eyebrow r" style="--d:.05s">El escenario que elegimos</div>
+      <h2 class="title r" style="--d:.12s">¿Por qué plantear una misión a Marte?</h2>
+      <p class="sub r" style="--d:.2s">No es capricho: es el escenario donde el problema del reto —darle al astronauta autonomía para evaluar su propia salud— se vuelve crítico.</p>
+      <div class="three" style="margin-top:26px">
+        <div class="scard r" style="--d:.34s">
+          <div class="tagk">01 · El reto lo contempla</div>
+          <h3>🛰️ Lo sugiere el planteamiento</h3>
+          <p>El propio reto del Space Apps presenta Marte entre los escenarios posibles de la misión. No lo inventamos: lo tomamos del brief.</p>
+        </div>
+        <div class="scard r" style="--d:.46s">
+          <div class="tagk">02 · Tiempo prolongado</div>
+          <h3>⏳ No puedes ir y volver</h3>
+          <p>A diferencia de órbita baja o la Luna, donde el retorno es relativamente rápido, Marte implica años sin posibilidad de volver pronto. El tiempo lo cambia todo.</p>
+        </div>
+        <div class="scard r" style="--d:.58s">
+          <div class="tagk">03 · Distancia y comunicación</div>
+          <h3>📡 Sin Houston en tiempo real</h3>
+          <p>Hasta ~20 min de retraso por sentido justifican el corazón del reto: el astronauta tiene que automonitorearse y decidir con autonomía.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 · RÉCORDS -->
+  <section class="slide">
+    <div class="sin">
+      <div class="eyebrow r" style="--d:.05s">Datos reales · cuánto aguanta un humano allá arriba</div>
+      <h2 class="title r" style="--d:.12s">Los récords de tiempo en el espacio</h2>
+      <p class="sub r" style="--d:.2s">Cuánto tiempo ha pasado la gente fuera de la Tierra, en una sola misión y sumando varias.</p>
+      <div class="stats" style="margin-top:24px">
+        <div class="stat pop" style="--d:.3s"><div class="rtype">Continuo · récord mundial</div><div class="big">437 días</div><div class="who">Valeri Polyakov · Mir (1994–95)</div></div>
+        <div class="stat pop" style="--d:.4s"><div class="rtype">Continuo · récord NASA</div><div class="big">371 días</div><div class="who">Frank Rubio · ISS (2022–23)</div></div>
+        <div class="stat pop" style="--d:.5s"><div class="rtype">Acumulado · récord mundial</div><div class="big">+1,111 días</div><div class="who">Oleg Kononenko · 5 misiones (+3 años)</div></div>
+        <div class="stat pop" style="--d:.6s"><div class="rtype">Acumulado · récord NASA</div><div class="big">675 días</div><div class="who">Peggy Whitson · varias misiones</div></div>
+      </div>
+      <p class="note r" style="--d:.7s">Fuentes: récords reconocidos por NASA y agencias espaciales (continuo = una sola misión; acumulado = suma de toda la carrera).</p>
+    </div>
+  </section>
+
+  <!-- 4 · EL MOTOR -->
+  <section class="slide">
+    <div class="rings"><span style="width:900px;height:900px;top:-200px;left:-300px"></span></div>
+    <div class="sin">
+      <div class="statement r" style="--d:.1s">
+        <p>Ni el récord continuo llega a Marte. Una misión completa son <span class="hl">~2.5 a 3 años</span> — ida, estancia y regreso. Diseñar salud para <em>esa</em> duración, y no para una estancia corta, es el problema real.</p>
+        <div class="by">Por eso el foco no es un chequeo puntual: es el seguimiento sostenido de cuerpo y mente.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 · RIDGE -->
+  <section class="slide">
+    <div class="sin">
+      <div class="eyebrow r" style="--d:.05s">El marco que usa la NASA</div>
+      <h2 class="title r" style="--d:.12s">RIDGE — los 5 peligros del vuelo espacial</h2>
+      <p class="sub r" style="--d:.2s">La NASA agrupa los riesgos de una misión humana en cinco categorías. El acrónimo <b style="color:var(--white)">RIDGE</b> las resume — y es el mapa que seguimos.</p>
+      <div class="ridge">
+        <div class="ridgecard r" style="--d:.3s"><div class="L">R</div><div><div class="rt">Radiación (Radiation)</div><div class="rd">Exposición a radiación espacial, muy superior a la de la Tierra.</div></div></div>
+        <div class="ridgecard r" style="--d:.38s"><div class="L">I</div><div><div class="rt">Aislamiento y confinamiento (Isolation)</div><div class="rd">Encierro, poco contacto y estrés que afectan sueño, ánimo y conducta.</div></div></div>
+        <div class="ridgecard r" style="--d:.46s"><div class="L">D</div><div><div class="rt">Distancia a la Tierra (Distance)</div><div class="rd">Lejanía que obliga a la autonomía: sin retorno ni reabasto rápidos.</div></div></div>
+        <div class="ridgecard r" style="--d:.54s"><div class="L">G</div><div><div class="rt">Campos de gravedad (Gravity)</div><div class="rd">Ingravidez y gravedad parcial que alteran hueso, músculo, fluidos y visión.</div></div></div>
+        <div class="ridgecard r" style="--d:.62s"><div class="L">E</div><div><div class="rt">Entornos hostiles y cerrados (Environments)</div><div class="rd">Hábitat sellado: calidad del aire, microbios, estrés e inmunidad.</div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 · RADIACIÓN -->
+  <section class="slide">
+    <div class="sin">
+      <div class="eyebrow r" style="--d:.05s">RIDGE · R</div>
+      <h2 class="title r" style="--d:.12s">Radiación</h2>
+      <p class="sub r" style="--d:.2s">El campo magnético y la atmósfera de la Tierra nos protegen; fuera de ellos, la exposición se dispara.</p>
+      <div class="haz">
+        <div class="col r" style="--d:.34s">
+          <h4>El riesgo</h4>
+          <ul>
+            <li>Tres fuentes: partículas atrapadas en el campo magnético, <b>partículas solares</b> y <b>rayos cósmicos galácticos</b>.</li>
+            <li>El daño se rige por el <b>tipo de radiación</b> y el <b>tiempo de exposición</b>, muy distintos a los de la Tierra.</li>
+            <li>Luna y Marte aumentan la <b>exposición total acumulada</b>.</li>
+          </ul>
+        </div>
+        <div class="col b r" style="--d:.46s">
+          <h4>Qué se hace</h4>
+          <ul>
+            <li><b>Blindaje</b> del hábitat y las zonas de descanso.</li>
+            <li><b>Monitoreo de la radiación</b> recibida por la tripulación.</li>
+            <li>Procedimientos operativos para reducir la exposición en eventos solares.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 · AISLAMIENTO -->
+  <section class="slide">
+    <div class="rings"><span style="width:1000px;height:1000px;top:-250px;right:-350px"></span></div>
+    <div class="sin">
+      <div class="eyebrow r" style="--d:.05s">RIDGE · I</div>
+      <h2 class="title r" style="--d:.12s">Aislamiento y confinamiento</h2>
+      <p class="sub r" style="--d:.2s">El frente más conductual — y el que más crece con el tiempo de misión.</p>
+      <div class="haz">
+        <div class="col r" style="--d:.34s">
+          <h4>Qué afecta</h4>
+          <ul>
+            <li>Tripulación <b>internacional y multicultural</b>: la convivencia se vuelve un factor a gestionar.</li>
+            <li><b>Sueño y ritmo circadiano</b> alterados por luz, ruido y el día marciano de <b>~37 min extra</b>.</li>
+            <li><b>Fatiga cognitiva</b> por carga de trabajo y cambios de horario.</li>
+            <li>Reducción de estímulos y <b>añoranza de seres queridos</b>.</li>
+            <li>A más tiempo con restricciones, más riesgo de afecciones <b>conductuales, cognitivas o psiquiátricas</b>.</li>
+          </ul>
+        </div>
+        <div class="col b r" style="--d:.5s">
+          <h4>Herramientas de monitoreo y apoyo</h4>
+          <ul>
+            <li><b>Autoprueba de vigilancia de 10 min (PVT):</b> mide cómo la fatiga golpea el rendimiento. Clave.</li>
+            <li><b>Actigrafía</b> para rastrear movimiento y luz ambiental; iluminación LED que regula el ciclo.</li>
+            <li><b>Diario</b> como desahogo y como dato de seguimiento.</li>
+            <li><b>Realidad virtual</b> con entornos relajantes para el ánimo.</li>
+            <li>Aprender habilidades o un idioma nuevo para sostener la motivación.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 · DISTANCIA -->
+  <section class="slide">
+    <div class="sin">
+      <div class="eyebrow r" style="--d:.05s">RIDGE · D</div>
+      <h2 class="title r" style="--d:.12s">Distancia a la Tierra</h2>
+      <p class="sub r" style="--d:.2s">La razón de fondo por la que el reto pide autonomía.</p>
+      <div class="stats" style="grid-template-columns:repeat(3,1fr);margin-top:24px">
+        <div class="stat pop" style="--d:.32s"><div class="big">~240 mi</div><div class="lbl">altura de la ISS sobre la Tierra</div></div>
+        <div class="stat pop" style="--d:.42s"><div class="big">~140 M mi</div><div class="lbl">distancia media a Marte</div></div>
+        <div class="stat pop" style="--d:.52s"><div class="big">hasta 20 min</div><div class="lbl">retraso de comunicación por sentido</div></div>
+      </div>
+      <div class="tip r" style="--d:.62s"><b>Implicación directa:</b> a diferencia de la ISS —que recibe reabasto regular— la tripulación de Marte lleva toda su comida, equipo y material médico, y resuelve los problemas <b style="color:var(--white)">en gran medida por su cuenta</b>. El automonitoreo deja de ser cómodo y se vuelve obligatorio.</div>
+    </div>
+  </section>
+
+  <!-- 9 · GRAVEDAD -->
+  <section class="slide">
+    <div class="rings"><span style="width:1000px;height:1000px;top:-250px;left:-320px"></span></div>
+    <div class="sin">
+      <div class="eyebrow r" style="--d:.05s">RIDGE · G</div>
+      <h2 class="title r" style="--d:.12s">Campos de gravedad</h2>
+      <p class="sub r" style="--d:.2s">Tres gravedades en una misión: ingravidez en el tránsito, ~⅓ de g en Marte y readaptación a la Tierra al volver.</p>
+      <div class="haz">
+        <div class="col r" style="--d:.34s">
+          <h4>Qué le pasa al cuerpo</h4>
+          <ul>
+            <li><b>Hueso:</b> pierde en promedio <b>1 a 1.5 % de densidad por mes</b>.</li>
+            <li><b>Fluidos hacia la cabeza:</b> presión sobre los ojos y problemas de <b>visión</b>.</li>
+            <li>Pérdida muscular, <b>cálculos renales</b> e intolerancia ortostática al aterrizar.</li>
+            <li>Afecta orientación, coordinación, equilibrio y locomoción.</li>
+          </ul>
+        </div>
+        <div class="col b r" style="--d:.48s">
+          <h4>Contramedidas</h4>
+          <ul>
+            <li>Ejercicio y <b>manguitos de compresión</b>; se estudia la presión negativa en tren inferior.</li>
+            <li><b>Bisfosfonatos</b> para frenar la pérdida ósea.</li>
+            <li><b>Citrato de potasio</b> y ajustes de dieta para el riesgo de cálculos renales.</li>
+            <li>Medición de orina para vigilar sustancias asociadas a cálculos.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="tip r" style="--d:.6s"><b>Nuestra hipótesis:</b> el desplazamiento de fluidos a la cabeza sugiere que el impacto no es solo emocional o conductual, sino también <b style="color:var(--white)">neuropsicológico</b> — cognición y motricidad. Por eso proponemos sumar <b style="color:var(--white)">pruebas de motricidad fina</b> al monitoreo.</div>
+    </div>
+  </section>
+
+  <!-- 10 · ENTORNOS -->
+  <section class="slide">
+    <div class="sin">
+      <div class="eyebrow r" style="--d:.05s">RIDGE · E</div>
+      <h2 class="title r" style="--d:.12s">Entornos cerrados y hostiles</h2>
+      <p class="sub r" style="--d:.2s">Vivir meses dentro de un hábitat sellado tiene su propio costo biológico.</p>
+      <div class="haz">
+        <div class="col r" style="--d:.34s">
+          <h4>Qué cambia</h4>
+          <ul>
+            <li><b>Microbios</b> que se transforman y se propagan más fácil entre personas en un espacio cerrado.</li>
+            <li>Suben las <b>hormonas del estrés</b> y se altera la <b>respuesta inmune</b>.</li>
+            <li>Estudio de la NASA en la <b>Antártida</b>: cómo los factores estresantes afectan el sistema inmunológico.</li>
+          </ul>
+        </div>
+        <div class="col b r" style="--d:.48s">
+          <h4>Qué se vigila</h4>
+          <ul>
+            <li>Calidad del aire, cambio de filtros y limpieza de superficies.</li>
+            <li>Tratamiento del agua y <b>muestreo microbiano</b> del entorno.</li>
+            <li><b>Estudio de saliva</b> y control microbiano; vacunas y cuarentena previa al lanzamiento.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11 · QUÉ MONITOREAR -->
+  <section class="slide">
+    <div class="sin">
+      <div class="eyebrow r" style="--d:.05s">De la evidencia a la acción</div>
+      <h2 class="title r" style="--d:.12s">Qué se puede monitorear — y qué revela</h2>
+      <p class="sub r" style="--d:.2s">Señales que aparecen en las fuentes, y si hablan del cuerpo, de la mente o de ambos.</p>
+      <div class="matrix r" style="--d:.34s">
+        <table>
+          <thead><tr><th>Señal</th><th>Qué revela</th><th>Frente</th></tr></thead>
+          <tbody>
+            <tr><td class="dir">Frecuencia cardíaca</td><td>Carga cardiovascular, estrés y activación</td><td><span class="pill p-both">Cuerpo + Mente</span></td></tr>
+            <tr><td class="dir">Ecocardiograma</td><td>Función y adaptación cardíaca</td><td><span class="pill p-body">Cuerpo</span></td></tr>
+            <tr><td class="dir">Densidad ósea</td><td>Desmineralización por microgravedad</td><td><span class="pill p-body">Cuerpo</span></td></tr>
+            <tr><td class="dir">Columna / dolor de espalda</td><td>Cambios musculoesqueléticos</td><td><span class="pill p-body">Cuerpo</span></td></tr>
+            <tr><td class="dir">Distribución de fluidos</td><td>Conexión con cambios de visión (manguitos)</td><td><span class="pill p-body">Cuerpo</span></td></tr>
+            <tr><td class="dir">Orina</td><td>Riesgo de cálculos renales; guía la dieta</td><td><span class="pill p-body">Cuerpo</span></td></tr>
+            <tr><td class="dir">Sangre (biometría + hormona de estrés)</td><td>Salud general y nivel de estrés</td><td><span class="pill p-both">Cuerpo + Mente</span></td></tr>
+            <tr><td class="dir">Saliva</td><td>Cortisol y control microbiano</td><td><span class="pill p-both">Cuerpo + Mente</span></td></tr>
+            <tr><td class="dir">Pruebas cognitivas / PVT</td><td>Fatiga y atención en el rendimiento</td><td><span class="pill p-mind">Mente</span></td></tr>
+            <tr><td class="dir">Motricidad fina</td><td>Efecto neuropsicológico y motor</td><td><span class="pill p-both">Cuerpo + Mente</span></td></tr>
+            <tr><td class="dir">Test de ansiedad</td><td>Estado conductual</td><td><span class="pill p-mind">Mente</span></td></tr>
+            <tr><td class="dir">Test de depresión</td><td>Estado conductual</td><td><span class="pill p-mind">Mente</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- 12 · PSIQUIÁTRICO I -->
+  <section class="slide">
+    <div class="rings"><span style="width:900px;height:900px;top:-200px;right:-280px"></span></div>
+    <div class="sin">
+      <div class="eyebrow r" style="--d:.05s">Lo psiquiátrico y conductual · 1/2</div>
+      <h2 class="title r" style="--d:.12s">Qué aparece de verdad en vuelo</h2>
+      <ul class="bullets">
+        <li class="r" style="--d:.3s"><b>Depresión y ansiedad</b> son lo más frecuente, normalmente como <em>reacción de ajuste</em> al entorno.</li>
+        <li class="r" style="--d:.4s"><b>Reacciones psicosomáticas:</b> p. ej., un tripulante con dolor de muelas detonado por un suceso en Tierra que temía que se repitiera en la misión.</li>
+        <li class="r" style="--d:.5s"><b>Conflictos interpersonales</b> dentro de la tripulación y con el control en Tierra.</li>
+        <li class="r" style="--d:.6s"><b>Trastornos mayores</b> (bipolar, esquizofrenia) no se han presentado en vuelo —probablemente por el tamizaje previo— pero <em>sí</em> en análogos como submarinos y la Antártida.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 13 · PSIQUIÁTRICO II -->
+  <section class="slide">
+    <div class="sin">
+      <div class="eyebrow r" style="--d:.05s">Lo psiquiátrico y conductual · 2/2</div>
+      <h2 class="title r" style="--d:.12s">Astenización: el desgaste de la larga duración</h2>
+      <p class="sub r" style="--d:.2s">Un síndrome bien descrito en misiones prolongadas — justo lo que una misión a Marte amplifica.</p>
+      <div class="haz">
+        <div class="col r" style="--d:.34s">
+          <h4>Señales de astenización</h4>
+          <ul>
+            <li>Fatiga, irritabilidad y <b>labilidad emocional</b>.</li>
+            <li>Dificultades de <b>atención y concentración</b>, inquietud.</li>
+            <li>Mayor sensibilidad perceptiva.</li>
+            <li><b>Palpitaciones</b> e inestabilidad arterial.</li>
+            <li>Problemas de <b>sueño y apetito</b>.</li>
+          </ul>
+        </div>
+        <div class="col b r" style="--d:.48s">
+          <h4>Y además</h4>
+          <ul>
+            <li><b>Burnout</b> y fatiga crónica por la carga sostenida.</li>
+            <li><b>Farmacocinética alterada:</b> los medicamentos actúan distinto en el espacio.</li>
+            <li>El cuerpo y la mente se retroalimentan: el estrés crónico produce síntomas físicos reales.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 14 · LO QUE AYUDA -->
+  <section class="slide">
+    <div class="rings"><span style="width:900px;height:900px;top:-200px;left:-280px"></span></div>
+    <div class="sin">
+      <div class="eyebrow r" style="--d:.05s">Lo que ayuda · evidencia de análogos</div>
+      <h2 class="title r" style="--d:.12s">Qué sostiene a una tripulación</h2>
+      <ul class="bullets">
+        <li class="r" style="--d:.3s"><b>Ver la Tierra</b> produce bienestar (efecto salutogénico). A la distancia de Marte, la Tierra es apenas <em>un punto de luz</em> — hay que reemplazar ese recurso.</li>
+        <li class="r" style="--d:.4s"><b>Mars-500 (simulación rusa, ~520 días):</b> aparecieron trastornos del sueño y depresión por el aislamiento.</li>
+        <li class="r" style="--d:.5s"><b>Alfano (Antártida / UH):</b> monotonía y aislamiento; un <em>Mental Health Checklist</em> con biomarcadores detectó caída de las estrategias de afrontamiento y de las emociones positivas con el tiempo.</li>
+        <li class="r" style="--d:.6s"><b>BHP de la NASA (2008):</b> entrena a la tripulación en resolución de conflictos, entre otras habilidades.</li>
+        <li class="r" style="--d:.7s">Picano: a Marte no basta el <em>"right stuff"</em> — hace falta "adaptabilidad, afrontamiento del entorno, resistencia mental, ser buen compañero y trabajar en equipo".</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- FUENTE 1 · NASA HRP · PELIGROS -->
+  <section class="slide">
+    <div class="sin">
+      <div class="eyebrow r" style="--d:.05s">Fuente oficial · 1 de 5</div>
+      <h2 class="title r" style="--d:.12s">Los 5 peligros, según la NASA</h2>
+      <div class="srcline r" style="--d:.18s"><span class="org">NASA · Human Research Program</span><a href="https://www.nasa.gov/hrp/hazards/" target="_blank" rel="noopener">nasa.gov/hrp/hazards</a><span class="dt">Actualizada el 12 jun 2026</span></div>
+      <p class="sub r" style="--d:.22s">La página que da origen al marco RIDGE: reconocer los peligros permite a la NASA buscar cómo superarlos en misiones a la estación, la Luna y Marte.</p>
+      <div class="haz">
+        <div class="col r" style="--d:.34s">
+          <h4>Qué dice</h4>
+          <ul>
+            <li>Agrupa los retos del vuelo humano en <b>cinco peligros</b>: radiación, aislamiento y confinamiento, distancia a la Tierra, campos de gravedad y entornos hostiles o cerrados.</li>
+            <li>Los peligros <b>pueden interactuar</b> y empeorar los efectos de los demás sobre el cuerpo.</li>
+            <li>Se estudian en <b>análogos en tierra, laboratorios y la ISS</b>; cada peligro tiene su subpágina y su video.</li>
+          </ul>
+        </div>
+        <div class="col b r" style="--d:.46s">
+          <h4>Para ORBITAL</h4>
+          <ul>
+            <li>Es la base del <b>marco RIDGE</b> de esta presentación.</li>
+            <li>Como los peligros se combinan, tiene sentido medir <b>cuerpo y mente juntos</b>, no por separado.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FUENTE 2 · NASA HRP · RIESGOS -->
+  <section class="slide">
+    <div class="sin">
+      <div class="eyebrow r" style="--d:.05s">Fuente oficial · 2 de 5</div>
+      <h2 class="title r" style="--d:.12s">Los riesgos de salud y desempeño</h2>
+      <div class="srcline r" style="--d:.18s"><span class="org">NASA · Human Research Program</span><a href="https://www.nasa.gov/hrp/risks/" target="_blank" rel="noopener">nasa.gov/hrp/risks</a><span class="dt">Actualizada el 21 jul 2026</span></div>
+      <p class="sub r" style="--d:.22s">Baja un nivel: de los cinco peligros a los riesgos concretos para la tripulación, que cambian según el destino (órbita baja, Luna o Marte).</p>
+      <div class="haz">
+        <div class="col r" style="--d:.34s">
+          <h4>Qué dice</h4>
+          <ul>
+            <li>Ordena los riesgos en <b>tres categorías</b>: fisiología humana (11), desempeño conductual y factores humanos (5) y radiación (1: cánceres inducidos).</li>
+            <li>No los jerarquiza, salvo uno: el <b>síndrome neuro-ocular asociado al vuelo (SANS)</b> es hoy el principal riesgo de salud.</li>
+            <li>En la categoría conductual aparecen <b>cambios de conducta y trastornos psiquiátricos</b>, trabajo en equipo inadecuado, <b>sueño inadecuado y horarios irregulares</b> y soporte insuficiente a la operación de sistemas (cognición y toma de decisiones).</li>
+          </ul>
+        </div>
+        <div class="col b r" style="--d:.46s">
+          <h4>Para ORBITAL</h4>
+          <ul>
+            <li>Nuestro eje mental-conductual cae justo en esa categoría: <b>sueño, cognición y conducta</b>.</li>
+            <li>Da un vocabulario oficial para nombrar lo que la app vigila.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FUENTE 3 · NASA HRP · INVESTIGACIÓN EN CURSO -->
+  <section class="slide">
+    <div class="rings"><span style="width:1000px;height:1000px;top:-250px;right:-350px"></span></div>
+    <div class="sin">
+      <div class="eyebrow r" style="--d:.05s">Fuente oficial · 3 de 5</div>
+      <h2 class="title r" style="--d:.12s">Qué investiga la NASA ahora</h2>
+      <div class="srcline r" style="--d:.18s"><span class="org">NASA · Human Research Program</span><a href="https://www.nasa.gov/hrp/ongoing-hrp-research/" target="_blank" rel="noopener">nasa.gov/hrp/ongoing-hrp-research</a><span class="dt">Actualizada el 18 ago 2026</span></div>
+      <p class="sub r" style="--d:.22s">Catálogo de estudios en curso y pasados, en cuatro áreas: factores humanos y desempeño conductual, contramedidas de salud, radiación y operaciones de investigación.</p>
+      <div class="haz">
+        <div class="col r" style="--d:.34s">
+          <h4>Qué dice</h4>
+          <ul>
+            <li><b>Artemis II:</b> ARCHeR (bienestar, actividad y sueño de la tripulación), biomarcadores inmunes y un banco de datos de salud compartido.</li>
+            <li><b>Órbita baja (ISS):</b> CIPHER, B-Complex, Thigh Cuff, Zero T2, presión del líquido cefalorraquídeo, <b>Standard Measures</b> (mediciones fisiológicas y psicológicas consistentes), entre otros.</li>
+            <li>No nombra estudios cognitivos concretos; solo enlaza al área de factores humanos y a la <b>Human Research Roadmap</b>.</li>
+          </ul>
+        </div>
+        <div class="col b r" style="--d:.46s">
+          <h4>Para ORBITAL</h4>
+          <ul>
+            <li>ARCHeR y Standard Measures son el precedente de <b>seguimiento continuo</b> de bienestar, actividad y sueño.</li>
+            <li>El banco de datos compartido respalda guardar todo en una <b>base común</b>.</li>
+            <li>Para cognición hay que ir a las pruebas de la siguiente sección.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FUENTE 4 · ASC-CSA · RADIACIÓN -->
+  <section class="slide">
+    <div class="sin">
+      <div class="eyebrow r" style="--d:.05s">Fuente oficial · 4 de 5</div>
+      <h2 class="title r" style="--d:.12s">Vigilar la radiación, en miniatura</h2>
+      <div class="srcline r" style="--d:.18s"><span class="org">Agencia Espacial Canadiense</span><a href="https://www.asc-csa.gc.ca/eng/news/articles/2026/2026-02-26-monitoring-radiation-astronaut-health.asp" target="_blank" rel="noopener">asc-csa.gc.ca · Monitoring radiation</a><span class="dt">26 feb 2026</span></div>
+      <p class="sub r" style="--d:.22s">La agencia canadiense contrató a Bubble Technology Industries para seguir desarrollando un espectrómetro de neutrones compacto y autónomo, el <b style="color:var(--white)">CANS</b>.</p>
+      <div class="stats">
+        <div class="stat pop" style="--d:.3s"><div class="big">$5.5 M</div><div class="lbl">valor del contrato para desarrollar el CANS</div></div>
+        <div class="stat pop" style="--d:.38s"><div class="big">~30%</div><div class="lbl">de la radiación en la ISS son neutrones</div></div>
+        <div class="stat pop" style="--d:.46s"><div class="big">25+ años</div><div class="lbl">de la ISS como banco de pruebas tecnológico</div></div>
+        <div class="stat pop" style="--d:.54s"><div class="big">5</div><div class="lbl">instrumentos o experimentos previos citados: detectores de burbujas, MOSFET, EVARM, Radi-N y Radi-N2</div></div>
+      </div>
+      <div class="haz" style="margin-top:22px">
+        <div class="col r" style="--d:.62s">
+          <h4>Qué dice</h4>
+          <ul>
+            <li>Los neutrones pueden causar daño biológico serio; los datos ayudarían a <b>reducir riesgos en misiones a la Luna y Marte</b>.</li>
+            <li>Los detectores de burbujas, antecesores del CANS, los usó el astronauta David Saint-Jacques en la ISS.</li>
+            <li>También tendría usos en la Tierra: terapia contra el cáncer, protección de tripulaciones aéreas y seguridad pública.</li>
+          </ul>
+        </div>
+        <div class="col b r" style="--d:.7s">
+          <h4>Para ORBITAL</h4>
+          <ul>
+            <li>Ejemplo real de cómo se monitorea la <b>R</b> de RIDGE.</li>
+            <li>Con la opción B (eje mental-conductual), la radiación queda como <b>contexto de la misión</b>, no como dato propio.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FUENTE 5 · ASC-CSA · POR QUÉ CIENCIA EN EL ESPACIO -->
+  <section class="slide">
+    <div class="rings"><span style="width:900px;height:900px;top:-200px;left:-300px"></span></div>
+    <div class="sin">
+      <div class="eyebrow r" style="--d:.05s">Fuente oficial · 5 de 5</div>
+      <h2 class="title r" style="--d:.12s">¿Por qué hacer ciencia en el espacio?</h2>
+      <div class="srcline r" style="--d:.18s"><span class="org">Agencia Espacial Canadiense</span><a href="https://www.asc-csa.gc.ca/eng/iss/science/why-do-we-conduct-science-experiments-in-space.asp" target="_blank" rel="noopener">asc-csa.gc.ca · Why science in space</a><span class="dt">Modificada el 28 oct 2025</span></div>
+      <p class="sub r" style="--d:.22s">Tres razones que da la agencia para usar la ISS como laboratorio.</p>
+      <div class="three">
+        <div class="scard r" style="--d:.3s"><div class="tagk">1 · Acceso</div><h3>Un entorno único</h3><p>La ISS ofrece condiciones imposibles de reproducir en tierra. En promedio hay <b style="color:var(--white)">~200 experimentos internacionales</b> a bordo al mismo tiempo.</p></div>
+        <div class="scard r" style="--d:.4s"><div class="tagk">2 · Futuro</div><h3>Preparar Luna y Marte</h3><p>Identificar y reducir riesgos de misiones largas: ingravidez prolongada, más radiación, aislamiento, retrasos de comunicación y menos apoyo de la Tierra en suministros y atención médica.</p></div>
+        <div class="scard r" style="--d:.5s"><div class="tagk">3 · Aquí</div><h3>Mejorar la vida en la Tierra</h3><p>Los efectos en astronautas recuerdan al envejecimiento acelerado y al sedentarismo. Se estudian huesos, corazón, vasos sanguíneos y cerebro, con posibles beneficios para el equilibrio, la osteoporosis, enfermedades cardiovasculares y diabetes tipo 2.</p></div>
+      </div>
+      <div class="tip r" style="--d:.62s"><b>Dato clave:</b> seis meses en el espacio pueden dar datos que en la Tierra tardarían años en reunirse. <b>Para ORBITAL:</b> respalda medir de forma continua durante la misión, y mostrar que lo que aprendemos también sirve en tierra.</div>
+    </div>
+  </section>
+
+  <!-- PRUEBAS 1 · COGNITION -->
+  <section class="slide">
+    <div class="sin">
+      <div class="eyebrow r" style="--d:.05s">Pruebas cognitivas · 1 de 3</div>
+      <h2 class="title r" style="--d:.12s">Cognition: 7 pruebas de referencia</h2>
+      <p class="sub r" style="--d:.2s">Batería de 10 pruebas breves que Penn desarrolló para la NASA y que se usa en la ISS. Estos son los parámetros para diseñar cada minijuego.</p>
+      <div class="matrix fit r" style="--d:.3s">
+        <table>
+          <thead><tr><th>Prueba</th><th>Qué ve y hace la persona</th><th>Dónde verla</th></tr></thead>
+          <tbody>
+            <tr><td class="dir">Motor Praxis<small>MPT</small></td><td>20 cuadros azules, uno a la vez, cada uno más pequeño y en lugar aleatorio; se hace clic con el trackpad.</td><td><a href="https://www.med.upenn.edu/uep/cognition.html" target="_blank" rel="noopener">GIF en Penn</a></td></tr>
+            <tr><td class="dir">Visual Object Learning<small>VOLT</small></td><td>Memorizar 10 objetos de alambre (5 s cada uno); luego juzgar 20, la mitad nuevos, con 4 respuestas: sí o no, definitivo o probable.</td><td><a href="https://www.med.upenn.edu/uep/cognition.html" target="_blank" rel="noopener">GIF en Penn</a></td></tr>
+            <tr><td class="dir">Fractal 2-Back<small>F2B</small></td><td>62 fractales de 1.75 s, 15 de ellos coincidencias; barra espaciadora si es igual al de dos antes. Práctica con feedback; la prueba real, sin él.</td><td><a href="https://www.med.upenn.edu/uep/cognition.html" target="_blank" rel="noopener">GIF en Penn</a> · <a href="https://github.com/vekteo/Nback_jsPsych" target="_blank" rel="noopener">código n-back (MIT)</a></td></tr>
+            <tr><td class="dir">Line Orientation<small>LOT</small></td><td>12 pares: rotar con flechas la línea azul hasta dejarla paralela a la negra (pasos de 2° según la NASA).</td><td><a href="https://www.med.upenn.edu/uep/cognition.html" target="_blank" rel="noopener">GIF en Penn</a></td></tr>
+            <tr><td class="dir">Balloon Analog Risk<small>BART</small></td><td>30 globos: cada bombeo suma $1 y puede reventar; “collect” guarda lo ganado. El reporte de la NASA menciona un punto de ruptura de unos 4 bombeos.</td><td><a href="https://www.med.upenn.edu/uep/cognition.html" target="_blank" rel="noopener">GIF en Penn</a> · <a href="https://github.com/m-Py/BART" target="_blank" rel="noopener">código BART (dominio público)</a></td></tr>
+            <tr><td class="dir">Psychomotor Vigilance<small>PVT</small></td><td>3 min. Tras un rectángulo azul arranca un contador en milisegundos; se presiona la barra espaciadora lo más rápido posible y el tiempo se muestra 1 s. Intervalo entre estímulos de 1 a 4 s.</td><td><a href="https://www.med.upenn.edu/uep/assets/user-content/documents/Basner2011-ValidityandsensitivityofabriefPVT.pdf" target="_blank" rel="noopener">PDF Basner 2011</a> · <a href="https://www.psytoolkit.org/experiment-library/pvtb.html" target="_blank" rel="noopener">demo PsyToolkit</a></td></tr>
+            <tr><td class="dir">Emotion Recognition<small>ERT</small></td><td>Caras una por una; 5 etiquetas: feliz, triste, enojo, miedo y sin emoción. La versión NASA y Penn usa 20 caras.</td><td><a href="https://www.med.upenn.edu/bbl/2dfaces.html" target="_blank" rel="noopener">Muestras ER40 (Penn)</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note r" style="--d:.45s;margin-bottom:34px">Capturas reales: Figura 1 de <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4691281" target="_blank" rel="noopener" style="color:var(--blue-pale)">Basner et al. 2015</a>. Instrucciones exactas al sujeto: Apéndice C del <a href="https://ntrs.nasa.gov/api/citations/20205008023/downloads/NASA_TM20205008023.pdf" target="_blank" rel="noopener" style="color:var(--blue-pale)">reporte NASA/TM-20205008023</a> (pp. 56–58).</p>
+    </div>
+  </section>
+
+  <!-- PRUEBAS 2 · WINSCAT -->
+  <section class="slide">
+    <div class="rings"><span style="width:1000px;height:1000px;top:-250px;right:-350px"></span></div>
+    <div class="sin">
+      <div class="eyebrow r" style="--d:.05s">Pruebas cognitivas · 2 de 3</div>
+      <h2 class="title r" style="--d:.12s">WinSCAT: las otras tres pruebas</h2>
+      <p class="sub r" style="--d:.2s">Subconjunto de cinco pruebas del sistema ANAM que usó la NASA antes de Cognition. La batería completa dura entre 11 y 15 minutos.</p>
+      <div class="three">
+        <div class="scard r" style="--d:.3s"><div class="tagk">WinSCAT</div><h3>Code Substitution</h3><p>Se emparejan símbolos con números consultando una cuadrícula de referencia en la parte superior de la pantalla.</p></div>
+        <div class="scard r" style="--d:.4s"><div class="tagk">WinSCAT</div><h3>Mathematics</h3><p>Sumas y restas de tres dígitos sueltos, por ejemplo 3 − 5 + 4 = ?</p></div>
+        <div class="scard r" style="--d:.5s"><div class="tagk">WinSCAT</div><h3>Match to Sample</h3><p>Se identifica la cuadrícula igual a la mostrada, después de una demora de 5 s.</p></div>
+      </div>
+      <div class="tip r" style="--d:.62s"><b>Sin capturas públicas.</b> Estas descripciones salen de la <a href="https://ntrs.nasa.gov/api/citations/20080009715/downloads/20080009715.pdf" target="_blank" rel="noopener" style="color:var(--blue-pale)">Tabla I (p. 10) de un reporte de la NASA</a>; no encontré cantidad de ítems ni tiempos. Lo más cercano a ver la pantalla son las figuras B-5, B-7, B-8 y B-9 (pp. 17–19) del <a href="https://apps.dtic.mil/sti/pdfs/ADA549141.pdf" target="_blank" rel="noopener" style="color:var(--blue-pale)">informe ARL-TN-0440 sobre ANAM</a> (es ANAM, no WinSCAT, y solo leí los pies de figura). Pruebas parecidas con demo: <a href="https://www.millisecond.com/library/digitsymbolsubstitutiontask" target="_blank" rel="noopener" style="color:var(--blue-pale)">DSST</a> y <a href="https://www.millisecond.com/library/dmts" target="_blank" rel="noopener" style="color:var(--blue-pale)">Delayed Matching to Sample</a> de Millisecond (requieren licencia de Inquisit).</div>
+    </div>
+  </section>
+
+  <!-- PRUEBAS 3 · PARÁMETROS QUE NO COINCIDEN -->
+  <section class="slide">
+    <div class="sin">
+      <div class="eyebrow r" style="--d:.05s">Pruebas cognitivas · 3 de 3</div>
+      <h2 class="title r" style="--d:.12s">Antes de fijar parámetros: las fuentes no coinciden</h2>
+      <p class="sub r" style="--d:.2s">Al comparar los documentos aparecen valores distintos para la misma prueba. Hay que elegir uno y dejarlo escrito.</p>
+      <div class="matrix fit r" style="--d:.3s">
+        <table>
+          <thead><tr><th>Parámetro</th><th>Valores encontrados</th><th>Fuentes</th></tr></thead>
+          <tbody>
+            <tr><td class="dir">PVT · lapso</td><td>355 ms · 500 ms</td><td>Basner 2011 y Moore 2017 · PsyToolkit</td></tr>
+            <tr><td class="dir">PVT · falso inicio</td><td>menos de 100 ms · 130 ms</td><td>Basner 2011 · Moore 2017</td></tr>
+            <tr><td class="dir">PVT · intervalo entre estímulos</td><td>1–4 s · 0–3 s · 2–10 s</td><td>Basner 2011 y NASA · PsyToolkit · repo snipeso/pvt</td></tr>
+            <tr><td class="dir">ERT · número de caras</td><td>20 · 40</td><td>Reporte NASA y página de Penn · Moore 2017</td></tr>
+            <tr><td class="dir">LOT · rotación por clic</td><td>2° · 9° o 3°</td><td>Reporte NASA · Moore 2017</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="tip r" style="--d:.45s"><b>Propuesta:</b> un valor por parámetro, la fuente citada en el código y todo configurable. <b>Para ver la interfaz original:</b> Penn entrega el software gratis, vía NASA, a investigación con fondos federales y aprobación ética (IRB); contacto: cognition@pennmedicine.upenn.edu. La versión para iPad es comercial (Pulsar Informatics).</div>
+    </div>
+  </section>
+
+  <!-- 15 · PREGUNTA DE ALCANCE -->
+  <section class="slide">
+    <div class="sin">
+      <div class="eyebrow r" style="--d:.05s">La decisión de equipo</div>
+      <h2 class="title r" style="--d:.12s">¿Abarcamos todo o lo acotamos?</h2>
+      <p class="sub r" style="--d:.2s">La evidencia es enorme y el cuerpo y la mente están entrelazados. Pero el tiempo del hackathon es finito. Hay que elegir.</p>
+      <div class="ask r" style="--d:.34s">
+        <div class="optrow">
+          <div class="opt wide">
+            <div class="ot">Opción A · abarcar todo</div>
+            <p>Monitoreo integral de los 5 frentes RIDGE. Más completo y fiel a la realidad, pero difícil de demostrar en una demo de 3 minutos y de construir en el tiempo que tenemos.</p>
+          </div>
+          <div class="opt focus">
+            <div class="ot">Opción B · acotar (propuesta)</div>
+            <p>Centrarlo en el <b style="color:var(--white)">eje mental-conductual</b> con un ancla fisiológica medible: <b style="color:var(--white)">monitoreo del corazón y del sueño</b>. Barato, continuo y cruza cuerpo y mente — justo el triaje psicofisiológico de ORBITAL.</p>
+          </div>
+        </div>
+      </div>
+      <p class="note r" style="--d:.5s">Esta es la pregunta que llevamos a la mesa: definir el alcance antes de construir.</p>
+    </div>
+  </section>
+
+  <!-- 16 · CIERRE -->
+  <section class="slide closing-slide">
+    <div class="rings">
+      <span style="width:700px;height:700px;top:50%;left:50%;transform:translate(-50%,-50%)"></span>
+      <span style="width:1050px;height:1050px;top:50%;left:50%;transform:translate(-50%,-50%)"></span>
+    </div>
+    <div class="sin">
+      <div class="eyebrow r" style="--d:.1s">En una frase</div>
+      <div class="big r" style="--d:.2s">A mayor tiempo lejos de casa, <span class="hl">más pesa la mente</span> — y más necesitamos medirla junto al cuerpo.</div>
+      <div class="tag r" style="--d:.45s">Marte no es ciencia ficción para este reto: es el escenario que vuelve urgente lo que proponemos.</div>
+      <div class="tag r" style="--d:.6s;margin-top:28px;color:var(--blue-pale);font-family:'Archivo';font-weight:800;letter-spacing:.04em">🌮 Tacos de Asada · ORBITAL · NASA Space Apps CDMX 2026</div>
+    </div>
+  </section>
+
+  <!-- 17 · REFERENCIAS -->
+  <section class="slide">
+    <div class="sin">
+      <span class="numtag r" style="--d:.05s">+</span>
+      <div class="eyebrow r" style="--d:.12s">En qué nos basamos</div>
+      <h2 class="title r" style="--d:.2s">Referencias</h2>
+      <div class="reflist r" style="--d:.32s">
+        <a class="wide" href="https://drive.google.com/drive/folders/1UrVE1Gp53D9SItG5zXhtFitwmo81hk66?usp=sharing" target="_blank" rel="noopener"><b>📁 Carpeta de recursos del equipo (Google Drive)</b>Documentos, briefs y material de referencia que vamos compilando como equipo.</a>
+        <a class="wide" href="reto.html"><b>📄 Análisis del Reto: Software de Salud Espacial</b>Objetivos oficiales, lineamientos, contexto, salud mental, escenario del video y gamificación.</a>
+        <a href="https://www.nasa.gov/humans-in-space/the-human-body-in-space/" target="_blank" rel="noopener"><b>The Human Body in Space (marco RIDGE)</b>NASA Human Research Program</a>
+        <a href="https://www.psychiatrictimes.com/view/psychiatric-issues-space" target="_blank" rel="noopener"><b>Psychiatric Issues in Space</b>N. Kanas · Psychiatric Times</a>
+        <a href="https://ntrs.nasa.gov/api/citations/20240000994/downloads/Behavioral%20Risk%20In%20Spaceflight_Picano.pdf" target="_blank" rel="noopener"><b>Behavioral Risk in Spaceflight (PDF)</b>NASA BHP · Picano</a>
+        <a href="https://www.discovermagazine.com/the-sciences/can-humans-live-in-space-without-going-crazy" target="_blank" rel="noopener"><b>Can Humans Live in Space Without Going Crazy</b>Discover Magazine · Mars-500</a>
+        <a href="https://www.uh.edu/news-events/stories/2021/april-2021/04202021-candice-alfano-astronaut-antarctica-mental-health.php" target="_blank" rel="noopener"><b>Mental Health Checklist (autoreporte)</b>C. Alfano · U. of Houston</a>
+        <a href="https://www.nasa.gov/missions/station/human-research-studying-astronaut-physiology" target="_blank" rel="noopener"><b>Studying Astronaut Physiology</b>NASA HRP · SANS, Twins Study</a>
+        <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC12155433/" target="_blank" rel="noopener"><b>Circadian Disruption &amp; Sleep Disorders (2025)</b>Int. J. Mol. Sci.</a>
+        <a href="https://ntrs.nasa.gov/api/citations/20220013418/downloads/ASCEND-Communication%20Delays%2C%20Disruptions%2C%20and%20Blackouts%20for%20Crewed%20Mars%20Missions.pdf" target="_blank" rel="noopener"><b>Communication Delays &amp; Blackouts (Mars)</b>NASA ASCEND</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 19 · REFERENCIAS · FUENTES OFICIALES Y PRUEBAS COGNITIVAS -->
+  <section class="slide">
+    <div class="sin">
+      <span class="numtag r" style="--d:.05s">+</span>
+      <div class="eyebrow r" style="--d:.12s">En qué nos basamos · parte 2</div>
+      <h2 class="title r" style="--d:.2s">Fuentes oficiales y pruebas cognitivas</h2>
+      <div class="reflist r" style="--d:.32s">
+        <div class="refh">Fuentes oficiales</div>
+        <a href="https://www.nasa.gov/hrp/hazards/" target="_blank" rel="noopener"><b>NASA HRP · Los 5 peligros</b>Actualizada el 12 jun 2026</a>
+        <a href="https://www.nasa.gov/hrp/risks/" target="_blank" rel="noopener"><b>NASA HRP · Riesgos del vuelo espacial</b>Actualizada el 21 jul 2026</a>
+        <a href="https://www.nasa.gov/hrp/ongoing-hrp-research/" target="_blank" rel="noopener"><b>NASA HRP · Investigación en curso</b>Actualizada el 18 ago 2026</a>
+        <a href="https://www.asc-csa.gc.ca/eng/news/articles/2026/2026-02-26-monitoring-radiation-astronaut-health.asp" target="_blank" rel="noopener"><b>ASC-CSA · Monitoreo de radiación</b>Agencia Espacial Canadiense · 26 feb 2026</a>
+        <a class="wide" href="https://www.asc-csa.gc.ca/eng/iss/science/why-do-we-conduct-science-experiments-in-space.asp" target="_blank" rel="noopener"><b>ASC-CSA · ¿Por qué hacer ciencia en el espacio?</b>Agencia Espacial Canadiense · modificada el 28 oct 2025</a>
+        <div class="refh">Batería Cognition y WinSCAT</div>
+        <a href="https://www.med.upenn.edu/uep/cognition.html" target="_blank" rel="noopener"><b>Penn · Cognition Test Battery</b>Un GIF por prueba y duración de la batería</a>
+        <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4691281" target="_blank" rel="noopener"><b>Basner et al. 2015 (PMC)</b>Desarrollo y validación; Figura 1 con capturas de las 10 pruebas</a>
+        <a href="https://ntrs.nasa.gov/api/citations/20205008023/downloads/NASA_TM20205008023.pdf" target="_blank" rel="noopener"><b>NASA/TM-20205008023 (PDF)</b>Beard · parámetros e instrucciones al sujeto</a>
+        <a href="https://www.mooremetrics.com/wp-content/uploads/2021/01/neurocats_moore.pdf" target="_blank" rel="noopener"><b>Moore et al. 2017 (PDF)</b>Validación; Apéndice A describe las pruebas</a>
+        <a href="https://www.med.upenn.edu/uep/assets/user-content/documents/Basner2011-ValidityandsensitivityofabriefPVT.pdf" target="_blank" rel="noopener"><b>Basner et al. 2011 · PVT-B (PDF)</b>3 min, ISI de 1 a 4 s, lapso de 355 ms</a>
+        <a href="https://ntrs.nasa.gov/api/citations/20080009715/downloads/20080009715.pdf" target="_blank" rel="noopener"><b>NTRS 20080009715 (PDF)</b>Seaton et al. · descripción de WinSCAT en la Tabla I</a>
+        <a class="wide" href="https://apps.dtic.mil/sti/pdfs/ADA549141.pdf" target="_blank" rel="noopener"><b>ARL-TN-0440 · ANAM (PDF)</b>Figuras B-5, B-7, B-8 y B-9 de Code Substitution, Match to Sample y Mathematical Processing</a>
+        <div class="refh">Código y demos</div>
+        <a href="https://github.com/m-Py/BART" target="_blank" rel="noopener"><b>m-Py/BART</b>BART en JavaScript · dominio público</a>
+        <a href="https://github.com/vekteo/Nback_jsPsych" target="_blank" rel="noopener"><b>vekteo/Nback_jsPsych</b>n-back en jsPsych · licencia MIT</a>
+        <a href="https://github.com/snipeso/pvt" target="_blank" rel="noopener"><b>snipeso/pvt</b>PVT en Python con PsychoPy · sin licencia visible</a>
+        <a href="https://www.psytoolkit.org/experiment-library/pvtb.html" target="_blank" rel="noopener"><b>PsyToolkit · PVT-B</b>Demo y código del PVT de 3 min</a>
+        <a href="https://www.med.upenn.edu/bbl/2dfaces.html" target="_blank" rel="noopener"><b>Penn BBL · caras ER40</b>Muestras; el set completo es solo para investigación</a>
+        <a href="https://link.springer.com/content/pdf/10.3758/BRM.40.1.109.pdf" target="_blank" rel="noopener"><b>Calvo y Lundqvist 2008 (PDF)</b>KDEF: tiempos de exposición y layout de caras</a>
+        <a href="https://www.millisecond.com/library/digitsymbolsubstitutiontask" target="_blank" rel="noopener"><b>Millisecond · DSST</b>Demo parecida a Code Substitution · requiere licencia</a>
+        <a href="https://www.millisecond.com/library/dmts" target="_blank" rel="noopener"><b>Millisecond · Delayed Matching to Sample</b>Demo parecida a Match to Sample · requiere licencia</a>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<div class="hud">
+  <button id="prev" aria-label="Anterior"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <span class="counter"><b id="cur">01</b> / <span id="total">17</span></span>
+  <button id="next" aria-label="Siguiente"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <button id="fs" aria-label="Pantalla completa"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 9V5a1 1 0 011-1h4M20 9V5a1 1 0 00-1-1h-4M4 15v4a1 1 0 001 1h4M20 15v4a1 1 0 01-1 1h-4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</div>
+<div class="hint-key" id="keyhint"><kbd>←</kbd><kbd>→</kbd> navega · <kbd>F</kbd> pantalla completa</div>
+
+<script>
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var N = slides.length, i = 0;
+  var prog = document.getElementById('prog'), cur = document.getElementById('cur');
+  var prevB = document.getElementById('prev'), nextB = document.getElementById('next');
+  document.getElementById('total').textContent = String(N).padStart(2,'0');
+  function pad(n){return String(n+1).padStart(2,'0')}
+  function go(n){
+    n = Math.max(0, Math.min(N-1, n));
+    if(n===i && slides[i].classList.contains('active')) return;
+    slides[i].classList.remove('active');
+    i = n;
+    slides[i].classList.add('active');
+    slides[i].scrollTop = 0;
+    prog.style.width = ((i)/(N-1)*100)+'%';
+    cur.textContent = pad(i);
+    prevB.disabled = i===0; nextB.disabled = i===N-1;
+  }
+  function next(){go(i+1)} function prev(){go(i-1)}
+  nextB.addEventListener('click', next);
+  prevB.addEventListener('click', prev);
+  var kh = document.getElementById('keyhint');
+  document.addEventListener('keydown', function(e){
+    if(e.key==='ArrowRight'||e.key==='PageDown'||(e.key===' '&&!e.shiftKey)){e.preventDefault();next();kh.classList.add('gone')}
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'||(e.key===' '&&e.shiftKey)){e.preventDefault();prev();kh.classList.add('gone')}
+    else if(e.key==='Home'){go(0)} else if(e.key==='End'){go(N-1)}
+    else if(e.key==='f'||e.key==='F'){toggleFs()}
+  });
+  var tx=0, ty=0;
+  document.getElementById('deck').addEventListener('touchstart',function(e){tx=e.changedTouches[0].clientX;ty=e.changedTouches[0].clientY},{passive:true});
+  document.getElementById('deck').addEventListener('touchend',function(e){
+    var dx=e.changedTouches[0].clientX-tx, dy=e.changedTouches[0].clientY-ty;
+    if(Math.abs(dx)>60 && Math.abs(dx)>Math.abs(dy)){ dx<0?next():prev(); kh.classList.add('gone'); }
+  },{passive:true});
+  function toggleFs(){
+    if(!document.fullscreenElement){ (document.documentElement.requestFullscreen||function(){})(); }
+    else { (document.exitFullscreen||function(){})(); }
+  }
+  document.getElementById('fs').addEventListener('click', toggleFs);
+  go(0);
+</script>
+</body>
+</html>
