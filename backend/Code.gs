@@ -276,6 +276,55 @@ function verdict_(m, k) {
 }
 function json_(s) { try { return JSON.parse(s); } catch (_) { return null; } }
 
+/* ---- voto ponderado de equipo (empatía, aterrizar, riesgo) ---- */
+function voteTally_(cands, kvmap, prefix) {
+  var score = {};
+  cands.forEach(function (c) { score[c.id] = 0; });
+  Object.keys(kvmap).forEach(function (k) {
+    if (k.indexOf(prefix) === 0) {
+      var b = json_(kvmap[k]) || {};
+      [['p3', 3], ['p2', 2], ['p1', 1]].forEach(function (p) {
+        var id = b[p[0]]; if (id && score[id] != null) score[id] += p[1];
+      });
+    }
+  });
+  return cands.map(function (c) { return { c: c, s: score[c.id] || 0 }; })
+    .sort(function (a, b) { return b.s - a.s || (String(a.c.id) < String(b.c.id) ? -1 : 1); });
+}
+/* opciones de empatía por zona: notas que pasan, fusionadas por "se parece a" (union-find) */
+function empOpts_(noteRows, emRaw, zone) {
+  var ns = noteRows.filter(function (r) { return String(r[4]) === zone && emRaw['pass' + PP_SEP + r[3]] !== '0'; });
+  var parent = {}; ns.forEach(function (r) { parent[r[3]] = r[3]; });
+  function find(x) { while (parent[x] !== x) { parent[x] = parent[parent[x]]; x = parent[x]; } return x; }
+  ns.forEach(function (r) {
+    var t = emRaw['merge' + PP_SEP + r[3]];
+    if (t && parent[t] !== undefined) { var a = find(r[3]), b = find(t); if (a !== b) { if (String(a) < String(b)) parent[b] = a; else parent[a] = b; } }
+  });
+  var groups = {}; ns.forEach(function (r) { var root = find(r[3]); (groups[root] = groups[root] || []).push(r); });
+  return Object.keys(groups).map(function (root) {
+    var mem = groups[root].sort(function (a, b) { return String(a[3]) < String(b[3]) ? -1 : 1; });
+    return { id: String(mem[0][3]), value: mem.map(function (m) { return String(m[7]); }).join('  /  '), merged: mem.length > 1 };
+  }).sort(function (a, b) { return a.id < b.id ? -1 : 1; });
+}
+function empWinner_(noteRows, emRaw, zone) {
+  var r = voteTally_(empOpts_(noteRows, emRaw, zone), emRaw, 'ballot' + PP_SEP + zone + PP_SEP);
+  return (r.length && r[0].s > 0) ? r[0].c.value : '';
+}
+function candList_(candRows) {
+  return candRows.map(function (r) { return { id: String(r[3]), value: String(r[7]), author: String(r[5] || '') }; });
+}
+function candRows_(candRows, kvmap, prefix) {
+  var ranked = voteTally_(candList_(candRows), kvmap, prefix);
+  if (!ranked.length) return [['—', '(sin propuestas)', '']];
+  return ranked.map(function (x, i) {
+    return [(i === 0 && x.s > 0) ? '★' : (i + 1), x.c.value + (x.c.author ? '  — ' + x.c.author : ''), x.s];
+  });
+}
+function candWinner_(candRows, kvmap, prefix) {
+  var r = voteTally_(candList_(candRows), kvmap, prefix);
+  return (r.length && r[0].s > 0) ? r[0].c.value : '';
+}
+
 function buildViews_(room) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var name = ss.getName();
@@ -294,6 +343,19 @@ function buildViews_(room) {
     if (String(r[4]) === 'evento') events.push(o);
     if (String(r[4]) === 'autorreporte') reports.push(o);
   });
+  /* claves crudas y candidatos de votación (empatía, aterrizar, riesgo) */
+  var emRaw = {}, atRaw = {}, rvRaw = {}, atHmw = [], atIdea = [], rvCands = [];
+  all.forEach(function (r) {
+    var tool = String(r[2]);
+    if (tool === 'empatia' && r[6]) emRaw[String(r[6])] = (r[7] == null ? '' : String(r[7]));
+    else if (tool === 'aterrizar' && r[6]) atRaw[String(r[6])] = (r[7] == null ? '' : String(r[7]));
+    else if (tool === 'aterrizar' && r[3] && !r[6] && String(r[4]) === 'hmw') atHmw.push(r);
+    else if (tool === 'aterrizar' && r[3] && !r[6] && String(r[4]) === 'idea') atIdea.push(r);
+    else if (tool === 'riesgo_vote' && r[6]) rvRaw[String(r[6])] = (r[7] == null ? '' : String(r[7]));
+    else if (tool === 'riesgo_vote' && r[3] && !r[6]) rvCands.push(r);
+  });
+  var povNeed = emRaw['pov_need'] || '', povWhy = emRaw['pov_why'] || '';
+  var povText = (povNeed || povWhy) ? ('Katya necesita ' + (povNeed || '…') + ' porque ' + (povWhy || '…') + '.') : '(sin definir)';
   var updated = 'Actualizado: ' + fmtDate_(new Date()) + ' · equipo: ' + room;
 
   /* ---------- 1 · Aterrizar ---------- */
@@ -322,21 +384,29 @@ function buildViews_(room) {
     { title: '¿Dato o Supuesto? — según cada integrante', header: headPP, rows: dsPP },
     { title: '¿Cómo podríamos…? — la pregunta de cada integrante', header: headPP, rows: hmwPP },
     { title: 'Idea finalista y pregunta elegida — por integrante', header: headPP, rows: finPP },
-    { title: '¿Enviaron sus respuestas? (botón “Enviar mis respuestas”)', header: headPP, rows: [ppRow_(atp, 'Última vez que envió', '_enviado')] }
+    { title: '¿Enviaron sus respuestas? (botón “Enviar mis respuestas”)', header: headPP, rows: [ppRow_(atp, 'Última vez que envió', '_enviado')] },
+    { title: 'Voto de equipo · pregunta guía (3·2·1 · ★ ganadora)', header: ['#', 'Propuesta — autor', 'Puntos'], rows: candRows_(atHmw, atRaw, 'vb' + PP_SEP + 'hmw' + PP_SEP) },
+    { title: 'Voto de equipo · idea a prototipar (3·2·1 · ★ ganadora)', header: ['#', 'Propuesta — autor', 'Puntos'], rows: candRows_(atIdea, atRaw, 'vb' + PP_SEP + 'idea' + PP_SEP) }
   ], [210, 160, 160, 160, 160, 160]);
 
   /* ---------- 2 · Empatía ---------- */
   var zoneName = {}; ZONES.forEach(function (z) { zoneName[z[0]] = z[1]; });
-  var order = {}; ZONES.forEach(function (z, i) { order[z[0]] = i; });
-  var noteRows = notes.slice().sort(function (a, b) { return (order[a[4]] - order[b[4]]) || ((Number(b[8]) || 0) - (Number(a[8]) || 0)); })
-    .map(function (r) { return [zoneName[r[4]] || r[4], String(r[7]), Number(r[8]) || 0, String(r[5] || ''), fmtDate_(r[0])]; });
+  var empRows = [];
+  ZONES.forEach(function (z) {
+    var ranked = voteTally_(empOpts_(notes, emRaw, z[0]), emRaw, 'ballot' + PP_SEP + z[0] + PP_SEP);
+    if (!ranked.length) { empRows.push([z[1], '(sin aportaciones)', '', '']); return; }
+    ranked.forEach(function (x, i) {
+      empRows.push([i === 0 ? z[1] : '', x.c.value, x.s, (i === 0 && x.s > 0) ? '★ ganadora' : '']);
+    });
+  });
+  var allNoteRows = notes.slice().map(function (r) { return [zoneName[r[4]] || r[4], String(r[7]), String(r[5] || ''), fmtDate_(r[0])]; });
   writeTab_(TAB.empatia, '#9cc1f2', [
-    { title: 'Mapa de empatía · Katya E. · por persona · ' + updated },
+    { title: 'Mapa de empatía · ' + updated },
+    { title: 'POV de equipo — la necesidad y su porqué', header: ['Campo', 'Valor'], rows: [['Necesidad', povNeed || '(sin definir)'], ['Porqué · insight', povWhy || '(sin definir)'], ['POV armado', povText]] },
+    { title: 'Opciones por zona y puntos (voto ponderado 3·2·1 · fusionadas · ★ = la más votada)', header: ['Zona', 'Opción', 'Puntos', ''], rows: empRows },
     { title: 'Escenario que empatizó cada integrante', header: headPP, rows: [ppRow_(emp, 'Escenario', 'escenario')] },
-    { title: 'POV (la necesidad) de cada integrante', header: headPP, rows: [ppRow_(emp, 'POV', 'pov')] },
-    { title: '¿Enviaron?', header: headPP, rows: [ppRow_(emp, 'Última vez que envió', '_enviado')] },
-    { title: 'Notas por zona — de todo el equipo (las más votadas primero)', header: ['Zona', 'Nota', 'Votos', 'Autor', 'Fecha'], rows: noteRows.length ? noteRows : [['', '(sin notas)', '', '', '']] }
-  ], [150, 300, 150, 150, 150, 150]);
+    { title: 'Todas las aportaciones (crudas)', header: ['Zona', 'Nota', 'Autor', 'Fecha'], rows: allNoteRows.length ? allNoteRows : [['', '(sin notas)', '', '']] }
+  ], [150, 420, 90, 110, 140]);
 
   /* ---------- 3 · Riesgo · Cédulas ---------- */
   var c1 = [], placed = [];
@@ -385,7 +455,8 @@ function buildViews_(room) {
     { title: 'Cédula 1 y 2 · Peligros, probabilidad y severidad — por integrante', header: headPP, rows: c1PP },
     { title: 'Cédula 2 · Prioridades y control elegido — por integrante', header: headPP, rows: prioPP },
     { title: 'Cédula 4 · Lienzo del sistema T·U·C·E·I — por integrante', header: headPP, rows: tuceiPP },
-    { title: '¿Enviaron su cédula? (botón “Enviar mi cédula”)', header: headPP, rows: [ppRow_(cep, 'Última vez que envió', '_enviado')] }
+    { title: '¿Enviaron su cédula? (botón “Enviar mi cédula”)', header: headPP, rows: [ppRow_(cep, 'Última vez que envió', '_enviado')] },
+    { title: 'Voto de equipo · riesgo prioritario (3·2·1 · ★ ganador)', header: ['#', 'Propuesta — autor', 'Puntos'], rows: candRows_(rvCands, rvRaw, 'vb' + PP_SEP + 'prio' + PP_SEP) }
   ], [210, 170, 170, 170, 170, 170]);
 
   /* ---------- 4 · Riesgo · Eventos ---------- */
@@ -434,14 +505,14 @@ function buildViews_(room) {
     ['1 · Problema', 'Supuestos por verificar', sup.join(' · '), 'Aterrizar · Dato/Supuesto'],
     ['2 · Usuario', 'Cliente / usuario', v_(at, 'c_clientes'), 'Aterrizar · Canvas'],
     ['2 · Usuario', 'Escenario empatizado', v_(em, 'escenario'), 'Empatía'],
-    ['2 · Usuario', 'POV del mapa de empatía', v_(em, 'pov'), 'Empatía'],
-    ['2 · Usuario', 'Dolores más votados', topZone('dolores'), 'Empatía'],
-    ['2 · Usuario', 'Ganancias más votadas', topZone('ganancias'), 'Empatía'],
+    ['2 · Usuario', 'POV del mapa de empatía (equipo)', povText, 'Empatía'],
+    ['2 · Usuario', 'Dolor más votado', empWinner_(notes, emRaw, 'dolores'), 'Empatía · voto'],
+    ['2 · Usuario', 'Ganancia más votada', empWinner_(notes, emRaw, 'ganancias'), 'Empatía · voto'],
     ['2 · Usuario', 'Cuerpo y mente en la condición (U)', v_(ce, 'c4_U'), 'Cédula 4'],
     ['3 · Alternativas', 'Qué usan hoy', v_(at, 'c_alternativas'), 'Aterrizar · Canvas'],
     ['3 · Alternativas', 'Qué les falla', v_(at, 'c_desventajas'), 'Aterrizar · Canvas'],
-    ['4 · Objetivo', 'Pregunta guía elegida', hmwTxt, 'Aterrizar · Matriz (total ' + hmwScore + ' de 6)'],
-    ['4 · Objetivo', 'Idea a prototipar', v_(at, 'final_idea'), 'Aterrizar · Elegir'],
+    ['4 · Objetivo', 'Pregunta guía (voto de equipo)', candWinner_(atHmw, atRaw, 'vb' + PP_SEP + 'hmw' + PP_SEP) || hmwTxt, 'Aterrizar · voto'],
+    ['4 · Objetivo', 'Idea a prototipar (voto de equipo)', candWinner_(atIdea, atRaw, 'vb' + PP_SEP + 'idea' + PP_SEP) || v_(at, 'final_idea'), 'Aterrizar · voto'],
     ['4 · Objetivo', 'Alcance de la demo (por qué cabe en un día)', v_(at, 'final_why'), 'Aterrizar · Elegir'],
     ['5 · Funcionales', 'Datos a monitorear (opciones de “Dato”)', [1, 2, 3, 4, 5].map(function (x) { return v_(at, 'co_dato_' + x); }).filter(String).join(' · '), 'Aterrizar · Ronda 2'],
     ['5 · Funcionales', 'Canales de aviso (opciones de “Canal”)', [1, 2, 3, 4, 5].map(function (x) { return v_(at, 'co_canal_' + x); }).filter(String).join(' · '), 'Aterrizar · Ronda 2'],
@@ -455,6 +526,7 @@ function buildViews_(room) {
     ['6 · Riesgos', 'Umbrales usados para GR', Object.keys(thresholds).join(' · '), 'Eventos'],
     ['6 · Riesgos', 'Escalas subjetivas a registrar', 'Fatiga, dolor, ánimo y sueño (1–5) + casi-incidente', 'Cédula 3'],
     ['6 · Riesgos', 'Casi-incidentes reportados', nears, 'Cédula 3'],
+    ['6 · Riesgos', 'Riesgo prioritario (voto de equipo)', candWinner_(rvCands, rvRaw, 'vb' + PP_SEP + 'prio' + PP_SEP), 'Riesgo · voto'],
     ['7 · No funcionales', 'Entorno de operación (E)', v_(ce, 'c4_E'), 'Cédula 4'],
     ['7 · No funcionales', 'Interacciones y fallas en cadena (I)', v_(ce, 'c4_I'), 'Cédula 4'],
     ['7 · No funcionales', 'Principios de interfaz', 'Línea base personal · pocas alarmas bien jerarquizadas · lectura simple · DOL · 10 heurísticas de Nielsen', 'Riesgo · bloque E']
