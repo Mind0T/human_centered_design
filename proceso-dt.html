@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>HCD Kit · El proceso de Design Thinking</title>
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png">
+<link rel="shortcut icon" href="favicon.ico">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="description" content="El proceso de Design Thinking paso a paso (IDEO U): enmarcar la pregunta, reunir inspiración, sintetizar, generar ideas, prototipar, probar y compartir la historia. Guía interactiva de estudio del HCD Kit." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;800;900&family=Overpass:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --navy-900:#071428;--navy-800:#0a1a33;--navy-700:#0d2244;--navy-600:#102a55;
+    --blue-soft:#4e8fe6;--blue-pale:#9cc1f2;--lime:#d7e64b;--white:#f4f8ff;--mute:#a9bbd6;
+    --line:rgba(156,193,242,.16);--card:rgba(18,38,74,.6);--ok:#4ccb8f;--warn:#f2c14e;--crit:#ef6a5a;
+    --ph:#4e8fe6; /* acento de la fase activa */
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:"Overpass",system-ui,sans-serif;background:var(--navy-900);color:var(--white);line-height:1.55;-webkit-font-smoothing:antialiased;overflow:hidden}
+  h1,h2,h3,h4{font-family:"Archivo",sans-serif;letter-spacing:-.01em}
+  a{color:var(--blue-soft)}
+  .deck{position:fixed;inset:0;transition:background .6s ease;
+    background:radial-gradient(1200px 760px at 82% 10%, color-mix(in srgb, var(--ph) 22%, transparent), transparent 60%),
+    radial-gradient(900px 640px at 6% 96%, rgba(20,50,130,.3), transparent 60%),
+    linear-gradient(180deg,var(--navy-800),var(--navy-900))}
+  .slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-start;
+    padding:clamp(76px,11vh,104px) clamp(22px,6vw,96px) clamp(84px,12vh,108px);
+    opacity:0;visibility:hidden;transform:scale(.985);transition:opacity .45s ease,transform .55s cubic-bezier(.2,.7,.2,1),visibility .45s;overflow-y:auto}
+  .slide.active{opacity:1;visibility:visible;transform:none;z-index:2}
+  .sin{width:100%;max-width:1080px;margin:auto}
+  .r{opacity:0;transform:translateY(22px);transition:opacity .55s cubic-bezier(.2,.7,.2,1),transform .55s cubic-bezier(.2,.7,.2,1)}
+  .slide.active .r{opacity:1;transform:none;transition-delay:var(--d,0s)}
+
+  .eyebrow{font-family:"Archivo";font-weight:800;text-transform:uppercase;letter-spacing:.14em;font-size:clamp(.66rem,1.1vw,.76rem);color:var(--ph);display:inline-flex;align-items:center;gap:10px}
+  .eyebrow::before{content:"";width:26px;height:2px;background:var(--ph);display:inline-block}
+  h2.title{font-size:clamp(1.7rem,4.2vw,3rem);font-weight:900;line-height:1.03;margin:8px 0 12px}
+  .lead{color:var(--blue-pale);font-size:clamp(1.02rem,2vw,1.3rem);max-width:64ch}
+  .sub{color:var(--mute);font-size:clamp(.98rem,1.6vw,1.12rem);max-width:74ch}
+  .sub b{color:var(--white)} .hl{color:var(--ph)} em{color:var(--blue-soft);font-style:normal}
+  .phnum{font-family:"Archivo";font-weight:900;color:var(--ph);font-size:clamp(2.2rem,5vw,3.4rem);line-height:1}
+
+  .brandmark{display:flex;align-items:center;gap:14px;margin-bottom:26px}
+  .brandmark img{height:46px;width:auto;display:block;filter:drop-shadow(0 3px 10px rgba(0,0,0,.5))}
+  .brandmark small{display:block;font-size:.6rem;letter-spacing:.3em;color:var(--mute);font-weight:700;font-family:"Archivo"}
+  .brandmark b{font-size:1rem;letter-spacing:.04em;font-family:"Archivo";font-weight:900;text-transform:uppercase}
+  .hero h1{font-weight:900;font-size:clamp(2.3rem,6.6vw,4.8rem);line-height:.98;margin:10px 0 18px}
+
+  .btn{cursor:pointer;font-family:"Archivo";font-weight:800;font-size:.85rem;border-radius:11px;padding:11px 17px;border:1px solid var(--line);background:rgba(10,26,51,.6);color:var(--white);transition:.2s;display:inline-flex;align-items:center;gap:8px;text-decoration:none}
+  .btn:hover{border-color:var(--ph);color:var(--ph)}
+  .btn.prime{background:var(--ph);color:#071428;border-color:var(--ph)}
+  .btn.prime:hover{color:#071428;filter:brightness(1.06)}
+  .btnrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+
+  .g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+  .g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:clamp(16px,2.2vw,22px)}
+  .card h4{font-size:clamp(1rem,1.6vw,1.15rem);font-weight:800;margin-bottom:6px}
+  .card p{color:var(--mute);font-size:clamp(.9rem,1.4vw,1rem)} .card p b{color:var(--white)}
+  .card .ic{font-size:1.5rem;margin-bottom:6px;display:block}
+
+  .quote{background:linear-gradient(135deg,color-mix(in srgb,var(--ph) 22%,var(--navy-700)),var(--navy-700));border:1px solid var(--line);border-left:4px solid var(--ph);border-radius:16px;padding:clamp(20px,3vw,32px);font-family:"Archivo";font-weight:600;font-size:clamp(1.1rem,2.2vw,1.55rem);line-height:1.35;margin-top:14px}
+  .tip{margin-top:16px;display:flex;gap:12px;align-items:flex-start;background:color-mix(in srgb,var(--ph) 10%,transparent);border:1px solid color-mix(in srgb,var(--ph) 35%,transparent);border-radius:0 14px 14px 0;border-left:3px solid var(--ph);padding:14px 18px}
+  .tip .tk{font-family:"Archivo";font-weight:900;font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ph);white-space:nowrap;flex:0 0 auto;padding-top:3px}
+  .tip p{color:var(--mute);font-size:.96rem;margin:0}
+  .casebadge{display:inline-flex;align-items:center;gap:8px;background:rgba(76,203,143,.14);border:1px solid rgba(76,203,143,.4);color:var(--ok);font-family:"Archivo";font-weight:800;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;padding:5px 12px;border-radius:999px;margin-bottom:10px}
+
+  .mm{display:inline-flex;gap:0;border:1px solid var(--line);border-radius:999px;overflow:hidden;margin-top:14px}
+  .mm span{font-family:"Archivo";font-weight:800;font-size:.74rem;padding:8px 16px;color:var(--mute)}
+  .mm .mind{background:color-mix(in srgb,var(--ph) 20%,transparent);color:var(--ph)}
+  .mm .meth{border-left:1px solid var(--line)}
+
+  textarea,input[type=text]{width:100%;background:rgba(7,20,40,.55);border:1px solid var(--line);border-radius:12px;color:var(--white);font-family:"Overpass";font-size:1rem;padding:12px 14px;resize:vertical}
+  textarea:focus,input[type=text]:focus{outline:none;border-color:var(--ph)}
+  input[type=range]{width:100%;accent-color:var(--ph);height:28px}
+  label.fld{display:block;font-family:"Archivo";font-weight:800;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--blue-soft);margin:14px 0 6px}
+
+  /* steppers / tabs genéricos */
+  .pills{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
+  .pill{font-family:"Archivo";font-weight:800;font-size:.8rem;border:1px solid var(--line);background:transparent;color:var(--mute);border-radius:10px;padding:9px 14px;cursor:pointer;transition:.2s}
+  .pill:hover{color:var(--white);border-color:var(--ph)} .pill.on{background:var(--ph);border-color:var(--ph);color:#071428}
+
+  /* design squiggle */
+  .sqwrap{margin-top:16px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px}
+  .sqstage{position:relative;width:100%;height:220px}
+  .sqstage svg{width:100%;height:100%}
+  .sqlabel{text-align:center;font-family:"Archivo";font-weight:800;color:var(--ph);margin-top:6px;min-height:22px}
+  .sqcap{display:flex;justify-content:space-between;font-size:.74rem;color:var(--mute);font-family:"Archivo";font-weight:700;margin-top:4px}
+
+  /* divergir/convergir */
+  .dcwrap{margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .dccard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px}
+  .dccard.on{border-color:var(--ph);box-shadow:0 0 0 2px color-mix(in srgb,var(--ph) 25%,transparent)}
+  .dccard h4{display:flex;align-items:center;gap:10px}
+  .dcsvg{height:120px;margin:10px 0}
+  .dcsvg svg{height:100%;width:100%}
+
+  /* brainstorm timer */
+  .timer{display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin-top:14px}
+  .tclock{font-family:"Archivo";font-weight:900;font-size:2.4rem;color:var(--ph);min-width:130px;font-variant-numeric:tabular-nums}
+  .tclock.warn{color:var(--warn)} .tclock.done{color:var(--crit)}
+  .ideacount{font-family:"Archivo";font-weight:900;font-size:1.3rem;color:var(--white)}
+  .idealist{display:flex;flex-direction:column;gap:6px;max-height:26vh;overflow:auto;margin-top:10px}
+  .idea{background:rgba(7,20,40,.5);border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-size:.92rem}
+
+  /* venn */
+  .vennwrap{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:16px;align-items:center}
+  .vennstage{position:relative;min-height:320px;display:flex;align-items:center;justify-content:center}
+  .vennstage svg{width:100%;max-width:360px;height:auto}
+  .vcircle{cursor:pointer;transition:.25s;fill-opacity:.18;stroke-width:2}
+  .vcircle:hover{fill-opacity:.32}
+  .vcircle.on{fill-opacity:.42;stroke-width:3}
+  .vennside{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;min-height:180px}
+  .vennside .vk{font-family:"Archivo";font-weight:900;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+  .vennside h4{font-size:1.2rem;margin-bottom:8px} .vennside p{color:var(--mute);font-size:.96rem;margin-bottom:10px}
+  .vennside .vq{background:rgba(76,203,143,.1);border-left:3px solid var(--ok);border-radius:0 10px 10px 0;padding:10px 13px;font-size:.9rem;color:var(--blue-pale)}
+  .vlens{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:12px}
+  .vlens button{font-family:"Archivo";font-weight:800;font-size:.78rem;border:1px solid var(--lc);background:transparent;color:var(--lc);border-radius:999px;padding:7px 14px;cursor:pointer;transition:.2s;display:inline-flex;align-items:center;gap:7px}
+  .vlens button::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--lc)}
+  .vlens button.on{background:var(--lc);color:#071428}
+
+  /* guideposts */
+  .guides{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;margin-top:18px}
+  .guide{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 10px;text-align:center;cursor:pointer;transition:.25s;border-top:4px solid var(--gc)}
+  .guide .gi{width:34px;height:34px;margin:0 auto 8px;color:var(--gc)}
+  .guide .gn{font-family:"Archivo";font-weight:900;font-size:.72rem;color:var(--gc)}
+  .guide .gt{font-family:"Archivo";font-weight:800;font-size:.78rem;margin-top:4px;line-height:1.1}
+  .guide .gp{font-size:.72rem;color:var(--mute);margin-top:6px;max-height:0;overflow:hidden;transition:max-height .3s;line-height:1.35}
+  .guides.dim .guide{opacity:.25} .guides.dim .guide.on{opacity:1;transform:translateY(-4px)}
+  .guide.on .gp{max-height:120px}
+  @media(max-width:860px){.guides{grid-template-columns:repeat(2,1fr)}}
+
+  /* transformer */
+  .trwrap{margin-top:16px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px}
+  .trstate{min-height:120px;display:flex;flex-direction:column;justify-content:center}
+  .trk{font-family:"Archivo";font-weight:900;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ph);margin-bottom:8px}
+  .trtxt{font-family:"Archivo";font-weight:600;font-size:clamp(1.05rem,2vw,1.4rem);line-height:1.35}
+  .trsteps{display:flex;justify-content:space-between;font-size:.74rem;color:var(--mute);font-family:"Archivo";font-weight:700;margin-top:14px}
+
+  /* chrome (reutilizado del kit) */
+  .prog{position:fixed;top:0;left:0;height:3px;background:var(--ph);width:0;z-index:40;transition:width .4s ease,background .5s}
+  .tbar{position:fixed;top:0;left:0;right:0;z-index:35;background:rgba(7,20,40,.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .tin{padding:9px 14px;display:flex;align-items:center;gap:8px;max-width:1180px;margin:0 auto}
+  .tin .home{display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:var(--mute);font-family:"Archivo";font-weight:800;font-size:.74rem;flex:0 0 auto}
+  .tin .home img{height:22px}
+  .phasemap{display:flex;gap:6px;margin-left:auto;align-items:center}
+  .pdot{width:auto;display:flex;align-items:center;gap:6px;background:transparent;border:1px solid var(--line);border-radius:999px;padding:5px 9px;cursor:pointer;transition:.2s}
+  .pdot i{width:9px;height:9px;border-radius:50%;background:var(--pc);display:block}
+  .pdot b{font-family:"Archivo";font-weight:800;font-size:.68rem;color:var(--mute)}
+  .pdot.on{border-color:var(--pc)} .pdot.on b{color:var(--white)}
+  .pdot:hover{border-color:var(--pc)}
+  .pdot .pl{display:none}
+  @media(max-width:900px){.pdot b{display:none}.pdot{padding:7px}}
+
+  .hud{position:fixed;bottom:18px;right:20px;display:flex;align-items:center;gap:10px;z-index:30}
+  .hud button{width:44px;height:44px;border-radius:12px;border:1px solid var(--line);background:rgba(10,26,51,.85);color:var(--white);cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .hud button:hover{border-color:var(--ph);color:var(--ph)} .hud button:disabled{opacity:.3;cursor:default}
+  .counter{font-family:"Archivo";font-weight:800;font-size:.82rem;color:var(--mute);letter-spacing:.08em;padding:0 6px;min-width:62px;text-align:center}
+  .counter b{color:var(--ph)}
+  .hint-key{position:fixed;bottom:20px;left:20px;z-index:30;color:var(--mute);font-size:.72rem;font-family:"Archivo";font-weight:700;letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;gap:8px;background:rgba(7,20,40,.9);border:1px solid var(--line);border-radius:12px;padding:7px 11px}
+  .hint-key kbd{background:rgba(10,26,51,.8);border:1px solid var(--line);border-radius:6px;padding:2px 7px}
+  .hint-key.gone{opacity:0;transition:opacity .6s;pointer-events:none}
+  .toast{position:fixed;left:50%;bottom:80px;transform:translateX(-50%) translateY(20px);background:var(--ph);color:#071428;font-family:"Archivo";font-weight:800;font-size:.86rem;padding:11px 18px;border-radius:12px;opacity:0;transition:.3s;z-index:70;pointer-events:none}
+  .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  @media(max-width:860px){.g2,.g3,.dcwrap,.vennwrap{grid-template-columns:1fr}.hint-key{display:none}.slide{padding:70px 18px 92px}}
+</style>
+</head>
+<body>
+<div class="prog" id="prog"></div>
+<nav class="tbar"><div class="tin">
+  <a class="home" href="index.html"><img src="assets/img/logo.png" alt="HCD Kit">← HCD Kit</a>
+  <div class="phasemap" id="phasemap"></div>
+</div></nav>
+
+<div class="deck" id="deck">
+
+<!-- 1 PORTADA -->
+<section class="slide active" id="s-portada" data-ph="0" style="--ph:#4e8fe6">
+  <div class="sin hero">
+    <div class="brandmark r"><img src="assets/img/logo.png" alt="Logo"><span><small>HCD Kit · Aprende</small><b>Design Thinking</b></span></div>
+    <div class="eyebrow r" style="--d:.1s">Guía interactiva de estudio · basada en IDEO U</div>
+    <h1 class="r" style="--d:.2s">El proceso de Design Thinking,<br>paso a paso</h1>
+    <p class="lead r" style="--d:.3s">Siete fases para pasar de una buena pregunta a una solución que importa. Se enseña en orden, pero se vive de forma <em>fluida e iterativa</em>. Avanza con las flechas, salta entre fases con el mapa de arriba y usa las herramientas de cada etapa.</p>
+    <div class="btnrow r" style="--d:.42s"><button class="btn prime" data-goto="s-crea">Iniciar recorrido →</button><a class="btn" href="index.html">← Volver al kit</a></div>
+  </div>
+</section>
+
+<!-- 2 CREATIVIDAD + DEFINICIÓN -->
+<section class="slide" id="s-crea" data-ph="0" style="--ph:#4e8fe6">
+  <div class="sin">
+    <div class="eyebrow r">La premisa</div>
+    <h2 class="title r" style="--d:.08s">Todos somos creativos</h2>
+    <div class="quote r" style="--d:.14s">“Quizá no te consideres creativo, pero la verdad es que <span class="hl">todos lo somos</span>. El Design Thinking es el proceso que desbloquea esa creatividad.”</div>
+    <div class="g2">
+      <div class="card r" style="--d:.2s"><h4>Qué es</h4><p>Un enfoque de resolución de problemas <b>centrado en el ser humano</b>: parte de entender las necesidades reales de las personas y culmina en soluciones innovadoras y significativas.</p></div>
+      <div class="card r" style="--d:.26s"><h4>De dónde parte</h4><p>No de la tecnología ni de la idea favorita, sino de la <b>empatía</b>: ver, escuchar y entender a quien vive el problema.</p></div>
+    </div>
+    <div class="btnrow r" style="--d:.32s"><button class="btn prime" data-goto="s-squiggle">Siguiente →</button></div>
+  </div>
+</section>
+
+<!-- 3 DESIGN SQUIGGLE -->
+<section class="slide" id="s-squiggle" data-ph="0" style="--ph:#4e8fe6">
+  <div class="sin">
+    <div class="eyebrow r">El proceso real</div>
+    <h2 class="title r" style="--d:.08s">El <em>Design Squiggle</em></h2>
+    <p class="sub r" style="--d:.12s">Mueve el control: al principio el proceso es un <b>garabato caótico</b> de incertidumbre; con el tiempo se aclara hasta volverse una línea. Se enseña lineal, pero en la práctica es <b>fluido e iterativo</b> — retrocedes, repites y refinas.</p>
+    <div class="sqwrap r" style="--d:.16s">
+      <div class="sqstage">
+        <svg viewBox="0 0 600 200" preserveAspectRatio="none" aria-label="Design squiggle">
+          <path id="sqPath" fill="none" stroke="#4e8fe6" stroke-width="2.4" stroke-linecap="round"/>
+          <circle id="sqDot" r="7" fill="#d7e64b"/>
+        </svg>
+      </div>
+      <div class="sqlabel" id="sqLabel">Enmarcar</div>
+      <input type="range" id="sqRange" min="0" max="100" value="12">
+      <div class="sqcap"><span>Incertidumbre · caos</span><span>Claridad · solución</span></div>
+    </div>
+    <div class="btnrow r" style="--d:.24s"><button class="btn prime" data-goto="s-guides">Ver las 7 fases →</button></div>
+  </div>
+</section>
+
+<!-- 4 GUIDEPOSTS -->
+<section class="slide" id="s-guides" data-ph="0" style="--ph:#4e8fe6">
+  <div class="sin">
+    <div class="eyebrow r">El mapa</div>
+    <h2 class="title r" style="--d:.08s">Los 7 postes indicadores</h2>
+    <p class="sub r" style="--d:.12s">No son pasos rígidos sino <em>guideposts</em>: señales para orientarte. Toca una para ver su propósito.</p>
+    <div class="guides r" id="guides" style="--d:.16s"></div>
+    <div class="btnrow r" style="--d:.24s"><button class="btn prime" data-goto="s-f1a">Empezar: Fase 1 →</button></div>
+  </div>
+</section>
+
+<!-- 5 FASE 1a -->
+<section class="slide" id="s-f1a" data-ph="1" style="--ph:#4e8fe6">
+  <div class="sin">
+    <span class="phnum r">01</span>
+    <div class="eyebrow r" style="--d:.05s">Enmarcar una pregunta · <em>Frame a Question</em></div>
+    <h2 class="title r" style="--d:.1s">El poder de una gran pregunta</h2>
+    <p class="sub r" style="--d:.14s">Antes de saltar a soluciones, define el <b>reto correcto</b>. Una buena pregunta abre territorio; una mala lo cierra.</p>
+    <div class="casebadge r" style="--d:.18s">🎞️ Caso real · Polaroid</div>
+    <div class="card r" style="--d:.2s"><p>La cámara instantánea nació de la pregunta de una niña de 4 años: <b style="color:var(--white)">“¿Por qué tenemos que esperar para ver la foto?”</b> Una pregunta ingenua reescribió toda una industria.</p></div>
+    <label class="fld r" style="--d:.26s">Progresión de la curiosidad</label>
+    <div class="pills r" style="--d:.28s" id="curios">
+      <button class="pill on" data-c="0">1 · ¿Por qué…?</button>
+      <button class="pill" data-c="1">2 · ¿Qué pasaría si…?</button>
+      <button class="pill" data-c="2">3 · ¿Cómo podríamos…?</button>
+    </div>
+    <div class="card r" style="--d:.3s" id="curiosBox"><p>—</p></div>
+    <div class="btnrow r" style="--d:.36s"><button class="btn prime" data-goto="s-f1b">Construir una “¿Cómo podríamos…?” →</button></div>
+  </div>
+</section>
+
+<!-- 6 FASE 1b · HMW -->
+<section class="slide" id="s-f1b" data-ph="1" style="--ph:#4e8fe6">
+  <div class="sin">
+    <div class="eyebrow r">Enmarcar · herramienta</div>
+    <h2 class="title r" style="--d:.08s">Anatomía de “¿Cómo podríamos…?”</h2>
+    <div class="g3">
+      <div class="card r" style="--d:.14s"><span class="ic">🙌</span><h4>Cómo <em>(How)</em></h4><p>Asume que <b>sí existe</b> una solución. Invita a buscarla.</p></div>
+      <div class="card r" style="--d:.2s"><span class="ic">🕊️</span><h4>Podríamos <em>(Might)</em></h4><p>Libera del juicio. No decimos “deberíamos” <em>(should)</em>: eso presiona y cierra opciones.</p></div>
+      <div class="card r" style="--d:.26s"><span class="ic">🤝</span><h4>Nosotros <em>(We)</em></h4><p>Es esfuerzo <b>colaborativo</b>, no en solitario.</p></div>
+    </div>
+    <div class="tip r" style="--d:.3s"><span class="tk">Ejemplo · hospital</span><p>“¿Cómo podríamos asegurar que los pacientes se sientan <b style="color:var(--white)">apoyados e informados</b> en cada paso de su atención?”</p></div>
+    <label class="fld r" style="--d:.34s">Tu turno · redacta tu “¿Cómo podríamos…?”</label>
+    <textarea class="r" id="hmwInput" style="--d:.36s" placeholder="¿Cómo podríamos…?"></textarea>
+    <div id="hmwWarn" style="display:none;margin-top:8px;color:var(--warn);font-size:.9rem;font-family:'Archivo';font-weight:700">💡 Cuidado con “deberíamos / debería”: suena a obligación y cierra la creatividad. Prueba “podríamos”.</div>
+    <div class="tip r" style="--d:.4s"><span class="tk">Consejo</span><p>Suficientemente <b style="color:var(--white)">amplia</b> para la creatividad, suficientemente <b style="color:var(--white)">enfocada</b> para inspirar soluciones reales.</p></div>
+    <div class="btnrow r" style="--d:.44s"><button class="btn prime" data-goto="s-f2a">Fase 2: Reunir inspiración →</button></div>
+  </div>
+</section>
+
+<!-- 7 FASE 2a -->
+<section class="slide" id="s-f2a" data-ph="2" style="--ph:#f86666">
+  <div class="sin">
+    <span class="phnum r">02</span>
+    <div class="eyebrow r" style="--d:.05s">Reunir inspiración · <em>Gather Inspiration</em></div>
+    <h2 class="title r" style="--d:.1s">La empatía, corazón del diseño</h2>
+    <p class="sub r" style="--d:.14s">La capacidad de entender lo que otros <b>ven, sienten, piensan y experimentan</b> —intelectual y emocionalmente—, dejando atrás tus suposiciones. Diseñas <b>para y con</b> las personas.</p>
+    <div class="g3">
+      <div class="card r" style="--d:.18s"><span class="ic">👁️</span><h4>Observar</h4><p>Mira comportamientos reales, no solo lo que dicen.</p></div>
+      <div class="card r" style="--d:.22s"><span class="ic">👂</span><h4>Escuchar</h4><p>Pregunta, deja hablar, busca el porqué detrás.</p></div>
+      <div class="card r" style="--d:.26s"><span class="ic">🚪</span><h4>Entrar en su mundo</h4><p>Vive el contexto; ponte en sus zapatos.</p></div>
+    </div>
+    <label class="fld r" style="--d:.3s">5 métodos para reunir inspiración</label>
+    <div class="pills r" style="--d:.32s">
+      <span class="pill">Entrevistas</span><span class="pill">Observaciones</span><span class="pill">Encuestas</span><span class="pill">Empatía inmersiva</span><span class="pill">Industrias análogas</span>
+    </div>
+    <div class="btnrow r" style="--d:.38s"><button class="btn prime" data-goto="s-f2b">Caso hospital →</button></div>
+  </div>
+</section>
+
+<!-- 8 FASE 2b -->
+<section class="slide" id="s-f2b" data-ph="2" style="--ph:#f86666">
+  <div class="sin">
+    <div class="eyebrow r">Reunir · en acción</div>
+    <h2 class="title r" style="--d:.08s">Hospital + parques temáticos</h2>
+    <div class="g2">
+      <div class="card r" style="--d:.14s"><span class="ic">🏥</span><h4>Observar el recorrido</h4><p>Seguir el viaje emocional de pacientes <b>y sus familias</b> en salas de espera, pasillos y habitaciones.</p></div>
+      <div class="card r" style="--d:.2s"><span class="ic">🎢</span><h4>Industria análoga</h4><p>Estudiar cómo los <b>parques temáticos</b> guían a multitudes por espacios grandes haciéndolas sentir cómodas y orientadas.</p></div>
+    </div>
+    <div class="tip r" style="--d:.28s"><span class="tk">Consejo</span><p>“Las personas no siempre dicen lo que piensan ni hacen lo que dicen. Mira más allá de las palabras: observa <b style="color:var(--white)">comportamientos, emociones y patrones</b>.”</p></div>
+    <div class="btnrow r" style="--d:.34s"><button class="btn prime" data-goto="s-f3a">Fase 3: Sintetizar →</button></div>
+  </div>
+</section>
+
+<!-- 9 FASE 3a -->
+<section class="slide" id="s-f3a" data-ph="3" style="--ph:#ff9f1a">
+  <div class="sin">
+    <span class="phnum r">03</span>
+    <div class="eyebrow r" style="--d:.05s">Sintetizar para la acción · <em>Synthesize</em></div>
+    <h2 class="title r" style="--d:.1s">Armar el rompecabezas</h2>
+    <p class="sub r" style="--d:.14s">Conectar historias, observaciones y datos para detectar <b>temas sorprendentes</b> y retos recurrentes. De aquí salen los <em>insights</em>.</p>
+    <div class="quote r" style="--d:.18s">Un <span class="hl">insight</span> no es un dato ni una observación: es un momento <b style="color:var(--white)">“¡ajá!”</b> que cambia tu perspectiva y revela una necesidad no cubierta.</div>
+    <label class="fld r" style="--d:.24s">Los 3 atributos de un buen insight</label>
+    <div class="pills r" style="--d:.26s" id="insAttr">
+      <button class="pill on" data-a="0">Informar</button><button class="pill" data-a="1">Inspirar</button><button class="pill" data-a="2">Ser memorable</button>
+    </div>
+    <div class="card r" style="--d:.3s" id="insBox"><p>—</p></div>
+    <div class="btnrow r" style="--d:.36s"><button class="btn prime" data-goto="s-f3b">Transformar un dato en insight →</button></div>
+  </div>
+</section>
+
+<!-- 10 FASE 3b · TRANSFORMER -->
+<section class="slide" id="s-f3b" data-ph="3" style="--ph:#ff9f1a">
+  <div class="sin">
+    <div class="eyebrow r">Sintetizar · herramienta</div>
+    <h2 class="title r" style="--d:.08s">De dato → insight → <em>HMW</em></h2>
+    <p class="sub r" style="--d:.12s">Mueve el control sobre el caso de la <b>gestión de medicación</b> y mira cómo una observación plana se convierte en un insight poderoso y luego en una pregunta accionable.</p>
+    <div class="trwrap r" style="--d:.16s">
+      <div class="trstate"><div class="trk" id="trK">Estado 1 · Observación</div><div class="trtxt" id="trT">—</div></div>
+      <input type="range" id="trRange" min="0" max="2" value="0" step="1" style="margin-top:14px">
+      <div class="trsteps"><span>Observación</span><span>Insight</span><span>¿Cómo podríamos…?</span></div>
+    </div>
+    <div class="btnrow r" style="--d:.24s"><button class="btn prime" data-goto="s-f4a">Fase 4: Generar ideas →</button></div>
+  </div>
+</section>
+
+<!-- 11 FASE 4a · DIVERGIR/CONVERGIR -->
+<section class="slide" id="s-f4a" data-ph="4" style="--ph:#f2c531">
+  <div class="sin">
+    <span class="phnum r">04</span>
+    <div class="eyebrow r" style="--d:.05s">Generar ideas · <em>Generate Ideas</em></div>
+    <h2 class="title r" style="--d:.1s">Divergir, luego convergir</h2>
+    <div class="dcwrap">
+      <div class="dccard on r" style="--d:.16s" id="dcDiv">
+        <h4>◄► Divergir</h4>
+        <div class="dcsvg"><svg viewBox="0 0 200 110" id="svgDiv"></svg></div>
+        <p class="card">Ir a lo ancho, suspender el juicio, abrazar ideas descabelladas. <b style="color:var(--white)">Cantidad sobre calidad</b>: “la mejor forma de tener una buena idea es tener muchas”.</p>
+      </div>
+      <div class="dccard r" style="--d:.22s" id="dcConv">
+        <h4>►◄ Convergir</h4>
+        <div class="dcsvg"><svg viewBox="0 0 200 110" id="svgConv"></svg></div>
+        <p class="card">Evaluar y elegir los conceptos más <b style="color:var(--white)">emocionantes, resonantes o incluso arriesgados</b>.</p>
+      </div>
+    </div>
+    <div class="quote r" style="--d:.28s">“No podemos llegar a lugares nuevos haciendo solo lo que funcionó en el pasado.”</div>
+    <div class="btnrow r" style="--d:.34s"><button class="btn prime" data-goto="s-f4b">Las 7 reglas + reto de 5 min →</button></div>
+  </div>
+</section>
+
+<!-- 12 FASE 4b · BRAINSTORM -->
+<section class="slide" id="s-f4b" data-ph="4" style="--ph:#f2c531">
+  <div class="sin">
+    <div class="eyebrow r">Generar · herramienta</div>
+    <h2 class="title r" style="--d:.08s">Las 7 reglas del <em>brainstorming</em></h2>
+    <div class="g2 r" style="--d:.12s">
+      <ol style="list-style:none;display:grid;gap:7px">
+        <li class="card" style="padding:10px 14px">1 · Postergar el juicio</li>
+        <li class="card" style="padding:10px 14px">2 · Fomentar ideas descabelladas</li>
+        <li class="card" style="padding:10px 14px">3 · Construir sobre ideas de otros (<em>“Sí, y…”</em> en vez de <em>“Pero…”</em>)</li>
+        <li class="card" style="padding:10px 14px">4 · Mantenerse en el tema</li>
+      </ol>
+      <ol style="list-style:none;display:grid;gap:7px">
+        <li class="card" style="padding:10px 14px">5 · Una conversación a la vez</li>
+        <li class="card" style="padding:10px 14px">6 · Buscar cantidad (meta ambiciosa y supérala)</li>
+        <li class="card" style="padding:10px 14px">7 · Ser visual (bocetar activa otras áreas del cerebro)</li>
+      </ol>
+    </div>
+    <label class="fld r" style="--d:.2s">Reto de 5 minutos · lanza tantas ideas como puedas</label>
+    <div class="timer r" style="--d:.22s">
+      <div class="tclock" id="tClock">5:00</div>
+      <button class="btn prime" id="tStart">Iniciar</button>
+      <button class="btn" id="tReset">Reiniciar</button>
+      <div style="margin-left:auto;text-align:right"><div class="ideacount" id="tCount">0</div><div style="font-size:.7rem;color:var(--mute)">ideas</div></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:10px"><input type="text" id="ideaIn" placeholder="Escribe una idea y Enter…"><button class="btn prime" id="ideaAdd">+</button></div>
+    <div class="idealist" id="ideaList"></div>
+    <div class="btnrow r" style="--d:.3s"><button class="btn prime" data-goto="s-f5a">Fase 5: Hacer tangible →</button></div>
+  </div>
+</section>
+
+<!-- 13 FASE 5a -->
+<section class="slide" id="s-f5a" data-ph="5" style="--ph:#9a5bff">
+  <div class="sin">
+    <span class="phnum r">05</span>
+    <div class="eyebrow r" style="--d:.05s">Hacer tangibles las ideas · <em>Make Tangible</em></div>
+    <h2 class="title r" style="--d:.1s">Mentalidad de prototipado</h2>
+    <p class="sub r" style="--d:.14s">La primera versión no es la final. Prototipar no trata de perfección, sino de <b>aprender rápido</b>. Empieza preguntando: <em>¿qué quieres aprender?</em> → arranca por tus mayores dudas, supuestos y riesgos.</p>
+    <label class="fld r" style="--d:.2s">Tipos de prototipo</label>
+    <div class="pills r" style="--d:.22s">
+      <span class="pill">Boceto</span><span class="pill">Storyboard</span><span class="pill">Maqueta de cartón</span><span class="pill">Mockup</span><span class="pill">Juego de rol</span>
+    </div>
+    <div class="btnrow r" style="--d:.3s"><button class="btn prime" data-goto="s-f5b">El quiosco simulado →</button></div>
+  </div>
+</section>
+
+<!-- 14 FASE 5b -->
+<section class="slide" id="s-f5b" data-ph="5" style="--ph:#9a5bff">
+  <div class="sin">
+    <div class="eyebrow r">Hacer tangible · caso</div>
+    <h2 class="title r" style="--d:.08s">El quiosco falso</h2>
+    <div class="casebadge r" style="--d:.12s">✂️ Caso real · IDEO</div>
+    <div class="card r" style="--d:.16s"><p>Para un nuevo servicio de medicación, IDEO instaló un <b>quiosco falso</b> en un centro comercial —sin producto real— solo para medir reacciones y probar la <b style="color:var(--white)">deseabilidad</b>.</p></div>
+    <div class="quote r" style="--d:.22s">Mantra: <span class="hl">“gastar poco para aprender mucho”</span> — bajo costo, bajo riesgo.</div>
+    <div class="tip r" style="--d:.28s"><span class="tk">Consejo</span><p>Construye solo lo suficiente para probar tu idea. <b style="color:var(--white)">¿Cuál es la versión más pequeña que puedes prototipar?</b> No lo compliques.</p></div>
+    <div class="btnrow r" style="--d:.34s"><button class="btn prime" data-goto="s-f6a">Fase 6: Probar →</button></div>
+  </div>
+</section>
+
+<!-- 15 FASE 6a · VENN -->
+<section class="slide" id="s-f6a" data-ph="6" style="--ph:#2bc4d4">
+  <div class="sin">
+    <span class="phnum r">06</span>
+    <div class="eyebrow r" style="--d:.05s">Probar para aprender · <em>Test to Learn</em></div>
+    <h2 class="title r" style="--d:.1s">Los 4 lentes de la innovación</h2>
+    <p class="sub r" style="--d:.14s">No solo validar lo que funciona, también descubrir <b>lo que no</b>. Toca cada lente: donde se cruzan los cuatro vive la gran innovación. Caso: <em>app de gestión de medicamentos</em>.</p>
+    <div class="vennwrap">
+      <div class="r" style="--d:.18s">
+        <div class="vennstage">
+          <svg viewBox="0 0 320 300" id="vennSvg" aria-label="Cuatro lentes de innovación">
+            <circle class="vcircle on" data-l="0" cx="130" cy="120" r="85" fill="#2bc4d4" stroke="#2bc4d4"/>
+            <circle class="vcircle" data-l="1" cx="190" cy="120" r="85" fill="#f2c531" stroke="#f2c531"/>
+            <circle class="vcircle" data-l="2" cx="130" cy="180" r="85" fill="#f86666" stroke="#f86666"/>
+            <circle class="vcircle" data-l="3" cx="190" cy="180" r="85" fill="#9a5bff" stroke="#9a5bff"/>
+            <circle cx="160" cy="150" r="20" fill="#d7e64b" fill-opacity=".9" style="pointer-events:none"/>
+          </svg>
+        </div>
+        <div class="vlens" id="vlens"></div>
+      </div>
+      <div class="vennside r" style="--d:.22s" id="vennBox"></div>
+    </div>
+    <div class="btnrow r" style="--d:.3s"><button class="btn prime" data-goto="s-f6b">Iterar →</button></div>
+  </div>
+</section>
+
+<!-- 16 FASE 6b -->
+<section class="slide" id="s-f6b" data-ph="6" style="--ph:#2bc4d4">
+  <div class="sin">
+    <div class="eyebrow r">Probar · mentalidad</div>
+    <h2 class="title r" style="--d:.08s">Retroalimentación e iteración</h2>
+    <div class="g2">
+      <div class="card r" style="--d:.14s"><span class="ic">🧭</span><h4>Mente abierta</h4><p>Los mejores insights llegan de lugares inesperados. Escucha incluso lo que no esperabas.</p></div>
+      <div class="card r" style="--d:.2s"><span class="ic">🔁</span><h4>Ningún producto nace terminado</h4><p>Evoluciona por ciclos de prototipar, probar y refinar.</p></div>
+    </div>
+    <div class="quote r" style="--d:.26s">“¿Dónde puedes empujar más lejos? ¿Cómo puede tu solución ser —aunque sea un poco— mejor?”</div>
+    <div class="btnrow r" style="--d:.32s"><button class="btn prime" data-goto="s-f7">Fase 7: Compartir →</button></div>
+  </div>
+</section>
+
+<!-- 17 FASE 7 -->
+<section class="slide" id="s-f7" data-ph="7" style="--ph:#3ad17a">
+  <div class="sin">
+    <span class="phnum r">07</span>
+    <div class="eyebrow r" style="--d:.05s">Compartir la historia · <em>Share the Story</em></div>
+    <h2 class="title r" style="--d:.1s">El poder del <em>storytelling</em></h2>
+    <p class="sub r" style="--d:.14s">Las historias conectan a las personas con las ideas, explican por qué importa la solución e inspiran a actuar.</p>
+    <div class="g3">
+      <div class="card r" style="--d:.18s"><span class="ic">🎯</span><h4>1 · El reto</h4><p>Qué te propusiste resolver.</p></div>
+      <div class="card r" style="--d:.22s"><span class="ic">💡</span><h4>2 · Los insights</h4><p>Qué descubriste en el camino.</p></div>
+      <div class="card r" style="--d:.26s"><span class="ic">🌱</span><h4>3 · El impacto</h4><p>Qué cambia tu solución.</p></div>
+    </div>
+    <div class="quote r" style="--d:.3s">Mantra de IDEO: <span class="hl">“Si quieres que a la gente le importe, cuéntale una historia.”</span></div>
+    <div class="btnrow r" style="--d:.36s"><button class="btn prime" data-goto="s-cierre">Cierre y tu reto →</button></div>
+  </div>
+</section>
+
+<!-- 18 CIERRE -->
+<section class="slide" id="s-cierre" data-ph="c" style="--ph:#d7e64b">
+  <div class="sin">
+    <div class="eyebrow r">Cierre · práctica</div>
+    <h2 class="title r" style="--d:.08s">Ahora es tu turno</h2>
+    <p class="sub r" style="--d:.12s">Recuerda: las 7 fases no son una escalera. Puedes saltar entre ellas, repetir y dedicar más tiempo a unas que a otras según el reto. El proceso es iterativo.</p>
+    <label class="fld r" style="--d:.16s">¿Qué reto abordarás a continuación?</label>
+    <textarea class="r" id="finalChallenge" style="--d:.18s" placeholder="Mi próximo reto de diseño…"></textarea>
+    <div class="btnrow r" style="--d:.24s">
+      <button class="btn prime" id="exportBtn">↓ Exportar mis apuntes (.txt)</button>
+      <button class="btn" id="copyBtn">⧉ Copiar apuntes</button>
+      <a class="btn" href="index.html">← Volver al kit</a>
+      <a class="btn" href="empatia.html">🧠 Ir al mapa de empatía</a>
+    </div>
+    <p class="sub r" style="--d:.3s;margin-top:14px;font-size:.84rem">Los apuntes recopilan tu “¿Cómo podríamos…?”, las ideas del reto de 5 minutos y tu próximo reto.</p>
+  </div>
+</section>
+
+</div>
+
+<div class="hud">
+  <button id="prev" aria-label="Anterior"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <span class="counter"><b id="cur">01</b> / <span id="total">00</span></span>
+  <button id="next" aria-label="Siguiente"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <button id="fs" aria-label="Pantalla completa"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 9V5a1 1 0 011-1h4M20 9V5a1 1 0 00-1-1h-4M4 15v4a1 1 0 001 1h4M20 15v4a1 1 0 01-1 1h-4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</div>
+<div class="hint-key" id="keyhint"><kbd>←</kbd><kbd>→</kbd> navega · <kbd>F</kbd> pantalla completa</div>
+<div class="toast" id="toast"></div>
+
+<script>
+function $(s,r){return (r||document).querySelector(s);} function $$(s,r){return [].slice.call((r||document).querySelectorAll(s));}
+var toastT; function toast(m){ var t=$('#toast'); t.textContent=m; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(function(){t.classList.remove('on')},1800); }
+
+/* ---------- fases (mapa + acento) ---------- */
+var PHASES=[
+  {n:'01',t:'Enmarcar',c:'#4e8fe6',first:'s-f1a'},
+  {n:'02',t:'Reunir',c:'#f86666',first:'s-f2a'},
+  {n:'03',t:'Sintetizar',c:'#ff9f1a',first:'s-f3a'},
+  {n:'04',t:'Generar',c:'#f2c531',first:'s-f4a'},
+  {n:'05',t:'Tangible',c:'#9a5bff',first:'s-f5a'},
+  {n:'06',t:'Probar',c:'#2bc4d4',first:'s-f6a'},
+  {n:'07',t:'Compartir',c:'#3ad17a',first:'s-f7'}
+];
+(function(){
+  var host=$('#phasemap');
+  PHASES.forEach(function(p,i){
+    var b=document.createElement('button'); b.className='pdot'; b.style.setProperty('--pc',p.c);
+    b.innerHTML='<i></i><b>'+p.n+' '+p.t+'</b>'; b.setAttribute('data-ph',i+1); b.title='Fase '+p.n+' · '+p.t;
+    b.addEventListener('click',function(){ var t=indexOfId(p.first); if(t>=0) go(t); });
+    host.appendChild(b);
+  });
+})();
+
+/* ---------- guideposts ---------- */
+var GUIDE_ICONS=[
+ '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 9h16M9 4v16"/></svg>',
+ '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7l2-3h4l2 3"/><circle cx="12" cy="13" r="3"/></svg>',
+ '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M15 9l-2 5-5 2 2-5z"/></svg>',
+ '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 00-4 10c1 1 1 2 1 3h6c0-1 0-2 1-3a6 6 0 00-4-10z"/></svg>',
+ '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4L8.5 15.5M20 20L8.5 8.5"/></svg>',
+ '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4h6v3H9z"/><path d="M8 11h8M8 15h5"/></svg>',
+ '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0012 0M12 17v4M8 21h8"/></svg>'
+];
+var GUIDE_PURP=['Definir el reto correcto antes de buscar soluciones.','Empatizar: observar, escuchar y entrar en el mundo del usuario.','Convertir datos e historias en insights accionables.','Divergir y convergir: muchas ideas, luego las mejores.','Prototipar para aprender rápido, no para la perfección.','Probar con los 4 lentes y mejorar iterando.','Contar la historia para que la solución importe.'];
+(function(){
+  var host=$('#guides');
+  PHASES.forEach(function(p,i){
+    var g=document.createElement('div'); g.className='guide'; g.style.setProperty('--gc',p.c);
+    g.innerHTML='<div class="gi">'+GUIDE_ICONS[i]+'</div><div class="gn">FASE '+p.n+'</div><div class="gt">'+p.t+'</div><div class="gp">'+GUIDE_PURP[i]+'</div>';
+    g.addEventListener('click',function(){
+      var on=g.classList.contains('on');
+      $$('.guide',host).forEach(function(x){x.classList.remove('on')});
+      host.classList.toggle('dim',!on);
+      if(!on){ g.classList.add('on'); } else { host.classList.remove('dim'); }
+    });
+    host.appendChild(g);
+  });
+})();
+
+/* ---------- design squiggle ---------- */
+(function(){
+  var W=600,H=100,cy=100;
+  // puntos caóticos (bucles) normalizados y una recta; interpolamos
+  var chaos=[], line=[], N=60;
+  for(var i=0;i<=N;i++){
+    var x=i/N*W;
+    var prog=i/N;
+    // amplitud grande al inicio, decae
+    var amp=(1-prog)*70;
+    var w=Math.sin(prog*Math.PI*7)* amp + Math.sin(prog*Math.PI*17)*amp*0.4;
+    chaos.push([x, cy + w]);
+    line.push([x, cy]);
+  }
+  var path=$('#sqPath'), dot=$('#sqDot'), range=$('#sqRange'), label=$('#sqLabel');
+  var names=['Enmarcar','Reunir','Sintetizar','Oportunidad','Ideación','Probar','Solución'];
+  function draw(t){ // t 0..1 = straightening
+    var d='';
+    for(var i=0;i<chaos.length;i++){
+      var x=chaos[i][0];
+      var y=chaos[i][1]*(1-t)+line[i][1]*t;
+      d+=(i?'L':'M')+x.toFixed(1)+' '+y.toFixed(1)+' ';
+    }
+    path.setAttribute('d',d);
+    // dot position along progress
+    var idx=Math.round(t*(chaos.length-1));
+    var px=chaos[idx][0], py=chaos[idx][1]*(1-t)+line[idx][1]*t;
+    dot.setAttribute('cx',px); dot.setAttribute('cy',py);
+    label.textContent=names[Math.min(names.length-1,Math.floor(t*names.length))];
+  }
+  function upd(){ draw(+range.value/100); }
+  range.addEventListener('input',upd); upd();
+})();
+
+/* ---------- curiosidad stepper ---------- */
+(function(){
+  var txt=['<b style="color:var(--white)">¿Por qué…?</b> — busca las causas raíz. No te quedes en el síntoma.','<b style="color:var(--white)">¿Qué pasaría si…?</b> — abre la imaginación y la lluvia de ideas sin límites.','<b style="color:var(--white)">¿Cómo podríamos…?</b> — convierte el reto en una oportunidad accionable y colaborativa.'];
+  $$('#curios .pill').forEach(function(b){ b.addEventListener('click',function(){
+    $$('#curios .pill').forEach(function(x){x.classList.remove('on')}); b.classList.add('on');
+    $('#curiosBox').innerHTML='<p>'+txt[+b.getAttribute('data-c')]+'</p>';
+  }); });
+  $('#curiosBox').innerHTML='<p>'+txt[0]+'</p>';
+})();
+
+/* ---------- HMW warning ---------- */
+(function(){
+  var inp=$('#hmwInput'), warn=$('#hmwWarn');
+  inp.addEventListener('input',function(){
+    var v=this.value.toLowerCase();
+    warn.style.display=(/deber[íi]a|deberiamos|deberíamos|\bshould\b/.test(v))?'block':'none';
+  });
+})();
+
+/* ---------- insight atributos ---------- */
+(function(){
+  var txt=['<b style="color:var(--white)">Informar:</b> revela necesidades y deseos reales de las personas.','<b style="color:var(--white)">Inspirar:</b> motiva a la acción, no se queda en descripción.','<b style="color:var(--white)">Ser memorable:</b> fácil de recordar y de compartir con el equipo.'];
+  $$('#insAttr .pill').forEach(function(b){ b.addEventListener('click',function(){
+    $$('#insAttr .pill').forEach(function(x){x.classList.remove('on')}); b.classList.add('on');
+    $('#insBox').innerHTML='<p>'+txt[+b.getAttribute('data-a')]+'</p>';
+  }); });
+  $('#insBox').innerHTML='<p>'+txt[0]+'</p>';
+})();
+
+/* ---------- transformer dato->insight->hmw ---------- */
+(function(){
+  var K=['Estado 1 · Observación plana','Estado 2 · Insight poderoso','Estado 3 · Nueva pregunta (HMW)'];
+  var T=['“A las personas les cuesta llevar el control de su medicación.”','“Las personas quieren que gestionar su medicación se sienta <em>sin esfuerzo</em>, no como otra tarea en su lista de pendientes.”','“¿Cómo podríamos hacer que gestionar la medicación se sienta sin esfuerzo e integrado en la vida diaria?”'];
+  var r=$('#trRange');
+  function upd(){ var i=+r.value; $('#trK').textContent=K[i]; $('#trT').innerHTML=T[i]; }
+  r.addEventListener('input',upd); upd();
+})();
+
+/* ---------- divergir/convergir svg + toggle ---------- */
+(function(){
+  var div=$('#svgDiv'), conv=$('#svgConv');
+  var cols=['#f2c531','#f86666','#2bc4d4','#9a5bff','#4e8fe6'];
+  var dd='', cc='';
+  for(var i=0;i<5;i++){
+    var y2=10+i*22.5;
+    dd+='<path d="M10 55 L190 '+y2+'" stroke="'+cols[i]+'" stroke-width="2.4" fill="none"/>';
+    cc+='<path d="M10 '+y2+' L190 55" stroke="'+cols[i]+'" stroke-width="2.4" fill="none"/>';
+  }
+  div.innerHTML=dd+'<circle cx="10" cy="55" r="5" fill="#d7e64b"/>';
+  conv.innerHTML=cc+'<circle cx="190" cy="55" r="5" fill="#d7e64b"/>';
+  function sel(which){ $('#dcDiv').classList.toggle('on',which==='d'); $('#dcConv').classList.toggle('on',which==='c'); }
+  $('#dcDiv').addEventListener('click',function(){sel('d')}); $('#dcConv').addEventListener('click',function(){sel('c')});
+})();
+
+/* ---------- brainstorm timer + ideas ---------- */
+var IDEAS=[];
+(function(){
+  var total=300, left=total, tid=null, clock=$('#tClock');
+  function fmt(s){ var m=Math.floor(s/60), r=s%60; return m+':'+String(r).padStart(2,'0'); }
+  function render(){ clock.textContent=fmt(left); clock.className='tclock'+(left<=30?' done':left<=60?' warn':''); }
+  function tick(){ if(left<=0){ stop(); toast('¡Tiempo! ¿Superaste lo obvio?'); return; } left--; render(); }
+  function start(){ if(tid) return; tid=setInterval(tick,1000); $('#tStart').textContent='Pausar'; }
+  function stop(){ clearInterval(tid); tid=null; $('#tStart').textContent='Iniciar'; }
+  $('#tStart').addEventListener('click',function(){ tid?stop():start(); });
+  $('#tReset').addEventListener('click',function(){ stop(); left=total; render(); });
+  render();
+  function addIdea(v){ v=(v||'').trim(); if(!v) return; IDEAS.push(v); $('#tCount').textContent=IDEAS.length;
+    var d=document.createElement('div'); d.className='idea'; d.textContent=v; $('#ideaList').appendChild(d); $('#ideaList').scrollTop=9e9; }
+  $('#ideaAdd').addEventListener('click',function(){ var i=$('#ideaIn'); addIdea(i.value); i.value=''; i.focus(); });
+  $('#ideaIn').addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); addIdea(this.value); this.value=''; } });
+})();
+
+/* ---------- venn ---------- */
+(function(){
+  var L=[
+    {k:'Deseabilidad',c:'#2bc4d4',d:'¿Responde a necesidades humanas reales?',q:'¿La app hace la gestión más fácil y menos estresante?'},
+    {k:'Factibilidad',c:'#f2c531',d:'¿Podemos construirlo con nuestra tecnología y recursos?',q:'¿Pueden actualizar su lista de medicación sin problemas?'},
+    {k:'Viabilidad',c:'#f86666',d:'¿Es sostenible económicamente a largo plazo?',q:'¿Suficientes personas la valoran para sostenerla?'},
+    {k:'Responsabilidad',c:'#9a5bff',d:'¿Evita daños a las personas y al planeta?',q:'¿Mantiene privados y seguros los datos del paciente?'}
+  ];
+  // chips confiables (los círculos se traslapan y bloquean clics)
+  var vl=$('#vlens');
+  L.forEach(function(l,i){ var b=document.createElement('button'); b.style.setProperty('--lc',l.c); b.textContent=l.k; b.setAttribute('data-l',i); b.addEventListener('click',function(){show(i)}); vl.appendChild(b); });
+  function show(i){
+    $$('#vennSvg .vcircle').forEach(function(x){x.classList.toggle('on',+x.getAttribute('data-l')===i)});
+    $$('#vlens button').forEach(function(x){x.classList.toggle('on',+x.getAttribute('data-l')===i)});
+    var l=L[i];
+    $('#vennBox').innerHTML='<div class="vk" style="color:'+l.c+'">Lente '+(i+1)+'</div><h4>'+l.k+'</h4><p>'+l.d+'</p><div class="vq">App de medicamentos: '+l.q+'</div>';
+  }
+  $$('#vennSvg .vcircle').forEach(function(c){ c.addEventListener('click',function(){ show(+c.getAttribute('data-l')); }); });
+  show(0);
+})();
+
+/* ---------- export apuntes ---------- */
+function buildNotes(){
+  var hmw=($('#hmwInput').value||'').trim();
+  var reto=($('#finalChallenge').value||'').trim();
+  var lines=[];
+  lines.push('APUNTES · El proceso de Design Thinking (IDEO U) · HCD Kit');
+  lines.push('Fecha: '+new Date().toLocaleString('es-MX'));
+  lines.push('');
+  lines.push('MI "¿CÓMO PODRÍAMOS…?" (Fase 1):');
+  lines.push(hmw||'(sin escribir)');
+  lines.push('');
+  lines.push('IDEAS DEL RETO DE 5 MINUTOS (Fase 4): '+IDEAS.length);
+  IDEAS.forEach(function(x,i){ lines.push('  '+(i+1)+'. '+x); });
+  if(!IDEAS.length) lines.push('  (sin ideas)');
+  lines.push('');
+  lines.push('MI PRÓXIMO RETO DE DISEÑO:');
+  lines.push(reto||'(sin escribir)');
+  return lines.join('\n');
+}
+$('#exportBtn').addEventListener('click',function(){
+  var blob=new Blob(['﻿'+buildNotes()],{type:'text/plain;charset=utf-8'});
+  var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='apuntes-design-thinking.txt';
+  document.body.appendChild(a); a.click(); a.remove(); toast('Apuntes descargados');
+});
+$('#copyBtn').addEventListener('click',function(){
+  var txt=buildNotes();
+  if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(function(){toast('Apuntes copiados')},function(){fallback(txt)}); } else fallback(txt);
+  function fallback(t){ try{var ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();toast('Apuntes copiados');}catch(e){toast('No se pudo copiar');} }
+});
+
+/* ---------- navegación ---------- */
+var slides=$$('.slide'), N=slides.length, idx=0, prog=$('#prog'), cur=$('#cur'), prevB=$('#prev'), nextB=$('#next'), root=document.documentElement;
+$('#total').textContent=String(N).padStart(2,'0');
+function indexOfId(id){ for(var q=0;q<N;q++) if(slides[q].id===id) return q; return -1; }
+function go(n,noHash){ n=Math.max(0,Math.min(N-1,n)); if(n===idx&&slides[idx].classList.contains('active')) return;
+  slides[idx].classList.remove('active'); idx=n; var s=slides[idx]; s.classList.add('active'); s.scrollTop=0;
+  var ph=getComputedStyle(s).getPropertyValue('--ph'); root.style.setProperty('--ph',ph.trim());
+  prog.style.width=(idx/(N-1)*100)+'%'; cur.textContent=String(idx+1).padStart(2,'0'); prevB.disabled=idx===0; nextB.disabled=idx===N-1;
+  var pd=s.getAttribute('data-ph');
+  $$('.pdot').forEach(function(d){ d.classList.toggle('on',d.getAttribute('data-ph')===pd); });
+  if(!noHash){ try{ history.replaceState(null,'','#'+s.id); }catch(e){} }
+}
+function next(){go(idx+1)} function prev(){go(idx-1)}
+nextB.addEventListener('click',function(){next();this.blur()}); prevB.addEventListener('click',function(){prev();this.blur()});
+document.addEventListener('click',function(e){ var g=e.target.closest('[data-goto]'); if(g){ e.preventDefault(); var t=indexOfId(g.getAttribute('data-goto')); if(t>=0) go(t); g.blur&&g.blur(); } });
+var kh=$('#keyhint');
+function typing(t){ if(!t||!t.tagName) return false; var tag=t.tagName; return tag==='TEXTAREA'||tag==='SELECT'||t.isContentEditable||(tag==='INPUT'&&t.type!=='button'); }
+document.addEventListener('keydown',function(e){ if(e.ctrlKey||e.metaKey||e.altKey) return;
+  if(typing(e.target)){ if(e.key==='Escape'){ e.target.blur(); } return; }
+  var onBtn=e.target&&(e.target.tagName==='BUTTON'||e.target.tagName==='A');
+  if(e.key==='ArrowRight'||e.key==='PageDown'||(e.key===' '&&!e.shiftKey&&!onBtn)){e.preventDefault();next();kh.classList.add('gone')}
+  else if(e.key==='ArrowLeft'||e.key==='PageUp'||(e.key===' '&&e.shiftKey&&!onBtn)){e.preventDefault();prev();kh.classList.add('gone')}
+  else if(e.key==='Home') go(0); else if(e.key==='End') go(N-1); else if(e.key==='f'||e.key==='F') toggleFs(); });
+var tx=0,ty=0,tOk=false;
+$('#deck').addEventListener('touchstart',function(e){ tOk=!e.target.closest('input,textarea,button,select,.idealist,.vennstage,.sqwrap,.trwrap'); tx=e.changedTouches[0].clientX; ty=e.changedTouches[0].clientY; },{passive:true});
+$('#deck').addEventListener('touchend',function(e){ if(!tOk) return; var dx=e.changedTouches[0].clientX-tx, dy=e.changedTouches[0].clientY-ty; if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)){ dx<0?next():prev(); kh.classList.add('gone'); } },{passive:true});
+function toggleFs(){ if(!document.fullscreenElement){ (document.documentElement.requestFullscreen||function(){}).call(document.documentElement); } else { (document.exitFullscreen||function(){}).call(document); } }
+$('#fs').addEventListener('click',function(){toggleFs();this.blur()});
+window.addEventListener('hashchange',function(){ var t=indexOfId((location.hash||'').slice(1)); if(t>=0&&t!==idx) go(t,true); });
+
+(function(){ var t=indexOfId((location.hash||'').slice(1)); go(t>=0?t:0,true); })();
+</script>
+</body>
+</html>
