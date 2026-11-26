@@ -16,7 +16,10 @@
   // ⚠️ El machote nace VIRGEN a propósito: no reutilices el endpoint de otro
   //    proyecto o escribirás sobre sus datos.
   // ─────────────────────────────────────────────────────────────────────────
-  var HARDCODED_ENDPOINT = "";            // ← pega aquí tu URL .../exec
+  // Conectado al Sheet de práctica de Irvin (nov 2026). Al CLONAR este machote
+  // para un proyecto nuevo, reemplaza esta URL por la /exec de TU propio Sheet
+  // (ver backend/CONECTAR.md) para no escribir sobre estos datos.
+  var HARDCODED_ENDPOINT = "https://script.google.com/macros/s/AKfycby8Gjvrp9YpPks7uPIK5MwGfysJyO2xUt1kI9HN-HnZXLLsLsHWThBqBIyrVlasLwkezA/exec";
   var DEFAULT_ROOM = "proyecto-demo";     // ← nombre de tu equipo/proyecto
 
   var LS = { ep: 'hcd_endpoint', name: 'hcd_name', room: 'hcd_room' };
