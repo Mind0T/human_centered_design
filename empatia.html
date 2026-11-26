@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>ORBITAL · Mapa de empatía (Katya E.)</title>
+<title>HCD Kit · Mapa de empatía</title>
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png">
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<meta name="description" content="Mapa de empatía colaborativo para Katya E., paso a paso: una zona por diapositiva, con ejemplos y votación. Cada quien agrega notas desde su dispositivo y se sincroniza en Google. NASA Space Apps CDMX 2026." />
+<meta name="description" content="Mapa de empatía colaborativo: aportar notas por zona, consolidar las parecidas y votarlas de forma ponderada (3·2·1) para converger en un POV de equipo. Se sincroniza en Google. HCD Kit." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;800;900&family=Overpass:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
@@ -49,7 +49,7 @@
   .btn.prime:hover{color:#071428;filter:brightness(1.05)}
   .btnrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
   .brandmark{display:flex;align-items:center;gap:14px;margin-bottom:28px}
-  .logo-ring{width:48px;height:48px;flex:0 0 auto}
+  .brandmark img{height:46px;width:auto;display:block;filter:drop-shadow(0 3px 10px rgba(0,0,0,.5))}
   .brandmark small{display:block;font-size:.6rem;letter-spacing:.3em;color:var(--mute);font-weight:700;font-family:"Archivo"}
   .brandmark b{font-size:1rem;letter-spacing:.04em;font-family:"Archivo";font-weight:900;text-transform:uppercase}
   .hero h1{font-weight:900;font-size:clamp(2.3rem,6.6vw,4.6rem);line-height:.98;margin:12px 0 18px}
@@ -63,9 +63,7 @@
   .card p{color:var(--mute);font-size:clamp(.88rem,1.35vw,.98rem)}
   .card p b{color:var(--white)}
   .kk{font-family:"Archivo";font-weight:800;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--c,var(--blue-soft))}
-  .numq{font-family:"Archivo";font-weight:900;color:var(--lime);font-size:clamp(1.5rem,3vw,2.1rem);line-height:1}
 
-  /* persona */
   .persona{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 22px;margin-top:16px}
   .persona .av{width:72px;height:72px;flex:0 0 auto}
   .persona h3{font-size:1.3rem;font-weight:800}
@@ -73,14 +71,13 @@
   .persona .desc{color:var(--mute);font-size:.95rem}
   .persona .srcp{color:var(--mute);opacity:.72;font-size:.8rem;margin-top:8px}
 
-  /* steps dinámica */
   .steps3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px}
   .stepc{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;border-top:3px solid var(--c,var(--lime))}
   .stepc .n{font-family:"Archivo";font-weight:900;color:var(--c,var(--lime));font-size:1.4rem}
   .stepc h4{font-size:1.02rem;font-weight:800;margin:4px 0 4px}
   .stepc p{color:var(--mute);font-size:.9rem}
 
-  /* zona (llenado) */
+  /* zona (aporte) */
   .zonegrid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(18px,3vw,36px);margin-top:14px;align-items:start}
   .zhead{display:flex;align-items:center;gap:12px}
   .zicon{width:52px;height:52px;border-radius:14px;background:var(--zc,#4e8fe6);color:#071428;display:flex;align-items:center;justify-content:center;font-size:1.6rem;flex:0 0 auto}
@@ -103,26 +100,83 @@
   .note .nf{display:flex;align-items:center;gap:10px;margin-top:8px;font-size:.74rem;color:var(--mute)}
   .note .au{font-family:"Archivo";font-weight:700;color:var(--blue-pale)}
   .note .sp{flex:1}
-  .note .vote{cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--mute);border-radius:999px;padding:4px 11px;font-size:.76rem;font-family:"Archivo";font-weight:800;transition:.15s}
-  .note .vote:hover{border-color:var(--lime);color:var(--lime)}
-  .note .vote.hot{border-color:rgba(215,230,75,.5);color:var(--lime);background:rgba(215,230,75,.1)}
   .note .del{cursor:pointer;border:none;background:transparent;color:var(--mute);font-size:.9rem;opacity:.6}
   .note .del:hover{color:var(--crit);opacity:1}
   .empty{color:var(--mute);opacity:.6;font-size:.86rem;font-style:italic;padding:6px 2px}
   .zcount{font-family:"Archivo";font-weight:800;font-size:.76rem;color:var(--mute);margin-bottom:8px}
 
-  textarea{width:100%;min-height:90px;background:rgba(7,20,40,.55);border:1px solid var(--line);border-radius:12px;color:var(--white);font-family:"Overpass";font-size:1rem;padding:12px 14px;resize:vertical}
+  textarea{width:100%;min-height:80px;background:rgba(7,20,40,.55);border:1px solid var(--line);border-radius:12px;color:var(--white);font-family:"Overpass";font-size:1rem;padding:12px 14px;resize:vertical}
   textarea:focus{outline:none;border-color:var(--lime)}
 
-  /* priorizar */
-  .rank{display:grid;gap:10px;margin-top:14px}
-  .rankrow{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px}
-  .rankrow .pos{font-family:"Archivo";font-weight:900;color:var(--lime);font-size:1.2rem;width:28px;text-align:center}
-  .rankrow .zt{font-family:"Archivo";font-weight:800;font-size:.68rem;text-transform:uppercase;letter-spacing:.05em;color:var(--blue-pale)}
-  .rankrow .vt{font-family:"Archivo";font-weight:900;color:var(--lime)}
+  /* zone tabs (consolidar / votar) */
+  .ztabs{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 16px}
+  .ztab{font-family:"Archivo";font-weight:800;font-size:.78rem;background:transparent;border:1px solid var(--line);color:var(--mute);padding:9px 14px;border-radius:10px;cursor:pointer;transition:.2s;display:inline-flex;align-items:center;gap:7px}
+  .ztab:hover{color:var(--white);border-color:var(--blue-soft)}
+  .ztab.on{background:var(--zc,var(--royal));border-color:var(--zc,var(--royal));color:#fff}
+  .ztab .zdone{font-size:.66rem;color:var(--ok)}
+  .zbody{margin-top:4px}
+
+  /* consolidar */
+  .cnote{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:9px}
+  .cnote.dis{opacity:.5}
+  .cpass{display:inline-flex;align-items:center;gap:7px;font-family:"Archivo";font-weight:800;font-size:.72rem;color:var(--mute);cursor:pointer;user-select:none;white-space:nowrap}
+  .cpass input{width:17px;height:17px;accent-color:var(--lime)}
+  .cnote .ctx{font-size:.95rem;color:var(--white);line-height:1.4}
+  .cnote .cau{font-size:.72rem;color:var(--blue-pale);font-family:"Archivo";font-weight:700;margin-top:3px}
+  .cmerge{display:flex;align-items:center;gap:7px;font-size:.76rem;color:var(--mute)}
+  select{background:rgba(7,20,40,.7);border:1px solid var(--line);color:var(--white);font-family:"Overpass";font-size:.84rem;padding:8px 10px;border-radius:9px;max-width:230px}
+  select:focus{outline:none;border-color:var(--lime)}
+  .optprev{margin-top:14px;background:linear-gradient(90deg,rgba(76,203,143,.1),transparent);border:1px solid rgba(76,203,143,.3);border-radius:12px;padding:14px 16px}
+  .optprev .ot{font-family:"Archivo";font-weight:800;font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ok);margin-bottom:8px}
+  .optprev ul{list-style:none;display:grid;gap:6px}
+  .optprev li{color:var(--blue-pale);font-size:.9rem;padding-left:18px;position:relative}
+  .optprev li::before{content:"✓";position:absolute;left:0;color:var(--ok);font-weight:800}
+  .optprev li .merged{color:var(--lime);font-size:.72rem;font-family:"Archivo";font-weight:800;margin-left:6px}
+
+  /* votar */
+  .budget{display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:rgba(10,26,51,.5);border:1px solid var(--line);border-radius:12px;padding:12px 15px;margin-bottom:14px}
+  .budget .bl{font-family:"Archivo";font-weight:800;font-size:.76rem;color:var(--mute)}
+  .tokpill{font-family:"Archivo";font-weight:900;font-size:.82rem;padding:5px 11px;border-radius:999px;border:1px solid var(--line)}
+  .tokpill.p3{color:var(--lime);border-color:rgba(215,230,75,.5)}
+  .tokpill.p2{color:var(--blue-soft);border-color:rgba(78,143,230,.5)}
+  .tokpill.p1{color:var(--blue-pale);border-color:rgba(156,193,242,.5)}
+  .tokpill.used{background:rgba(255,255,255,.05);opacity:.5;text-decoration:line-through}
+  .vopt{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px 15px;margin-bottom:9px;transition:.2s}
+  .vopt.mine{opacity:.6;border-style:dashed}
+  .vopt.scored{border-color:rgba(215,230,75,.4)}
+  .vopt .vtx{font-size:.95rem;color:var(--white);line-height:1.4}
+  .vopt .vau{font-size:.71rem;color:var(--blue-pale);font-family:"Archivo";font-weight:700;margin-top:4px}
+  .vopt .vmine{font-size:.71rem;color:var(--warn);font-family:"Archivo";font-weight:800;margin-top:4px}
+  .toks{display:flex;gap:6px;flex-wrap:nowrap}
+  .tok{width:40px;height:40px;border-radius:10px;border:1px solid var(--line);background:rgba(7,20,40,.6);color:var(--white);font-family:"Archivo";font-weight:900;font-size:.95rem;cursor:pointer;transition:.15s;display:flex;align-items:center;justify-content:center}
+  .tok:hover:not(:disabled){border-color:var(--lime)}
+  .tok:disabled{opacity:.28;cursor:not-allowed}
+  .tok.on3{background:var(--lime);color:#071428;border-color:var(--lime)}
+  .tok.on2{background:var(--blue-soft);color:#071428;border-color:var(--blue-soft)}
+  .tok.on1{background:var(--blue-pale);color:#071428;border-color:var(--blue-pale)}
+  .tok.clr{font-size:1rem;color:var(--mute)}
+  .voteinfo{font-size:.8rem;color:var(--mute);margin:4px 0 2px}
+  .needname{background:rgba(242,193,78,.1);border:1px solid rgba(242,193,78,.35);border-radius:12px;padding:14px 16px;color:var(--white);font-size:.92rem}
+  .needname b{color:var(--warn)}
+
+  /* resultados */
+  .rz{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:12px}
+  .rz h4{font-size:1rem;font-weight:800;display:flex;align-items:center;gap:9px;margin-bottom:10px}
+  .rrow{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}
+  .rrow:first-of-type{border-top:none}
+  .rrow .pos{font-family:"Archivo";font-weight:900;color:var(--mute);width:26px;text-align:center}
+  .rrow.win .pos{color:var(--lime)}
+  .rrow.win .rtx{color:var(--white)}
+  .rrow .rtx{color:var(--blue-pale);font-size:.92rem}
+  .rrow .rsc{font-family:"Archivo";font-weight:900;color:var(--lime);white-space:nowrap}
+  .rrow .rsc small{color:var(--mute);font-weight:700}
   .povbox{background:linear-gradient(135deg,rgba(30,82,200,.26),var(--navy-700));border:1px solid var(--line);border-radius:16px;padding:clamp(18px,2.6vw,26px);margin-top:14px}
-  .povbox .tpl{font-family:"Archivo";font-weight:700;color:var(--blue-pale);font-size:1.05rem;margin-bottom:12px}
+  .povbox .tpl{font-family:"Archivo";font-weight:700;color:var(--blue-pale);font-size:1.05rem;margin-bottom:14px;line-height:1.5}
   .povbox .tpl em{color:var(--lime)}
+  .pov-field{margin-bottom:12px}
+  .pov-field label{display:block;font-family:"Archivo";font-weight:800;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--blue-soft);margin-bottom:6px}
+  .pov-preview{background:rgba(7,20,40,.5);border:1px solid var(--line);border-left:3px solid var(--lime);border-radius:0 12px 12px 0;padding:16px 18px;margin-top:14px;font-family:"Archivo";font-weight:600;font-size:clamp(1.05rem,2vw,1.35rem);line-height:1.4}
+  .pov-preview em{color:var(--lime)}
 
   /* chrome */
   .prog{position:fixed;top:0;left:0;height:3px;background:var(--lime);width:0;z-index:40;transition:width .4s ease;box-shadow:0 0 12px rgba(215,230,75,.5)}
@@ -154,18 +208,21 @@
     .hint-key{display:none}
     .slide{padding:66px 18px 92px}
     .notes{max-height:38vh}
+    .cnote{grid-template-columns:auto 1fr;gap:9px}
+    .cnote .cmerge{grid-column:1/-1}
+    select{max-width:none;width:100%}
   }
 </style>
 </head>
 <body>
 <div class="prog" id="prog"></div>
 <nav class="tbar"><div class="tin" id="tin">
-  <button type="button" class="tchip" data-goto="portada" data-step="0">Inicio</button>
-  <button type="button" class="tchip" data-goto="s-que" data-step="0">¿Qué es?</button>
-  <button type="button" class="tchip" data-goto="s-persona" data-step="0">Katya</button>
-  <button type="button" class="tchip" data-goto="z-dice" data-step="Z">Las 6 zonas</button>
-  <button type="button" class="tchip" data-goto="s-priorizar" data-step="P">Votar</button>
-  <button type="button" class="tchip" data-goto="s-pov" data-step="P">Definir</button>
+  <button type="button" class="tchip" data-goto="portada">Inicio</button>
+  <button type="button" class="tchip" data-goto="s-que">Método</button>
+  <button type="button" class="tchip" data-goto="z-dice">Aportar</button>
+  <button type="button" class="tchip" data-goto="s-consolidar">Consolidar</button>
+  <button type="button" class="tchip" data-goto="s-votar">Votar</button>
+  <button type="button" class="tchip" data-goto="s-resultados">Resultados</button>
   <span class="sp"></span>
   <span class="srcpill" id="srcPill"><i class="dot"></i><span class="tl" id="srcTxt">Local</span></span>
 </div></nav>
@@ -176,31 +233,33 @@
 <section class="slide active" id="portada">
   <div class="rings"><span style="width:620px;height:620px;top:-120px;right:-160px"></span><span style="width:940px;height:940px;top:-260px;right:-320px"></span></div>
   <div class="sin hero" style="position:relative;z-index:1">
-    <div class="brandmark r"><span class="logo-ring"><svg viewBox="0 0 48 48" fill="none"><circle cx="22" cy="26" r="16" stroke="#f4f8ff" stroke-width="2.4"/><path d="M34 14 C 30 10, 24 9, 20 11" stroke="#d7e64b" stroke-width="2.4" stroke-linecap="round"/><circle cx="35" cy="13" r="2.4" fill="#ef6a5a"/></svg></span><span><small>NASA Space Apps · CDMX 2026 · Equipo ORBITAL</small><b>Empatizar · Mapa de empatía</b></span></div>
+    <div class="brandmark r"><img src="assets/img/logo.png" alt="Logo"><span><small>HCD Kit · Empatizar</small><b>Mapa de empatía</b></span></div>
     <div class="eyebrow r" style="--d:.1s">Paso previo · diseñar para alguien concreto</div>
-    <h1 class="r" style="--d:.2s">Mapa de empatía — Katya E.</h1>
-    <p class="lead r" style="--d:.3s">No diseñamos para “un astronauta” genérico, sino para alguien concreto, aislada y sin médico al otro lado de la línea. Llénenlo juntos, una zona a la vez; se guarda solo y se sincroniza en Google.</p>
-    <div class="btnrow r" style="--d:.42s"><button type="button" class="btn prime" data-goto="s-que">Empezar →</button><a class="btn" href="proyecto.html">← Descripción del proyecto</a></div>
+    <h1 class="r" style="--d:.2s">Mapa de empatía</h1>
+    <p class="lead r" style="--d:.3s">No diseñamos para un usuario genérico, sino para alguien concreto. El equipo lo llena en tres movimientos: <b style="color:var(--white)">aportan</b> notas, <b style="color:var(--white)">consolidan</b> las parecidas y las <b style="color:var(--white)">votan</b> para converger en una necesidad. Se guarda solo y se sincroniza.</p>
+    <div class="banner r" style="--d:.36s">🧪 <div><b>Ejemplo cargado:</b> la persona es <b>Katya E.</b>, del reto de monitoreo de salud de astronautas (NASA Space Apps). Es contenido de muestra: al usar esta herramienta en tu proyecto, cambias la persona y empiezas con el tablero vacío.</div></div>
+    <div class="btnrow r" style="--d:.44s"><button type="button" class="btn prime" data-goto="s-como">Empezar →</button><a class="btn" href="index.html">← HCD Kit</a></div>
   </div>
 </section>
 
 <!-- CÓMO USAR -->
-<section class="slide" id="s-como" data-step="0">
+<section class="slide" id="s-como">
   <div class="sin">
     <div class="eyebrow r">Antes de empezar</div>
-    <h2 class="title r" style="--d:.08s">Cómo usar esta presentación</h2>
+    <h2 class="title r" style="--d:.08s">Cómo funciona</h2>
     <div class="g3">
-      <div class="card r" style="--d:.15s"><div class="ic">⌨️</div><h4>Avancen en orden</h4><p>Con las <b>flechas</b>, deslizando en el celular o con la barra de arriba. <b>Esc</b> los saca de un campo; <b>F</b> pone pantalla completa.</p></div>
-      <div class="card r" style="--d:.22s"><div class="ic">✍️</div><h4>Llenen en equipo</h4><p>En cada zona, <b>cada quien agrega notas</b> desde su dispositivo. Se guardan solas y se sincronizan con el equipo.</p></div>
-      <div class="card r" style="--d:.29s"><div class="ic">📊</div><h4>Alimenta a Insights</h4><p>Lo que escriban aquí aparece en el Google Sheet y en la presentación de <b>Insights</b> para los mentores.</p></div>
+      <div class="card r" style="--d:.15s"><div class="ic">① ✍️</div><h4>Aportar</h4><p>Cada quien agrega sus notas en cada zona, <b>una idea por nota</b>, desde su dispositivo.</p></div>
+      <div class="card r" style="--d:.22s"><div class="ic">② 🔗</div><h4>Consolidar</h4><p>Marcan qué notas <b>pasan</b> y cuáles se <b>parecen entre sí</b> para fusionarlas en una sola opción.</p></div>
+      <div class="card r" style="--d:.29s"><div class="ic">③ 🗳️</div><h4>Votar</h4><p>Cada persona reparte <b>3, 2 y 1 puntos</b> entre las opciones (no puede votar las suyas). Gana la de más puntos.</p></div>
     </div>
     <div id="syncbar" class="r" style="--d:.36s;margin-top:18px"></div>
-    <p class="sub r" style="--d:.42s;margin-top:10px;font-size:.92rem">Pon tu nombre y conéctate (⚙️) para que todos agreguen notas a la vez. Sin conectar, las notas se guardan en este dispositivo.</p>
+    <p class="sub r" style="--d:.42s;margin-top:10px;font-size:.92rem">Pon <b>tu nombre</b> y conéctate (⚙️) para trabajar en equipo en vivo. Tu nombre identifica tus aportes: así la herramienta sabe cuáles <b>no</b> puedes votar.</p>
+    <div class="btnrow r" style="--d:.48s"><button type="button" class="btn prime" data-goto="s-que">Siguiente →</button></div>
   </div>
 </section>
 
 <!-- QUÉ ES -->
-<section class="slide" id="s-que" data-step="0">
+<section class="slide" id="s-que">
   <div class="sin">
     <div class="eyebrow r">El método</div>
     <h2 class="title r" style="--d:.08s">¿Qué es un mapa de empatía?</h2>
@@ -210,80 +269,99 @@
       <div class="card r" style="--d:.24s"><div class="kk" style="--c:#2a66e6">Lo interno · invisible</div><h4>💭 Piensa · ❤️ Siente</h4><p>Lo que no se ve: creencias y emociones. Aquí se empatiza de verdad.</p></div>
       <div class="card r" style="--d:.3s"><div class="kk" style="--c:#f2c14e">El balance</div><h4>⚡ Dolores · 🌱 Ganancias</h4><p>Qué le estorba y qué desea. De los <b>dolores</b> más votados sale la necesidad.</p></div>
     </div>
-    <div class="callout r" style="--d:.36s"><b>Una nota, una idea.</b> Escriban corto y en las palabras de Katya, no en las de ustedes. Las ideas de solución (“una app”, “un dashboard”) aún no van aquí: eso es el paso de Aterrizar.</div>
+    <div class="callout r" style="--d:.36s"><b>Una nota, una idea.</b> Escriban corto y en las palabras de la persona, no en las de ustedes. Las ideas de solución aún no van aquí.</div>
+    <div class="btnrow r" style="--d:.42s"><button type="button" class="btn prime" data-goto="s-persona">Siguiente →</button></div>
   </div>
 </section>
 
 <!-- PERSONA -->
-<section class="slide" id="s-persona" data-step="0">
+<section class="slide" id="s-persona">
   <div class="sin">
-    <div class="eyebrow r">¿Para quién diseñamos?</div>
+    <div class="eyebrow r">¿Para quién diseñamos? · ejemplo</div>
     <h2 class="title r" style="--d:.08s">Katya E.</h2>
     <div class="persona r" style="--d:.14s">
       <div class="av"><svg viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="16" fill="#0a1a33" stroke="#9cc1f2" stroke-width="1.5"/><circle cx="24" cy="24" r="10" fill="none" stroke="#4e8fe6" stroke-width="1.5"/><path d="M18 22a6 6 0 0112 0" stroke="#d7e64b" stroke-width="1.6" stroke-linecap="round"/></svg></div>
       <div>
         <h3>Katya E. · 30 años</h3>
-        <div class="meta">Ingeniera electrónica y comunicadora científica · Guadalajara, México · misión a Marte (~18 meses)</div>
-        <div class="desc">UCLA · NASA JPL (Europa Clipper) · vuelo suborbital NS-21 (2022). Competente con la tecnología, pero <b style="color:var(--white)">no es clínica</b>. Sin médico a bordo; delay de hasta 20 min con la Tierra. Su miedo: <b style="color:var(--white)">no notar algo serio a tiempo</b>.</div>
-        <div class="srcp">Persona inspirada en la trayectoria pública de Katya Echazarreta (Wikipedia). Lo que dice, piensa y siente son hipótesis del equipo, no declaraciones suyas.</div>
+        <div class="meta">Ingeniera electrónica · misión a Marte (~18 meses)</div>
+        <div class="desc">Competente con la tecnología, pero <b style="color:var(--white)">no es clínica</b>. Sin médico a bordo; delay de hasta 20 min con la Tierra. Su miedo: <b style="color:var(--white)">no notar algo serio a tiempo</b>.</div>
+        <div class="srcp">Ejemplo inspirado en la trayectoria pública de Katya Echazarreta. Lo que dice/piensa/siente son hipótesis del equipo. Sustituye esta persona por la de tu proyecto.</div>
       </div>
     </div>
-    <div class="callout r" style="--d:.22s">Todo lo que escriban debe sonar a <b>esta</b> persona en <b>esta</b> condición, no a un astronauta de película.</div>
+    <div class="callout r" style="--d:.22s">Todo lo que escriban debe sonar a <b>esta</b> persona en <b>esta</b> condición.</div>
+    <div class="btnrow r" style="--d:.28s"><button type="button" class="btn prime" data-goto="s-escenario">Siguiente →</button></div>
   </div>
 </section>
 
 <!-- ESCENARIO -->
-<section class="slide" id="s-escenario" data-step="0">
+<section class="slide" id="s-escenario">
   <div class="sin">
     <div class="eyebrow r">El momento concreto</div>
     <h2 class="title r" style="--d:.08s">El escenario para arrancar</h2>
-    <p class="sub r" style="--d:.12s">Empatizar es más fácil con un momento específico. Lean este escenario, imagínenlo y empaticen con esa duda antes de escribir. Pueden <b>ajustarlo</b> en equipo.</p>
-    <div class="banner r" style="--d:.18s">🎬 <div><b>Escenario:</b> a Katya le empieza a doler el pecho durante el turno nocturno. Nadie a bordo es médico y Houston está a 20 min. Recuerden que el <b>estrés crónico</b> también causa dolor de pecho y migrañas: no sabe si es grave o no.</div></div>
-    <label class="kk r" style="--d:.24s;display:block;margin:18px 0 6px">Escenario del equipo (editable)</label>
-    <textarea class="r" id="escenario" style="--d:.26s" placeholder="Describan en una o dos frases el momento concreto que van a empatizar…"></textarea>
-    <p class="src">Se guarda y se sincroniza con el equipo, igual que las notas.</p>
-  </div>
-</section>
-
-<!-- DINÁMICA -->
-<section class="slide" id="s-dinamica" data-step="0">
-  <div class="sin">
-    <div class="eyebrow r">Cómo llenar cada zona</div>
-    <h2 class="title r" style="--d:.08s">La dinámica, en tres movimientos</h2>
-    <div class="steps3">
-      <div class="stepc r" style="--d:.15s;--c:#4e8fe6"><div class="n">1</div><h4>En silencio</h4><p>Cada quien escribe sus propias notas, <b>una idea por nota</b>, sin comentar todavía. Así no se contagian las ideas.</p></div>
-      <div class="stepc r" style="--d:.22s;--c:#d7e64b"><div class="n">2</div><h4>Agrupar y leer</h4><p>Lean en voz alta. Las notas parecidas quedan juntas; no se borran las repetidas, se votan.</p></div>
-      <div class="stepc r" style="--d:.29s;--c:#f2c14e"><div class="n">3</div><h4>Votar 👍</h4><p>Marquen las notas que más pesan, sobre todo en <b>Dolores</b>. De las más votadas sale la necesidad.</p></div>
-    </div>
-    <div class="callout r" style="--d:.36s">En las seis diapositivas que siguen, la <b>guía queda a la izquierda</b> y el <b>tablero en vivo a la derecha</b>. Escriban ahí mismo.</div>
-    <div class="btnrow r" style="--d:.42s"><button type="button" class="btn prime" data-goto="z-dice">Empezar por “Dice” →</button></div>
+    <p class="sub r" style="--d:.12s">Empatizar es más fácil con un momento específico. Léanlo, imagínenlo y empaticen con esa duda. Pueden <b>ajustarlo</b> en equipo.</p>
+    <label class="kk r" style="--d:.2s;display:block;margin:18px 0 6px">Escenario del equipo (editable · se comparte)</label>
+    <textarea class="r" id="escenario" style="--d:.24s" placeholder="Describan en una o dos frases el momento concreto que van a empatizar…"></textarea>
+    <p class="src">Se guarda y se sincroniza con el equipo.</p>
+    <div class="btnrow r" style="--d:.3s"><button type="button" class="btn prime" data-goto="z-dice">Ir a aportar →</button></div>
   </div>
 </section>
 
 <div data-gen="zones"></div>
 
-<!-- PRIORIZAR -->
-<section class="slide" id="s-priorizar" data-step="P">
+<!-- CONSOLIDAR -->
+<section class="slide" id="s-consolidar">
   <div class="sin">
-    <div class="eyebrow r">Converger</div>
-    <h2 class="title r" style="--d:.08s">Lo que más pesa (votos)</h2>
-    <p class="sub r" style="--d:.12s">Las notas más votadas de todo el tablero. Los <b>dolores</b> de arriba son los candidatos a convertirse en la necesidad de Katya.</p>
-    <div class="rank r" style="--d:.16s" id="rank"></div>
+    <div class="eyebrow r">② Consolidar · fusión</div>
+    <h2 class="title r" style="--d:.08s">Junten lo que se parece</h2>
+    <p class="sub r" style="--d:.12s">Antes de votar, depuren cada zona: desmarquen <b>“pasa”</b> lo que esté fuera de tema y, si dos notas dicen lo mismo, marquen en una que <b>se parece</b> a la otra para <b>fusionarlas en una sola opción</b>. Así se vota sobre ideas distintas, no repetidas.</p>
+    <div class="ztabs r" style="--d:.16s" id="consTabs"></div>
+    <div class="zbody" id="consBody"></div>
+    <div class="btnrow r" style="--d:.2s"><button type="button" class="btn prime" data-goto="s-votar">Ir a votar →</button></div>
   </div>
 </section>
 
-<!-- POV -->
-<section class="slide" id="s-pov" data-step="P">
+<!-- VOTAR -->
+<section class="slide" id="s-votar">
   <div class="sin">
-    <div class="eyebrow r">Definir</div>
-    <h2 class="title r" style="--d:.08s">La necesidad de Katya (POV)</h2>
-    <p class="sub r" style="--d:.12s">De los dolores más votados sale <b>una necesidad</b> y <b>un porqué</b>. Esta frase es el puente al taller de “Aterrizar el reto”.</p>
-    <div class="povbox r" style="--d:.16s">
+    <div class="eyebrow r">③ Votar · ponderado</div>
+    <h2 class="title r" style="--d:.08s">Reparte tus puntos</h2>
+    <p class="sub r" style="--d:.12s">En cada zona das <b class="hl">3</b>, <b style="color:var(--blue-soft)">2</b> y <b style="color:var(--blue-pale)">1</b> punto a tres opciones distintas. No puedes votar tus propias aportaciones, ni dar el mismo puntaje dos veces. Para mover un punto, libéralo con ✕.</p>
+    <div id="voteNeedName" class="needname r" style="--d:.14s;display:none;margin-top:14px"></div>
+    <div class="ztabs r" style="--d:.16s" id="voteTabs"></div>
+    <div class="zbody" id="voteBody"></div>
+    <div class="btnrow r" style="--d:.2s"><button type="button" class="btn prime" data-goto="s-resultados">Ver resultados →</button></div>
+  </div>
+</section>
+
+<!-- RESULTADOS + POV -->
+<section class="slide" id="s-resultados">
+  <div class="sin">
+    <div class="eyebrow r">Converger · definir</div>
+    <h2 class="title r" style="--d:.08s">Resultados y POV de equipo</h2>
+    <p class="sub r" style="--d:.12s">Lo más votado por zona, y de ahí la herramienta arma el <b>punto de vista</b>: la necesidad y su porqué. Es el puente al taller de “Aterrizar el reto”.</p>
+    <div class="r" style="--d:.16s" id="resultsBox" style="margin-top:16px"></div>
+
+    <div class="povbox r" style="--d:.2s">
       <div class="tpl">Katya necesita <em>[necesidad]</em> porque <em>[insight]</em>.</div>
-      <textarea id="pov" placeholder="Katya necesita… porque…"></textarea>
-      <div id="povHint" style="color:var(--mute);font-size:.86rem;margin-top:10px"></div>
+      <div class="pov-field">
+        <label>La necesidad (de los dolores / ganancias más votados)</label>
+        <textarea id="povNeed" placeholder="¿Qué necesita la persona? En verbo: interpretar, decidir, saber…"></textarea>
+      </div>
+      <div class="pov-field">
+        <label>El porqué · insight (de lo que piensa / siente)</label>
+        <textarea id="povWhy" placeholder="¿Por qué? El insight que lo explica."></textarea>
+      </div>
+      <div class="btnrow" style="margin-top:4px">
+        <button type="button" class="btn" id="povSeed">✨ Proponer desde los ganadores</button>
+      </div>
+      <div class="pov-preview" id="povPreview"></div>
     </div>
-    <div class="btnrow r" style="--d:.24s"><a class="btn prime" href="aterrizar.html">Continuar: Aterrizar el reto →</a><a class="btn" href="insights.html">📊 Ver Insights</a><a class="btn" href="riesgo.html">⚠️ Evaluación de riesgos</a></div>
+
+    <div class="btnrow r" style="--d:.26s">
+      <a class="btn prime" href="aterrizar.html">Continuar: Aterrizar el reto →</a>
+      <a class="btn" href="insights.html">📊 Ver Insights</a>
+      <a class="btn" href="riesgo.html">⚠️ Evaluación de riesgos</a>
+    </div>
   </div>
 </section>
 
@@ -293,7 +371,6 @@
   <button id="prev" aria-label="Anterior"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
   <span class="counter"><b id="cur">01</b> / <span id="total">00</span></span>
   <button id="next" aria-label="Siguiente"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-  <button id="sendBtn" type="button" style="width:auto;padding:0 16px;height:44px;font-family:Archivo,sans-serif;font-weight:800;font-size:.78rem;letter-spacing:.02em;color:#071428;background:var(--lime);border:none;border-radius:12px;cursor:pointer">Enviar mis respuestas</button>
   <button id="fs" aria-label="Pantalla completa"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 9V5a1 1 0 011-1h4M20 9V5a1 1 0 00-1-1h-4M4 15v4a1 1 0 001 1h4M20 15v4a1 1 0 01-1 1h-4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
 </div>
 <div class="hint-key" id="keyhint"><kbd>←</kbd><kbd>→</kbd> navega · <kbd>Esc</kbd> sale del campo · <kbd>F</kbd> pantalla completa</div>
@@ -301,64 +378,150 @@
 
 <script src="sync.js"></script>
 <script>
+/* ======================= ZONAS ======================= */
 var ZONES=[
-  {k:'dice',t:'Dice',ic:'🗣️',c:'#4e8fe6',q:'¿Qué diría Katya en voz alta?',
-    prompts:['¿Qué le comentaría a un compañero de tripulación?','¿Qué reportaría —o no— a Tierra?','Frases textuales, entre comillas.'],
-    good:['“¿Esto es normal o debería preocuparme?”'], goodWhy:'es una frase textual, con sus palabras',
-    bad:['“Está estresada”'], badWhy:'eso es un sentimiento, va en “Siente”'},
+  {k:'dice',t:'Dice',ic:'🗣️',c:'#4e8fe6',q:'¿Qué diría en voz alta?',
+    prompts:['¿Qué le comentaría a un compañero?','¿Qué reportaría —o no—?','Frases textuales, entre comillas.'],
+    good:'“¿Esto es normal o debería preocuparme?”',goodWhy:'es una frase textual',
+    bad:'“Está estresada”',badWhy:'eso es un sentimiento, va en “Siente”'},
   {k:'piensa',t:'Piensa',ic:'💭',c:'#2a66e6',q:'¿Qué piensa pero no dice?',
-    prompts:['¿Qué le preocupa en silencio?','¿Qué cree sobre pedir ayuda?','¿Qué duda no comparte?'],
-    good:['“No quiero alarmar a Tierra por nada.”'], goodWhy:'es una creencia que no diría en voz alta',
-    bad:['“Revisa sus signos”'], badWhy:'eso es una acción, va en “Hace”'},
-  {k:'hace',t:'Hace',ic:'🏃',c:'#d7e64b',q:'¿Qué hace? (acciones observables)',
-    prompts:['¿Qué hace cuando aparece el síntoma?','¿A quién recurre o qué revisa?','Verbos: busca, anota, ignora, espera…'],
-    good:['Minimiza molestias para no hacer drama.'], goodWhy:'es un comportamiento que se puede observar',
-    bad:['Siente miedo'], badWhy:'eso es una emoción, va en “Siente”'},
+    prompts:['¿Qué le preocupa en silencio?','¿Qué cree sobre pedir ayuda?'],
+    good:'“No quiero alarmar por nada.”',goodWhy:'es una creencia que no diría',
+    bad:'“Revisa sus signos”',badWhy:'eso es una acción, va en “Hace”'},
+  {k:'hace',t:'Hace',ic:'🏃',c:'#d7e64b',q:'¿Qué hace? (acciones)',
+    prompts:['¿Qué hace cuando aparece el problema?','Verbos: busca, anota, ignora…'],
+    good:'Minimiza molestias para no hacer drama.',goodWhy:'es un comportamiento observable',
+    bad:'Siente miedo',badWhy:'eso es una emoción, va en “Siente”'},
   {k:'siente',t:'Siente',ic:'❤️',c:'#ef6a5a',q:'¿Qué emociones la mueven?',
-    prompts:['¿Qué siente cuando la decisión le queda grande?','¿Qué teme que pase?','Una emoción por nota: miedo, alivio, culpa…'],
-    good:['Incertidumbre y aislamiento.'], goodWhy:'nombra emociones concretas',
-    bad:['Debería existir un protocolo'], badWhy:'eso es una idea/solución, no una emoción'},
+    prompts:['¿Qué siente cuando la decisión le queda grande?','Una emoción por nota.'],
+    good:'Incertidumbre y aislamiento.',goodWhy:'nombra emociones concretas',
+    bad:'Debería existir un protocolo',badWhy:'eso es una idea/solución'},
   {k:'dolores',t:'Dolores',ic:'⚡',c:'#f2c14e',q:'¿Qué le duele, teme o estorba?',
-    prompts:['¿Qué le da miedo que ocurra?','¿Qué le frustra de lo que hay hoy?','¿Qué obstáculo le impide decidir?'],
-    good:['Un número crudo sin contexto le genera ansiedad.'], goodWhy:'es un dolor real, no una solución',
-    bad:['Le falta una app bonita'], badWhy:'eso ya es una solución; describan el dolor, no el remedio'},
+    prompts:['¿Qué le da miedo que ocurra?','¿Qué le frustra de lo que hay hoy?'],
+    good:'Un número sin contexto le genera ansiedad.',goodWhy:'es un dolor real',
+    bad:'Le falta una app bonita',badWhy:'eso ya es una solución'},
   {k:'ganancias',t:'Ganancias',ic:'🌱',c:'#4ccb8f',q:'¿Qué desea? ¿Qué sería un éxito?',
-    prompts:['¿Cómo sería un buen día para Katya?','¿Qué querría sentir al decidir?','¿Qué resultado la haría confiar?'],
-    good:['Confianza para decidir sola y a tiempo.'], goodWhy:'es un deseo, un resultado esperado',
-    bad:['Un dashboard con gráficas'], badWhy:'eso es una solución; describan el deseo, no la herramienta'}
+    prompts:['¿Cómo sería un buen día para ella?','¿Qué resultado la haría confiar?'],
+    good:'Confianza para decidir sola y a tiempo.',goodWhy:'es un deseo, un resultado',
+    bad:'Un dashboard con gráficas',badWhy:'eso es una solución'}
 ];
-var ZORDER={}; ZONES.forEach(function(z,i){ ZORDER[z.k]=i; });
 var ZMETA={}; ZONES.forEach(function(z){ ZMETA[z.k]=z; });
-var TOOL='empatia';
-/* escenario y POV: cada quien el suyo (clave~~persona). Las notas ya son por persona. */
-var PP_SEP='~~';
-function _slug(n){ return (String(n||'').toLowerCase().replace(/[^a-z0-9]+/g,'')).slice(0,24) || 'anon'; }
-function _me(){ return _slug(window.Sync&&Sync.getName?Sync.getName():''); }
-var LS_NOTES='empatia_notes_v1', LS_MINE='empatia_mine_v1', LS_POV='empatia_pov_v1', LS_ESC='empatia_escenario_v1';
-var ESC_DEFAULT='A Katya le empieza a doler el pecho durante el turno nocturno. Nadie a bordo es médico y Houston está a 20 min; el estrés crónico también causa dolor de pecho, así que no sabe si es grave.';
+var TOOL='empatia', PP='~~';
+function _slug(n){ return (String(n||'').toLowerCase().replace(/[^a-z0-9]+/g,'')).slice(0,24)||'anon'; }
+function me(){ return (window.Sync&&Sync.getName)?Sync.getName():''; }
+function meSlug(){ return _slug(me()); }
+function hasName(){ return !!(me()&&me().trim()); }
 
-/* ---- utils ---- */
+/* ======================= UTILS ======================= */
 function $(s,r){return (r||document).querySelector(s);} function $$(s,r){return [].slice.call((r||document).querySelectorAll(s));}
+function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
 function lget(k,d){ try{var v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d} }
 function lset(k,v){ try{localStorage.setItem(k,JSON.stringify(v))}catch(e){} }
 function uid(){ return 'n'+Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
-var toastT; function toast(m){ var t=$('#toast'); t.textContent=m; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(function(){t.classList.remove('on')},1800); }
-var mine=lget(LS_MINE,{});
+var toastT; function toast(m){ var t=$('#toast'); t.textContent=m; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(function(){t.classList.remove('on')},1700); }
 function connected(){ return window.Sync && Sync.isConnected(); }
 
-/* ---- genera las 6 diapositivas de zona ---- */
+/* ======================= ESTADO ======================= */
+/* CUR.notes: [{id,zone,author,value}] ; CUR.kv: {key:value} */
+var LS_NOTES='emp2_notes', LS_KV='emp2_kv';
+var CUR={notes:[],kv:{}};
+var curZoneCons='dice', curZoneVote='dice';
+
+function setSrc(kind){ var p=$('#srcPill'); p.querySelector('.dot').className='dot'+(kind==='ok'?' ok':kind==='loc'?' loc':''); $('#srcTxt').textContent=kind==='ok'?'Equipo':'Este dispositivo'; }
+
+/* ---- lectura ---- */
+function refresh(){
+  if(connected()){
+    setSrc('ok');
+    Sync.read(TOOL).then(function(j){
+      if(!j||!j.ok||!j.rows){ return; }
+      var notes=[], kv={};
+      j.rows.forEach(function(r){
+        if(r.key){ kv[String(r.key)]=(r.value==null?'':String(r.value)); }
+        else if(r.id&&r.zone){ notes.push({id:String(r.id),zone:String(r.zone),author:String(r.author||''),value:String(r.value||'')}); }
+      });
+      CUR.notes=notes; CUR.kv=kv;
+      renderAll();
+    }).catch(function(){ loadLocal(); });
+  } else { loadLocal(); }
+}
+function loadLocal(){ setSrc('loc'); CUR.notes=lget(LS_NOTES,[]); CUR.kv=lget(LS_KV,{}); renderAll(); }
+function saveLocal(){ lset(LS_NOTES,CUR.notes); lset(LS_KV,CUR.kv); }
+
+/* ---- escritura ---- */
+function addNote(zone,text){
+  text=(text||'').trim(); if(!text) return;
+  var author=me()||'yo';
+  if(connected()){
+    Sync.post({op:'add',tool:TOOL,zone:zone,value:text}).then(function(){ refresh(); }).catch(function(){});
+  } else {
+    CUR.notes.push({id:uid(),zone:zone,author:author,value:text}); saveLocal(); renderAll();
+  }
+}
+function delNote(id){
+  if(connected()){ Sync.post({op:'del',id:id}).then(refresh).catch(function(){}); }
+  else { CUR.notes=CUR.notes.filter(function(n){return n.id!==id}); saveLocal(); renderAll(); }
+}
+function setKV(key,value){
+  CUR.kv[key]=value;                       // optimista
+  if(connected()){ Sync.post({op:'set',tool:TOOL,key:key,value:value}).catch(function(){}); }
+  else { saveLocal(); }
+  renderAll();
+}
+
+/* ======================= OPCIONES (fusión) ======================= */
+function optionsFor(zone){
+  var ns=CUR.notes.filter(function(n){ return n.zone===zone && CUR.kv['pass'+PP+n.id]!=='0'; });
+  var parent={}; ns.forEach(function(n){ parent[n.id]=n.id; });
+  function find(x){ while(parent[x]!==x){ parent[x]=parent[parent[x]]; x=parent[x]; } return x; }
+  function uni(a,b){ a=find(a); b=find(b); if(a===b) return; if(a<b) parent[b]=a; else parent[a]=b; }
+  ns.forEach(function(n){
+    var tgt=CUR.kv['merge'+PP+n.id];
+    if(tgt && parent[tgt]!==undefined) uni(n.id,tgt);
+  });
+  var groups={};
+  ns.forEach(function(n){ var r=find(n.id); (groups[r]=groups[r]||[]).push(n); });
+  var opts=Object.keys(groups).map(function(r){
+    var mem=groups[r].sort(function(a,b){ return a.id<b.id?-1:1; });
+    return {
+      id:mem[0].id, members:mem,
+      texts:mem.map(function(m){return m.value;}),
+      authorSlugs:mem.map(function(m){return _slug(m.author);}),
+      authors:mem.map(function(m){return m.author;}),
+      label:mem.map(function(m){return m.value;}).join('  /  '),
+      merged:mem.length>1
+    };
+  });
+  opts.sort(function(a,b){ return a.id<b.id?-1:1; });
+  return opts;
+}
+function myBallot(zone){ var raw=CUR.kv['ballot'+PP+zone+PP+meSlug()]; var b={}; try{ b=JSON.parse(raw||'{}'); }catch(e){} return {p3:b.p3||'',p2:b.p2||'',p1:b.p1||''}; }
+function saveBallot(zone,b){ setKV('ballot'+PP+zone+PP+meSlug(), JSON.stringify({p3:b.p3||'',p2:b.p2||'',p1:b.p1||''})); }
+function tally(zone){
+  var opts=optionsFor(zone); var score={}; opts.forEach(function(o){ score[o.id]=0; });
+  Object.keys(CUR.kv).forEach(function(k){
+    if(k.indexOf('ballot'+PP+zone+PP)===0){
+      var b={}; try{ b=JSON.parse(CUR.kv[k]||'{}'); }catch(e){}
+      [['p3',3],['p2',2],['p1',1]].forEach(function(pr){ var id=b[pr[0]]; if(id&&score[id]!==undefined) score[id]+=pr[1]; });
+    }
+  });
+  return opts.map(function(o){ return {opt:o,score:score[o.id]||0}; }).sort(function(a,b){ return b.score-a.score || (a.opt.id<b.opt.id?-1:1); });
+}
+function votersCount(zone){ var c=0; Object.keys(CUR.kv).forEach(function(k){ if(k.indexOf('ballot'+PP+zone+PP)===0){ var b={}; try{b=JSON.parse(CUR.kv[k]||'{}');}catch(e){} if(b.p3||b.p2||b.p1) c++; } }); return c; }
+
+/* ======================= RENDER APORTE ======================= */
 (function(){
   var html=ZONES.map(function(z,i){
-    var li=z.prompts.map(function(p){return '<li>'+p+'</li>'}).join('');
-    return '<section class="slide" id="z-'+z.k+'" data-step="Z"><div class="sin">'+
-      '<div class="eyebrow r">Zona '+(i+1)+' de 6 · empatizar</div>'+
+    var li=z.prompts.map(function(p){return '<li>'+esc(p)+'</li>'}).join('');
+    return '<section class="slide" id="z-'+z.k+'"><div class="sin">'+
+      '<div class="eyebrow r">① Aportar · zona '+(i+1)+' de 6</div>'+
       '<div class="zonegrid">'+
         '<div class="r" style="--d:.1s">'+
           '<div class="zhead"><span class="zicon" style="--zc:'+z.c+'">'+z.ic+'</span><h2 class="title" style="margin:0;font-size:clamp(1.6rem,3.4vw,2.4rem)">'+z.t+'</h2></div>'+
-          '<div class="zq">'+z.q+'</div>'+
+          '<div class="zq">'+esc(z.q)+'</div>'+
           '<ul class="prompts" style="--zc:'+z.c+'">'+li+'</ul>'+
-          '<div class="exline good"><span class="mk">✓</span><span><span class="tx">'+z.good[0]+'</span> <span class="why">— '+z.goodWhy+'</span></span></div>'+
-          '<div class="exline bad"><span class="mk">✗</span><span><span class="tx">'+z.bad[0]+'</span> <span class="why">— '+z.badWhy+'</span></span></div>'+
+          '<div class="exline good"><span class="mk">✓</span><span><span class="tx">'+esc(z.good)+'</span> <span class="why">— '+esc(z.goodWhy)+'</span></span></div>'+
+          '<div class="exline bad"><span class="mk">✗</span><span><span class="tx">'+esc(z.bad)+'</span> <span class="why">— '+esc(z.badWhy)+'</span></span></div>'+
         '</div>'+
         '<div class="r" style="--d:.18s">'+
           '<div class="zcount" id="count_'+z.k+'"></div>'+
@@ -370,121 +533,226 @@ function connected(){ return window.Sync && Sync.isConnected(); }
   var ph=$('[data-gen="zones"]'); ph.insertAdjacentHTML('beforebegin',html); ph.remove();
 })();
 
-/* ---- data layer ---- */
-var CUR={notes:[],pov:'',esc:''}, firstEsc=true;
-function localNotes(){ return lget(LS_NOTES,[]); }
-function setSrc(kind){ var p=$('#srcPill'); p.querySelector('.dot').className='dot'+(kind==='ok'?' ok':kind==='loc'?' loc':''); $('#srcTxt').textContent=kind==='ok'?'Equipo':'Este dispositivo'; }
-
 function renderNotes(){
   ZONES.forEach(function(z){
     var box=$('#notes_'+z.k); if(!box) return;
-    var list=CUR.notes.filter(function(n){return n.zone===z.k}).sort(function(a,b){ return (Number(b.votes||0)-Number(a.votes||0))||String(a.id).localeCompare(String(b.id)); });
-    var cnt=$('#count_'+z.k); if(cnt) cnt.textContent=list.length?(list.length+' nota'+(list.length>1?'s':'')+' · toquen 👍 para votar'):'Aún sin notas: escriban la primera.';
-    if(!list.length){ box.innerHTML='<div class="empty">Sin notas aún. Escriban en silencio, una idea por nota.</div>'; return; }
+    var list=CUR.notes.filter(function(n){return n.zone===z.k});
+    var cnt=$('#count_'+z.k); if(cnt) cnt.textContent=list.length?(list.length+' nota'+(list.length>1?'s':'')):'Aún sin notas: escriban la primera.';
+    if(!list.length){ box.innerHTML='<div class="empty">Sin notas aún. Una idea por nota.</div>'; return; }
     box.innerHTML='';
     list.forEach(function(n){
-      var isMine=mine[n.id]||(window.Sync&&n.author&&Sync.getName()&&n.author===Sync.getName());
+      var isMine=_slug(n.author)===meSlug();
       var card=document.createElement('div'); card.className='note';
       card.innerHTML='<div class="nt"></div><div class="nf"><span class="au"></span><span class="sp"></span>'+
-        '<button class="vote'+(Number(n.votes)>0?' hot':'')+'" data-vote="'+n.id+'">👍 '+(Number(n.votes)||0)+'</button>'+
         (isMine?'<button class="del" data-del="'+n.id+'" title="Borrar">✕</button>':'')+'</div>';
       card.querySelector('.nt').textContent=n.value;
       card.querySelector('.au').textContent=n.author||'anónimo';
       box.appendChild(card);
     });
   });
-  renderRank();
 }
-function renderRank(){
-  var box=$('#rank'); if(!box) return;
-  var top=CUR.notes.slice().filter(function(n){return (Number(n.votes)||0)>0}).sort(function(a,b){return (Number(b.votes)||0)-(Number(a.votes)||0)}).slice(0,8);
-  if(!top.length){ box.innerHTML='<div class="empty">Todavía nadie vota. Regresen a las zonas y marquen 👍 las notas que más pesan.</div>'; }
-  else box.innerHTML=top.map(function(n,i){ var z=ZMETA[n.zone]||{t:n.zone,c:'#4e8fe6'}; return '<div class="rankrow"><span class="pos">'+(i+1)+'</span><span><span class="zt" style="color:'+z.c+'">'+z.ic+' '+z.t+'</span><br>'+n.value.replace(/</g,'&lt;')+'</span><span class="vt">👍 '+(Number(n.votes)||0)+'</span></div>'; }).join('');
-  var dolores=CUR.notes.filter(function(n){return n.zone==='dolores'}).sort(function(a,b){return (Number(b.votes)||0)-(Number(a.votes)||0)}).slice(0,2).map(function(n){return n.value;});
-  var hint=$('#povHint'); if(hint) hint.innerHTML=dolores.length?'Dolores más votados para inspirar la necesidad: '+dolores.map(function(d){return '<b style="color:var(--blue-pale)">“'+d.replace(/</g,'&lt;')+'”</b>'}).join(' · '):'Voten los dolores en las zonas para ver aquí los candidatos.';
+
+/* ======================= RENDER CONSOLIDAR ======================= */
+function buildZoneTabs(hostId,current,onPick){
+  var host=$('#'+hostId); if(!host) return;
+  host.innerHTML='';
+  ZONES.forEach(function(z){
+    var b=document.createElement('button'); b.type='button'; b.className='ztab'+(z.k===current?' on':'');
+    b.style.setProperty('--zc',z.c);
+    b.innerHTML=z.ic+' '+z.t;
+    b.addEventListener('click',function(){ onPick(z.k); });
+    host.appendChild(b);
+  });
+}
+function renderConsolidate(){
+  buildZoneTabs('consTabs',curZoneCons,function(k){ curZoneCons=k; renderConsolidate(); });
+  var host=$('#consBody'); if(!host) return;
+  var z=ZMETA[curZoneCons];
+  var all=CUR.notes.filter(function(n){return n.zone===z.k});
+  if(!all.length){ host.innerHTML='<div class="empty">No hay notas en “'+esc(z.t)+'”. Regresen a Aportar.</div>'; return; }
+  var othersOpts=function(nid){
+    return all.filter(function(m){return m.id!==nid}).map(function(m){
+      var short=m.value.length>42?m.value.slice(0,40)+'…':m.value;
+      return '<option value="'+esc(m.id)+'">'+esc(short)+'</option>';
+    }).join('');
+  };
+  var rows=all.map(function(n){
+    var passed=CUR.kv['pass'+PP+n.id]!=='0';
+    var mergeTo=CUR.kv['merge'+PP+n.id]||'';
+    return '<div class="cnote'+(passed?'':' dis')+'">'+
+      '<label class="cpass"><input type="checkbox" data-pass="'+esc(n.id)+'" '+(passed?'checked':'')+'> pasa</label>'+
+      '<div><div class="ctx">'+esc(n.value)+'</div><div class="cau">'+esc(n.author||'anónimo')+'</div></div>'+
+      '<div class="cmerge">se parece a <select data-merge="'+esc(n.id)+'"><option value="">— (ninguna)</option>'+othersOpts(n.id)+'</select></div>'+
+    '</div>';
+  }).join('');
+  // restore selected merge values after inject
+  var opts=optionsFor(z.k);
+  var prev='<div class="optprev"><div class="ot">Quedan '+opts.length+' '+(opts.length===1?'opción':'opciones')+' para votar</div><ul>'+
+    opts.map(function(o){ return '<li>'+esc(o.label)+(o.merged?'<span class="merged">fusión de '+o.members.length+'</span>':'')+'</li>'; }).join('')+'</ul></div>';
+  host.innerHTML=rows+prev;
+  // set select values + bind
+  $$('select[data-merge]',host).forEach(function(sel){
+    var id=sel.getAttribute('data-merge'); sel.value=CUR.kv['merge'+PP+id]||'';
+    sel.addEventListener('change',function(){ setKV('merge'+PP+id, sel.value); });
+  });
+  $$('input[data-pass]',host).forEach(function(cb){
+    var id=cb.getAttribute('data-pass');
+    cb.addEventListener('change',function(){ setKV('pass'+PP+id, cb.checked?'1':'0'); });
+  });
+}
+
+/* ======================= RENDER VOTAR ======================= */
+function renderVote(){
+  var warn=$('#voteNeedName');
+  if(!hasName()){ warn.style.display='block'; warn.innerHTML='<b>Pon tu nombre</b> arriba (⚙️ Conectar) para votar: la herramienta necesita saber quién eres para no dejarte votar tus propias aportaciones.'; }
+  else { warn.style.display='none'; }
+  buildZoneTabs('voteTabs',curZoneVote,function(k){ curZoneVote=k; renderVote(); });
+  var host=$('#voteBody'); if(!host) return;
+  var z=ZMETA[curZoneVote];
+  var opts=optionsFor(z.k);
+  if(!opts.length){ host.innerHTML='<div class="empty">No hay opciones en “'+esc(z.t)+'”. Aporten y consoliden primero.</div>'; return; }
+  var b=myBallot(z.k);
+  var mineAll=opts.every(function(o){ return o.authorSlugs.indexOf(meSlug())>=0; });
+  var budget='<div class="budget"><span class="bl">Tus puntos:</span>'+
+    '<span class="tokpill p3'+(b.p3?' used':'')+'">3</span>'+
+    '<span class="tokpill p2'+(b.p2?' used':'')+'">2</span>'+
+    '<span class="tokpill p1'+(b.p1?' used':'')+'">1</span>'+
+    '<span class="bl" style="margin-left:auto">'+votersCount(z.k)+' voto(s) en esta zona</span></div>';
+  var rows=opts.map(function(o){
+    var mine=o.authorSlugs.indexOf(meSlug())>=0;
+    var cur = b.p3===o.id?3 : b.p2===o.id?2 : b.p1===o.id?1 : 0;
+    var auth='<div class="vau">'+esc(o.authors.join(', '))+(o.merged?' · fusión':'')+'</div>';
+    if(mine){
+      return '<div class="vopt mine"><div><div class="vtx">'+esc(o.label)+'</div>'+auth+'<div class="vmine">Tu aporte — no puedes votarlo</div></div><div class="toks"></div></div>';
+    }
+    function tk(v,cls){
+      var token=('p'+v);
+      var used=b[token]; // option id holding this token (or '')
+      var onHere=used===o.id;
+      // enabled if token free OR held here
+      var en=(!used)||onHere;
+      return '<button class="tok'+(onHere?(' on'+v):'')+'" data-vote="'+esc(o.id)+'" data-v="'+v+'" '+(en?'':'disabled')+'>'+v+'</button>';
+    }
+    var clr='<button class="tok clr" data-clear="'+esc(o.id)+'" '+(cur?'':'disabled')+' title="Quitar">✕</button>';
+    return '<div class="vopt'+(cur?' scored':'')+'"><div><div class="vtx">'+esc(o.label)+'</div>'+auth+'</div>'+
+      '<div class="toks">'+tk(3)+tk(2)+tk(1)+clr+'</div></div>';
+  }).join('');
+  var info = mineAll ? '<div class="voteinfo">Todas las opciones de esta zona son tuyas. Con tu equipo conectado, cada quien vota las de los demás.</div>' : '';
+  host.innerHTML=budget+rows+info;
+  $$('button[data-vote]',host).forEach(function(btn){
+    btn.addEventListener('click',function(){
+      if(btn.disabled) return;
+      var oid=btn.getAttribute('data-vote'), v='p'+btn.getAttribute('data-v');
+      var bb=myBallot(z.k);
+      // limpia cualquier otro puntaje que esta opción tuviera
+      ['p3','p2','p1'].forEach(function(f){ if(bb[f]===oid) bb[f]=''; });
+      bb[v]=oid;
+      saveBallot(z.k,bb);
+    });
+  });
+  $$('button[data-clear]',host).forEach(function(btn){
+    btn.addEventListener('click',function(){
+      if(btn.disabled) return;
+      var oid=btn.getAttribute('data-clear'); var bb=myBallot(z.k);
+      ['p3','p2','p1'].forEach(function(f){ if(bb[f]===oid) bb[f]=''; });
+      saveBallot(z.k,bb);
+    });
+  });
+}
+
+/* ======================= RENDER RESULTADOS + POV ======================= */
+function renderResults(){
+  var host=$('#resultsBox'); if(!host) return;
+  host.innerHTML=ZONES.map(function(z){
+    var t=tally(z.k).filter(function(r){return true;});
+    var rows;
+    if(!t.length || t.every(function(r){return r.score===0;})){
+      rows='<div class="empty" style="padding:4px 0">Sin votos todavía.</div>';
+    } else {
+      rows=t.slice(0,5).map(function(r,i){
+        return '<div class="rrow'+(i===0&&r.score>0?' win':'')+'"><span class="pos">'+(i+1)+'</span>'+
+          '<span class="rtx">'+esc(r.opt.label)+'</span>'+
+          '<span class="rsc">'+r.score+' <small>pts</small></span></div>';
+      }).join('');
+    }
+    return '<div class="rz"><h4>'+z.ic+' '+esc(z.t)+'</h4>'+rows+'</div>';
+  }).join('');
+  // POV fields
+  var need=$('#povNeed'), why=$('#povWhy');
+  if(need && document.activeElement!==need) need.value=CUR.kv['pov_need']||'';
+  if(why && document.activeElement!==why) why.value=CUR.kv['pov_why']||'';
+  updatePovPreview();
+}
+function updatePovPreview(){
+  var need=($('#povNeed')&&$('#povNeed').value)||'', why=($('#povWhy')&&$('#povWhy').value)||'';
+  var pv=$('#povPreview'); if(!pv) return;
+  pv.innerHTML='Katya necesita <em>'+(need?esc(need):'[necesidad]')+'</em> porque <em>'+(why?esc(why):'[insight]')+'</em>.';
+}
+function winnerLabel(zone){ var t=tally(zone); return (t.length&&t[0].score>0)?t[0].opt.label:''; }
+function seedPov(){
+  var dol=winnerLabel('dolores'), gan=winnerLabel('ganancias');
+  var pie=winnerLabel('piensa'), sie=winnerLabel('siente');
+  var need = dol || gan || '';
+  var why = pie || sie || '';
+  if(need){ setKV('pov_need',need); }
+  if(why){ setKV('pov_why',why); }
+  var nEl=$('#povNeed'), wEl=$('#povWhy'); if(nEl) nEl.value=need; if(wEl) wEl.value=why;
+  updatePovPreview();
+  toast('Propuesta cargada de los ganadores');
+}
+
+/* ======================= RENDER GLOBAL ======================= */
+function renderAll(){
+  renderNotes();
+  renderConsolidate();
+  renderVote();
+  renderResults();
+  syncText();
 }
 function syncText(){
-  var p=$('#pov'); if(p&&document.activeElement!==p&&p.value!==CUR.pov) p.value=CUR.pov;
-  var e=$('#escenario'); if(e&&document.activeElement!==e&&e.value!==CUR.esc) e.value=CUR.esc;
+  var e=$('#escenario'); if(e&&document.activeElement!==e){ var v=CUR.kv['escenario'+PP+meSlug()]; if(v!==undefined && e.value!==v) e.value=v; }
 }
 
-function refresh(){
-  if(connected()){
-    setSrc('ok');
-    Sync.read(TOOL).then(function(j){
-      if(!j||!j.ok||!j.rows) return;
-      CUR.notes=j.rows.filter(function(r){return r.id&&r.zone}).map(function(r){return {id:String(r.id),zone:String(r.zone),author:String(r.author||''),value:String(r.value||''),votes:Number(r.votes)||0}});
-      var myPov='pov'+PP_SEP+_me(), myEsc='escenario'+PP_SEP+_me();
-      var pov=j.rows.filter(function(r){return r.key===myPov})[0]; if(pov) CUR.pov=String(pov.value||''); /* solo el mío */
-      var es=j.rows.filter(function(r){return r.key===myEsc})[0];
-      if(es){ CUR.esc=String(es.value||''); firstEsc=false; }
-      else if(firstEsc){ firstEsc=false; if(!CUR.esc) CUR.esc=ESC_DEFAULT; } /* arranca con el default localmente */
-      renderNotes(); syncText();
-    }).catch(function(){ loadLocal(); });
-  } else { loadLocal(); }
-}
-function loadLocal(){ setSrc('loc'); CUR.notes=localNotes(); CUR.pov=lget(LS_POV,''); CUR.esc=lget(LS_ESC,ESC_DEFAULT); renderNotes(); syncText(); }
-
-function addNote(zone,text){
-  text=(text||'').trim(); if(!text) return;
-  if(connected()){ Sync.post({op:'add',tool:TOOL,zone:zone,value:text}).then(function(j){ if(j&&j.id){mine[j.id]=1;lset(LS_MINE,mine);} refresh(); }).catch(function(){}); }
-  else { var n=localNotes(); var id=uid(); n.push({id:id,zone:zone,author:(window.Sync?Sync.getName():'')||'yo',value:text,votes:0}); lset(LS_NOTES,n); mine[id]=1; lset(LS_MINE,mine); CUR.notes=n; renderNotes(); }
-}
-function voteNote(id){
-  if(connected()){ Sync.post({op:'vote',id:id,delta:1}).then(refresh).catch(function(){}); }
-  else { var n=localNotes(); n.forEach(function(x){if(x.id===id)x.votes=(Number(x.votes)||0)+1}); lset(LS_NOTES,n); CUR.notes=n; renderNotes(); }
-}
-function delNote(id){
-  if(connected()){ Sync.post({op:'del',id:id}).then(refresh).catch(function(){}); }
-  else { var n=localNotes().filter(function(x){return x.id!==id}); lset(LS_NOTES,n); CUR.notes=n; renderNotes(); }
-}
-
-/* ---- eventos del tablero ---- */
+/* ======================= EVENTOS APORTE ======================= */
 document.addEventListener('click',function(e){
   var a=e.target.closest('[data-add]'); if(a){ var z=a.getAttribute('data-add'); var inp=$('input[data-zone="'+z+'"]'); addNote(z,inp.value); inp.value=''; inp.focus(); return; }
-  var v=e.target.closest('[data-vote]'); if(v){ voteNote(v.getAttribute('data-vote')); return; }
   var d=e.target.closest('[data-del]'); if(d){ if(confirm('¿Borrar esta nota?')) delNote(d.getAttribute('data-del')); return; }
 });
 document.addEventListener('keydown',function(e){
   if(e.key==='Enter'&&e.target.matches&&e.target.matches('input[data-zone]')){ e.preventDefault(); var z=e.target.getAttribute('data-zone'); addNote(z,e.target.value); e.target.value=''; }
 });
 
-/* ---- POV y escenario (debounce) ---- */
-var povT,escT;
-$('#pov').addEventListener('input',function(){ CUR.pov=this.value; lset(LS_POV,this.value); if(connected()){ clearTimeout(povT); var val=this.value; povT=setTimeout(function(){ Sync.post({op:'set',tool:TOOL,key:'pov'+PP_SEP+_me(),value:val}).catch(function(){}); },600); } });
-$('#escenario').addEventListener('input',function(){ CUR.esc=this.value; lset(LS_ESC,this.value); if(connected()){ clearTimeout(escT); var val=this.value; escT=setTimeout(function(){ Sync.post({op:'set',tool:TOOL,key:'escenario'+PP_SEP+_me(),value:val}).catch(function(){}); },600); } });
+/* escenario (debounce, por persona) */
+var escT;
+var escEl=$('#escenario');
+if(escEl) escEl.addEventListener('input',function(){ var val=this.value; clearTimeout(escT); escT=setTimeout(function(){ setKV('escenario'+PP+meSlug(), val); },500); });
 
-/* ---- botón Enviar: sube mi escenario + POV y refresca el Sheet al instante ---- */
-(function(){
-  var sendBtn=document.getElementById('sendBtn'), sendT;
-  if(!sendBtn) return;
-  function lab(txt,bg){ sendBtn.textContent=txt; if(bg) sendBtn.style.background=bg; }
-  sendBtn.addEventListener('click', function(){
-    this.blur();
-    if(!connected() || !(window.Sync&&Sync.getName())){ lab('Pon tu nombre arriba ⚙️','#f2c14e'); clearTimeout(sendT); sendT=setTimeout(function(){lab('Enviar mis respuestas','var(--lime)')},2200); return; }
-    var items=[{key:'escenario'+PP_SEP+_me(),value:CUR.esc||''},{key:'pov'+PP_SEP+_me(),value:CUR.pov||''},{key:'_enviado'+PP_SEP+_me(),value:new Date().toLocaleString('es-MX')}];
-    lab('Enviando…','#9cc1f2');
-    Sync.post({op:'bulkset',tool:TOOL,items:items})
-      .then(function(){ return Sync.post({op:'views'}); })
-      .then(function(){ lab('Enviado ✓','#4ccb8f'); clearTimeout(sendT); sendT=setTimeout(function(){lab('Enviar mis respuestas','var(--lime)')},2200); })
-      .catch(function(){ lab('Error, reintenta','#ef6a5a'); clearTimeout(sendT); sendT=setTimeout(function(){lab('Enviar mis respuestas','var(--lime)')},2200); });
-  });
-})();
+/* POV fields */
+var povT;
+['povNeed','povWhy'].forEach(function(id){
+  var el=$('#'+id); if(!el) return;
+  el.addEventListener('input',function(){ updatePovPreview(); var key=id==='povNeed'?'pov_need':'pov_why'; var val=this.value; clearTimeout(povT); povT=setTimeout(function(){ setKV(key,val); },500); });
+});
+var seedBtn=$('#povSeed'); if(seedBtn) seedBtn.addEventListener('click',seedPov);
 
-/* ---- navegación ---- */
+/* ======================= NAVEGACIÓN ======================= */
 var slides=$$('.slide'), N=slides.length, idx=0, prog=$('#prog'), cur=$('#cur'), prevB=$('#prev'), nextB=$('#next'), tchips=$$('.tchip');
 $('#total').textContent=String(N).padStart(2,'0');
+var CHIPMAP={ 'portada':'portada','s-como':'portada','s-que':'s-que','s-persona':'s-que','s-escenario':'s-que',
+  'z-dice':'z-dice','z-piensa':'z-dice','z-hace':'z-dice','z-siente':'z-dice','z-dolores':'z-dice','z-ganancias':'z-dice',
+  's-consolidar':'s-consolidar','s-votar':'s-votar','s-resultados':'s-resultados' };
 function indexOfId(id){ for(var q=0;q<N;q++) if(slides[q].id===id) return q; return -1; }
 function go(n,noHash){ n=Math.max(0,Math.min(N-1,n)); if(n===idx&&slides[idx].classList.contains('active')) return;
   slides[idx].classList.remove('active'); idx=n; slides[idx].classList.add('active'); slides[idx].scrollTop=0;
   prog.style.width=(idx/(N-1)*100)+'%'; cur.textContent=String(idx+1).padStart(2,'0'); prevB.disabled=idx===0; nextB.disabled=idx===N-1;
-  var st=slides[idx].getAttribute('data-step'); tchips.forEach(function(c){ c.classList.toggle('on', st!==null&&c.getAttribute('data-step')===st&&c.getAttribute('data-step')!=='0'); });
+  var chip=CHIPMAP[slides[idx].id]||'';
+  tchips.forEach(function(c){ c.classList.toggle('on', c.getAttribute('data-goto')===chip); });
   if(!noHash){ try{ history.replaceState(null,'','#'+slides[idx].id); }catch(e){} } }
 function next(){go(idx+1)} function prev(){go(idx-1)}
 nextB.addEventListener('click',function(){next();this.blur()}); prevB.addEventListener('click',function(){prev();this.blur()});
 document.addEventListener('click',function(e){ var g=e.target.closest('[data-goto]'); if(g){ e.preventDefault(); var t=indexOfId(g.getAttribute('data-goto')); if(t>=0) go(t); g.blur(); } });
 var kh=$('#keyhint');
-function typing(t){ if(!t||!t.tagName) return false; var tag=t.tagName; return tag==='TEXTAREA'||t.isContentEditable||(tag==='INPUT'&&t.type!=='button'&&t.type!=='submit'); }
+function typing(t){ if(!t||!t.tagName) return false; var tag=t.tagName; return tag==='TEXTAREA'||tag==='SELECT'||t.isContentEditable||(tag==='INPUT'&&t.type!=='button'&&t.type!=='submit'&&t.type!=='checkbox'); }
 document.addEventListener('keydown',function(e){ if(e.ctrlKey||e.metaKey||e.altKey) return;
   if(typing(e.target)){ if(e.key==='Escape'){ e.target.blur(); kh.classList.remove('gone'); } return; }
   var onBtn=e.target&&(e.target.tagName==='BUTTON'||e.target.tagName==='A');
@@ -492,13 +760,13 @@ document.addEventListener('keydown',function(e){ if(e.ctrlKey||e.metaKey||e.altK
   else if(e.key==='ArrowLeft'||e.key==='PageUp'||(e.key===' '&&e.shiftKey&&!onBtn)){e.preventDefault();prev();kh.classList.add('gone')}
   else if(e.key==='Home') go(0); else if(e.key==='End') go(N-1); else if(e.key==='f'||e.key==='F') toggleFs(); });
 var tx=0,ty=0,tOk=false;
-$('#deck').addEventListener('touchstart',function(e){ tOk=!e.target.closest('input,textarea,button,.notes'); tx=e.changedTouches[0].clientX; ty=e.changedTouches[0].clientY; },{passive:true});
+$('#deck').addEventListener('touchstart',function(e){ tOk=!e.target.closest('input,textarea,button,select,.notes,.zbody'); tx=e.changedTouches[0].clientX; ty=e.changedTouches[0].clientY; },{passive:true});
 $('#deck').addEventListener('touchend',function(e){ if(!tOk) return; var dx=e.changedTouches[0].clientX-tx, dy=e.changedTouches[0].clientY-ty; if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)){ dx<0?next():prev(); kh.classList.add('gone'); } },{passive:true});
 function toggleFs(){ if(!document.fullscreenElement){ (document.documentElement.requestFullscreen||function(){}).call(document.documentElement); } else { (document.exitFullscreen||function(){}).call(document); } }
 $('#fs').addEventListener('click',function(){toggleFs();this.blur()});
 window.addEventListener('hashchange',function(){ var t=indexOfId((location.hash||'').slice(1)); if(t>=0&&t!==idx) go(t,true); });
 
-/* ---- init ---- */
+/* ======================= INIT ======================= */
 (function(){
   var barEl=$('#syncbar'); if(window.Sync&&barEl) Sync.mountBar(barEl);
   if(window.Sync){ Sync.onContext(function(){ refresh(); }); }
