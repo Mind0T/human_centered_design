@@ -403,6 +403,7 @@
     <button type="button" class="tchip" data-goto="e-controles" data-step="E">E · Controles</button>
     <button type="button" class="tchip" data-goto="f-cedulas" data-step="F">F · Cédulas</button>
     <button type="button" class="tchip" data-goto="g-ev1" data-step="G">G · Panel</button>
+    <button type="button" class="tchip" data-goto="h-converge" data-step="H">H · Votar</button>
     <span class="sp"></span>
     <span class="saved" id="savedMsg">Guardado ✓</span>
     <button type="button" class="tb" id="copyBtn" title="Copiar todo en formato tabla para pegar en Google Sheets">⧉<span class="tl"> Copiar para Sheets</span></button>
@@ -1038,6 +1039,17 @@
   </div>
 </section>
 
+<!-- ================= CONVERGER · VOTO DE EQUIPO ================= -->
+<section class="slide" id="h-converge" data-step="H">
+  <div class="sin">
+    <div class="eyebrow r">Converger · voto de equipo</div>
+    <h2 class="title r" style="--d:.06s">El riesgo que atacamos primero</h2>
+    <p class="sub r" style="--d:.1s">Ya cada quien evaluó peligros y eventos. Aquí el equipo <b>propone y vota</b> para quedarse con el <b>riesgo prioritario</b>. Reparten <span class="hl">3·2·1</span> puntos; no pueden votar su propia propuesta. Pongan su nombre (⚙️) para participar.</p>
+    <div class="r" style="--d:.16s;margin-top:22px" id="voteRiesgo"></div>
+    <div class="btnrow r" style="--d:.24s;margin-top:24px"><button type="button" class="btn prime" data-goto="cierre">Terminar →</button></div>
+  </div>
+</section>
+
 <!-- ================= CIERRE Y FUENTES ================= -->
 <section class="slide" id="cierre">
   <div class="sin">
@@ -1115,6 +1127,7 @@
 <div class="toast" id="toast"></div>
 
 <script src="sync.js"></script>
+<script src="vote.js"></script>
 <script>
 /* =================== DATOS DEL MÉTODO =================== */
 var FINE = {
@@ -1827,6 +1840,20 @@ if(window.Sync){
   Sync.onContext(function(){ kvFirst=true; pull(); kvPull(); });
   setInterval(function(){ pull(); kvPull(); }, 9000);
 }
+
+/* ---------- convergencia: voto de equipo (vote.js) ---------- */
+(function(){
+  if(!window.VoteWidget) return;
+  function seedRiesgo(){
+    var v=((document.querySelector('[data-k="c2_pr1_pel"]')||{}).value||'').trim();
+    if(v) return v;
+    return ((document.querySelector('[data-k="c1_r1_pel"]')||{}).value||'').trim();
+  }
+  VoteWidget({ tool:'riesgo_vote', group:'prio', mount:document.getElementById('voteRiesgo'),
+    title:'El riesgo prioritario del equipo',
+    prompt:'Cada quien propone el peligro/riesgo más urgente de atender (viene prellenada tu prioridad 1) y el equipo vota cuál encabeza.',
+    placeholder:'El peligro/riesgo a priorizar…', seed:seedRiesgo });
+})();
 </script>
 </body>
 </html>
