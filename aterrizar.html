@@ -273,6 +273,7 @@
     <button type="button" class="tchip hideM" data-goto="p3" data-step="3">3 · Afinar</button>
     <button type="button" class="tchip hideM" data-goto="p4" data-step="4">4 · Converger</button>
     <button type="button" class="tchip hideM" data-goto="p5" data-step="5">5 · Idear</button>
+    <button type="button" class="tchip hideM" data-goto="p-converge" data-step="6">6 · Votar</button>
     <span class="sp"></span>
     <span class="saved" id="savedMsg">Guardado ✓</span>
     <button type="button" class="tb" id="copyBtn" title="Copiar todo en formato tabla para pegar en Google Sheets">⧉<span class="tl"> Copiar para Sheets</span></button>
@@ -524,6 +525,19 @@
     </div>
   </section>
 
+  <!-- CONVERGER · VOTO DE EQUIPO -->
+  <section class="slide" id="p-converge" data-step="6">
+    <div class="sin">
+      <span class="numtag">Converger</span>
+      <div class="eyebrow r" style="--d:.05s">Voto de equipo</div>
+      <h2 class="title r" style="--d:.1s">Converjan en una sola</h2>
+      <p class="sub r" style="--d:.16s">Cada quien escribió su versión. Aquí el equipo <b>propone y vota</b> para quedarse con <b>una</b> pregunta guía y <b>una</b> idea a prototipar. Reparten <span class="hl">3·2·1</span> puntos; no pueden votar su propia propuesta. Pongan su nombre (⚙️) para participar.</p>
+      <div class="r" style="--d:.22s;margin-top:22px" id="voteHmw"></div>
+      <div class="r" style="--d:.28s;margin-top:30px" id="voteIdea"></div>
+      <div class="btnrow r" style="--d:.34s;margin-top:26px"><button type="button" class="ghostlink" data-goto="done">Terminar →</button></div>
+    </div>
+  </section>
+
   <!-- CIERRE -->
   <section class="slide" id="done">
     <div class="sin">
@@ -615,6 +629,7 @@
 <div class="hint-key" id="keyhint"><kbd>←</kbd><kbd>→</kbd> navega · <kbd>Esc</kbd> sale del campo · <kbd>F</kbd> pantalla completa</div>
 
 <script src="sync.js"></script>
+<script src="vote.js"></script>
 <script>
 /* ---------- data model ---------- */
 var CANVAS = [
@@ -1058,6 +1073,27 @@ document.getElementById('fs').addEventListener('click', function(){ toggleFs(); 
 
   Sync.onContext(function(){ firstPull=true; pull(); });
   setInterval(pull, 8000);
+})();
+
+/* ---------- convergencia: voto de equipo (vote.js) ---------- */
+(function(){
+  if(!window.VoteWidget) return;
+  function seedHmw(){
+    var k=window._elegida||'';
+    if(k){ var v=(document.querySelector('[data-k="hmw_'+k+'"]')||{}).value||''; if(v.trim()) return v.trim(); }
+    var found='';
+    CANVAS.forEach(function(f){ if(found) return; var v=(document.querySelector('[data-k="hmw_'+f.k+'"]')||{}).value||''; if(v.trim()) found=v.trim(); });
+    return found;
+  }
+  function seedIdea(){ return ((document.querySelector('[data-k="final_idea"]')||{}).value||'').trim(); }
+  VoteWidget({ tool:'aterrizar', group:'hmw', mount:document.getElementById('voteHmw'),
+    title:'① La pregunta guía del equipo',
+    prompt:'Propón tu “¿Cómo podríamos…?” (viene prellenada tu elegida del paso 4) y voten cuál será la del equipo.',
+    placeholder:'¿Cómo podríamos…?', seed:seedHmw });
+  VoteWidget({ tool:'aterrizar', group:'idea', mount:document.getElementById('voteIdea'),
+    title:'② La idea a prototipar',
+    prompt:'Propón la idea con la que seguirías y voten la ganadora para el prototipo.',
+    placeholder:'La idea / combinación a prototipar…', seed:seedIdea });
 })();
 </script>
 </body>
