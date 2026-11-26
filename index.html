@@ -14,127 +14,92 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;800;900&family=Overpass:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 <style>
   :root{
-    --navy-900:#071428;
-    --navy-800:#0a1a33;
-    --navy-700:#0d2244;
-    --navy-600:#102a55;
-    --royal:#1e52c8;
-    --royal-bright:#2a66e6;
-    --blue-soft:#4e8fe6;
-    --blue-pale:#9cc1f2;
-    --lime:#d7e64b;
-    --lime-dim:#aeb93a;
-    --white:#f4f8ff;
-    --mute:#a9bbd6;
-    --line:rgba(156,193,242,.16);
-    --card:rgba(18,38,74,.6);
-    --ok:#4ccb8f;
-    --warn:#f2c14e;
-    --crit:#ef6a5a;
-    --maxw:1180px;
-    --r:18px;
+    --navy-900:#071428;--navy-800:#0a1a33;--navy-700:#0d2244;--navy-600:#102a55;
+    --royal:#1e52c8;--royal-bright:#2a66e6;--blue-soft:#4e8fe6;--blue-pale:#9cc1f2;
+    --lime:#d7e64b;--lime-dim:#aeb93a;--white:#f4f8ff;--mute:#a9bbd6;
+    --line:rgba(156,193,242,.16);--card:rgba(18,38,74,.6);
+    --ok:#4ccb8f;--warn:#f2c14e;--crit:#ef6a5a;--maxw:1180px;--r:18px;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
-  body{
-    font-family:"Overpass",system-ui,sans-serif;
-    background:var(--navy-900);
-    color:var(--white);
-    line-height:1.55;
-    -webkit-font-smoothing:antialiased;
-    overflow-x:hidden;
-  }
-  h1,h2,h3,.display{font-family:"Archivo",sans-serif;letter-spacing:-.01em}
+  body{font-family:"Overpass",system-ui,sans-serif;background:var(--navy-900);color:var(--white);line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  h1,h2,h3{font-family:"Archivo",sans-serif;letter-spacing:-.01em}
   a{color:inherit}
   .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
-  .eyebrow{
-    font-family:"Archivo",sans-serif;font-weight:800;text-transform:uppercase;
-    letter-spacing:.14em;font-size:.74rem;color:var(--lime);
-    display:inline-flex;align-items:center;gap:10px;
-  }
+  .eyebrow{font-family:"Archivo";font-weight:800;text-transform:uppercase;letter-spacing:.14em;font-size:.74rem;color:var(--lime);display:inline-flex;align-items:center;gap:10px}
   .eyebrow::before{content:"";width:26px;height:2px;background:var(--lime);display:inline-block}
   section{position:relative;padding:72px 0}
   .divline{height:1px;background:var(--line);max-width:var(--maxw);margin:0 auto}
-
-  /* radar rings background motif */
   .rings{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
   .rings span{position:absolute;border-radius:50%;border:1px solid rgba(120,160,230,.10)}
   .inner{position:relative;z-index:1}
 
-  /* ---------- STICKY ANCHOR NAV ---------- */
-  .topnav{
-    position:sticky;top:0;z-index:40;
-    background:rgba(7,20,40,.82);backdrop-filter:blur(10px);
-    border-bottom:1px solid var(--line);
-  }
-  .topnav .tin{display:flex;align-items:center;gap:8px;padding:11px 24px;max-width:var(--maxw);margin:0 auto;overflow-x:auto;scrollbar-width:none}
+  /* ---------- STICKY NAV ---------- */
+  .topnav{position:sticky;top:0;z-index:40;background:rgba(7,20,40,.82);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .topnav .tin{display:flex;align-items:center;gap:8px;padding:10px 24px;max-width:var(--maxw);margin:0 auto;overflow-x:auto;scrollbar-width:none}
   .topnav .tin::-webkit-scrollbar{display:none}
-  .topnav .nbrand{display:flex;align-items:center;gap:10px;flex:0 0 auto;margin-right:auto}
-  .topnav .nbrand .logo-ring{width:30px;height:30px}
-  .topnav .nbrand b{font-family:"Archivo";font-weight:900;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase}
+  .nbrand{display:flex;align-items:center;gap:10px;flex:0 0 auto;margin-right:auto;text-decoration:none}
+  .nbrand img{height:30px;width:auto;display:block;filter:drop-shadow(0 2px 6px rgba(0,0,0,.4))}
+  .nbrand b{font-family:"Archivo";font-weight:900;font-size:.82rem;letter-spacing:.06em;text-transform:uppercase}
   .nlink{flex:0 0 auto;font-family:"Archivo";font-weight:800;font-size:.76rem;color:var(--mute);text-decoration:none;padding:7px 13px;border-radius:999px;border:1px solid transparent;white-space:nowrap;transition:.2s}
   .nlink:hover{color:var(--white);border-color:var(--line)}
   .nlink.prime{color:#071428;background:var(--lime);border-color:var(--lime)}
-  .nlink.prime:hover{color:#071428;filter:brightness(1.05)}
+  .nlink.prime:hover{filter:brightness(1.05)}
 
   /* ---------- HERO ---------- */
-  .hero{
-    background:
+  .hero{background:
       radial-gradient(1100px 680px at 82% 18%, rgba(30,82,200,.42), transparent 60%),
       radial-gradient(900px 600px at 10% 90%, rgba(20,50,130,.35), transparent 60%),
-      linear-gradient(180deg,var(--navy-800),var(--navy-900));
-    padding:0;
-  }
-  .hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:40px;align-items:center;min-height:80vh;padding:80px 0 64px}
-  .brandmark{display:flex;align-items:center;gap:14px;margin-bottom:30px}
-  .logo-ring{width:46px;height:46px;position:relative;flex:0 0 auto}
-  .logo-ring svg{width:100%;height:100%}
-  .brandmark .bt{font-family:"Archivo";font-weight:900;line-height:.98;text-transform:uppercase}
-  .brandmark .bt small{display:block;font-size:.58rem;letter-spacing:.3em;color:var(--mute);font-weight:700}
-  .brandmark .bt b{font-size:1.02rem;letter-spacing:.04em}
-  .hero h1{font-weight:900;font-size:clamp(2.7rem,6.4vw,5rem);line-height:.94;margin:14px 0 8px}
+      linear-gradient(180deg,var(--navy-800),var(--navy-900));padding:0}
+  .hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center;min-height:82vh;padding:70px 0 60px}
+  .brandmark{display:flex;align-items:center;gap:16px;margin-bottom:28px}
+  .brandmark img{height:58px;width:auto;display:block;filter:drop-shadow(0 4px 14px rgba(0,0,0,.5))}
+  .brandmark .bt{font-family:"Archivo";font-weight:900;line-height:1;text-transform:uppercase}
+  .brandmark .bt small{display:block;font-size:.56rem;letter-spacing:.3em;color:var(--mute);font-weight:700;margin-bottom:5px}
+  .brandmark .bt b{font-size:1rem;letter-spacing:.05em}
+  .hero h1{font-weight:900;font-size:clamp(2.7rem,6.4vw,5rem);line-height:.94;margin:10px 0 8px}
   .hero h1 .stroke{color:transparent;-webkit-text-stroke:2px var(--blue-soft)}
   .hero .tag{font-family:"Archivo";font-weight:700;color:var(--blue-soft);font-size:clamp(1.05rem,2vw,1.45rem);margin-bottom:24px}
   .hero p.lead{color:var(--mute);max-width:52ch;font-size:1.06rem;margin-bottom:28px}
+  .hero em{color:var(--blue-soft);font-style:normal}
   .meta-row{display:flex;flex-wrap:wrap;gap:10px}
-  .chip{
-    border:1px solid var(--line);background:rgba(10,26,51,.5);border-radius:999px;
-    padding:8px 15px;font-size:.82rem;color:var(--blue-pale);display:inline-flex;gap:8px;align-items:center;
-  }
+  .chip{border:1px solid var(--line);background:rgba(10,26,51,.5);border-radius:999px;padding:8px 15px;font-size:.82rem;color:var(--blue-pale);display:inline-flex;gap:8px;align-items:center}
   .chip b{color:var(--white);font-weight:600}
   .cta-row{margin-top:28px;display:flex;flex-wrap:wrap;gap:12px}
-  .cta{display:inline-flex;align-items:center;gap:10px;font-family:'Archivo',sans-serif;font-weight:800;font-size:.95rem;padding:14px 22px;border-radius:12px;text-decoration:none;transition:.2s}
+  .cta{display:inline-flex;align-items:center;gap:10px;font-family:'Archivo';font-weight:800;font-size:.95rem;padding:14px 22px;border-radius:12px;text-decoration:none;transition:.2s}
   .cta.prime{background:var(--lime);color:#071428;box-shadow:0 8px 24px rgba(215,230,75,.25)}
   .cta.ghost{background:transparent;color:var(--blue-pale);border:1px solid rgba(156,193,242,.4)}
   .cta.ghost:hover{border-color:var(--blue-soft);color:var(--white)}
   .cta svg{width:18px;height:18px}
 
-  /* hero planet */
-  .planet-wrap{position:relative;display:flex;align-items:center;justify-content:center;min-height:360px}
-  .planet{
-    width:min(360px,74%);aspect-ratio:1;border-radius:50%;
-    background:
-      radial-gradient(120px 120px at 32% 30%, rgba(90,150,240,.9), transparent 60%),
-      radial-gradient(circle at 60% 65%, #1b3f8f, #0c1f49 70%);
-    box-shadow:inset -30px -20px 70px rgba(0,0,0,.55), 0 0 90px rgba(30,90,220,.35);
-    position:relative;overflow:hidden;
-  }
-  .planet::after{
-    content:"";position:absolute;inset:0;border-radius:50%;
-    background:
-      radial-gradient(28px 16px at 40% 42%, rgba(12,30,70,.9),transparent 70%),
-      radial-gradient(44px 24px at 62% 60%, rgba(12,30,70,.85),transparent 72%),
-      radial-gradient(20px 14px at 52% 30%, rgba(12,30,70,.8),transparent 70%);
-  }
-  .orbit{position:absolute;border:1px solid rgba(120,160,230,.18);border-radius:50%}
+  /* ---------- DESIGN-THINKING ANIMATED SVG ---------- */
+  .dt-wrap{position:relative;display:flex;align-items:center;justify-content:center;min-height:380px}
+  .dt-svg{width:min(400px,90%);height:auto;overflow:visible}
+  .dt-loop{fill:none;stroke:rgba(120,160,230,.35);stroke-width:1.4;stroke-dasharray:5 9;animation:dtflow 26s linear infinite}
+  @keyframes dtflow{to{stroke-dashoffset:-420}}
+  .dt-node-ring{fill:none;stroke:var(--nc,#4e8fe6);stroke-width:1.6;opacity:.5}
+  .dt-node-core{fill:var(--navy-700);stroke:var(--nc,#4e8fe6);stroke-width:1.8}
+  .dt-node{transform-box:fill-box;transform-origin:center;animation:dtpulse 5s ease-in-out infinite;animation-delay:var(--d,0s)}
+  @keyframes dtpulse{0%,100%{transform:scale(.86);opacity:.65}44%{transform:scale(1.14);opacity:1}}
+  .dt-node.on .dt-node-core{fill:var(--navy-600)}
+  .dt-ic{font-size:19px}
+  .dt-lbl{font-family:"Archivo",sans-serif;font-weight:800;font-size:10px;letter-spacing:.06em;text-transform:uppercase;fill:var(--blue-pale)}
+  .dt-sparkrot{transform-box:view-box;transform-origin:190px 190px;animation:dtspin 11s linear infinite}
+  @keyframes dtspin{to{transform:rotate(360deg)}}
+  .dt-spark{fill:var(--lime);filter:drop-shadow(0 0 7px rgba(215,230,75,.9))}
+  .dt-center{font-family:"Archivo",sans-serif;font-weight:900;fill:var(--white)}
+  .dt-center-sub{font-family:"Archivo",sans-serif;font-weight:800;font-size:9px;letter-spacing:.22em;fill:var(--lime);text-transform:uppercase}
+  @media(prefers-reduced-motion:reduce){.dt-loop,.dt-node,.dt-sparkrot{animation:none}}
 
-  /* ---------- generic section head ---------- */
+  /* generic section head */
   .shead{max-width:72ch;margin-bottom:40px}
   .shead h2{font-size:clamp(1.9rem,4vw,2.9rem);font-weight:900;line-height:1.02;margin:12px 0 14px}
   .shead p{color:var(--mute);font-size:1.02rem}
+  .shead b{color:var(--white)}
+  .shead em{color:var(--blue-soft);font-style:normal}
   .numtag{font-family:"Archivo";font-weight:900;color:var(--lime);font-size:1.4rem}
 
-  /* ---------- METHODOLOGY NESTED LAYERS ---------- */
+  /* methodology nested layers */
   .layers{display:grid;grid-template-columns:1.1fr .9fr;gap:34px;align-items:center}
   .layerlist{display:flex;flex-direction:column;gap:12px}
   .layer{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;border-left:3px solid var(--lc,var(--blue-soft));transition:.2s}
@@ -142,7 +107,6 @@
   .layer .lk{font-family:"Archivo";font-weight:900;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--lc,var(--blue-soft));margin-bottom:4px}
   .layer h4{font-size:1.08rem;font-weight:800;margin-bottom:4px}
   .layer p{color:var(--mute);font-size:.92rem;margin:0}
-  /* concentric diagram */
   .concentric{display:flex;align-items:center;justify-content:center;min-height:320px;position:relative}
   .ring-d{position:absolute;border-radius:50%;display:flex;align-items:flex-start;justify-content:center;padding-top:10px;font-family:"Archivo";font-weight:800;font-size:.68rem;letter-spacing:.06em;text-transform:uppercase}
   .ring-d.r1{width:320px;height:320px;border:1.5px solid rgba(78,143,230,.5);color:var(--blue-soft)}
@@ -150,76 +114,89 @@
   .ring-d.r3{width:160px;height:160px;border:1.5px solid rgba(156,193,242,.6);color:var(--blue-pale)}
   .ring-d.core{width:92px;height:92px;border:1.5px solid var(--lime);background:radial-gradient(circle,rgba(215,230,75,.14),transparent 70%);color:var(--lime);align-items:center;padding-top:0;text-align:center;line-height:1.15}
 
-  /* ---------- TOOL CATEGORY CARDS ---------- */
-  .cat-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:8px}
-  .cat-head .ck{font-family:"Archivo";font-weight:900;color:var(--lime);font-size:.9rem;letter-spacing:.08em;text-transform:uppercase}
-  .toolgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:26px}
-  .tool{
-    display:flex;flex-direction:column;gap:0;
-    background:var(--card);border:1px solid var(--line);border-radius:var(--r);
-    padding:22px;text-decoration:none;color:inherit;position:relative;overflow:hidden;transition:.2s;
-  }
-  .tool::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--tc,var(--blue-soft));opacity:.9}
-  .tool:hover{border-color:var(--tc,var(--blue-soft));transform:translateY(-3px);box-shadow:0 14px 34px rgba(0,0,0,.35)}
-  .tool .ic{font-size:1.7rem;margin-bottom:12px}
-  .tool h4{font-size:1.1rem;font-weight:800;margin-bottom:7px;display:flex;align-items:center;gap:8px}
-  .tool p{color:var(--mute);font-size:.9rem;margin-bottom:14px;flex:1}
-  .tool .foot{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-family:"Archivo";font-weight:800;font-size:.68rem;letter-spacing:.04em;text-transform:uppercase}
-  .badge{display:inline-flex;align-items:center;gap:5px;padding:4px 9px;border-radius:999px;font-size:.66rem}
-  .b-data{background:rgba(76,203,143,.14);color:var(--ok)}
-  .b-info{background:rgba(78,143,230,.16);color:var(--blue-soft)}
-  .b-result{background:rgba(215,230,75,.14);color:var(--lime)}
-  .b-soon{background:rgba(169,187,214,.12);color:var(--mute)}
-  .tool .go{margin-left:auto;color:var(--tc,var(--blue-soft));display:inline-flex}
-  .tool.soon{opacity:.72;cursor:default}
-  .tool.soon:hover{transform:none;border-color:var(--line);box-shadow:none}
+  /* ---------- CIRCULAR MENU ---------- */
+  .menu-head{text-align:center;max-width:60ch;margin:0 auto 10px}
+  .menu-stage-wrap{position:relative;max-width:640px;margin:0 auto}
+  .menu-stage{position:relative;width:100%;height:clamp(360px,78vw,480px);margin:0 auto;touch-action:pan-y;outline:none;user-select:none}
+  .wheel{position:absolute;inset:0}
+  .mitem{position:absolute;top:50%;left:50%;width:84px;height:84px;margin:-42px 0 0 -42px;border-radius:50%;
+    background:var(--card);border:1px solid var(--line);cursor:pointer;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:2px;transition:transform .6s cubic-bezier(.2,.7,.2,1),opacity .4s,border-color .3s,box-shadow .3s;
+    color:var(--white);text-align:center;padding:4px;will-change:transform,opacity}
+  .menu-stage.dragging .mitem{transition:opacity .2s,border-color .3s}
+  .mitem::before{content:"";position:absolute;top:-1px;left:50%;transform:translateX(-50%);width:34px;height:3px;border-radius:0 0 4px 4px;background:var(--mc,var(--blue-soft));opacity:.9}
+  .mitem .mi-ic{font-size:1.5rem;line-height:1}
+  .mitem .mi-t{font-family:"Archivo";font-weight:800;font-size:.56rem;line-height:1.05;letter-spacing:.02em;color:var(--blue-pale);max-width:76px}
+  .mitem.active{border-color:var(--mc,var(--blue-soft));box-shadow:0 0 0 3px rgba(215,230,75,.12),0 16px 40px rgba(0,0,0,.45)}
+  .mitem.active .mi-t{color:var(--white)}
+  .mitem:hover{border-color:var(--mc,var(--blue-soft))}
 
-  /* placeholder add-card */
-  .tool.add{align-items:flex-start;justify-content:center;border-style:dashed;background:rgba(18,38,74,.3)}
-  .tool.add .ic{opacity:.6}
-  .tool.add h4{color:var(--mute)}
+  .menu-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:clamp(180px,42vw,230px);
+    text-align:center;pointer-events:none;z-index:2}
+  .menu-center .mc-badge{display:inline-block;font-family:"Archivo";font-weight:800;font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;padding:4px 11px;border-radius:999px;margin-bottom:10px}
+  .menu-center .mc-ic{font-size:2rem;line-height:1;margin-bottom:6px}
+  .menu-center .mc-name{font-family:"Archivo";font-weight:900;font-size:1.25rem;line-height:1.05;margin-bottom:8px}
+  .menu-center .mc-desc{color:var(--mute);font-size:.82rem;line-height:1.4;margin-bottom:14px;min-height:46px}
+  .menu-center .mc-open{pointer-events:auto;display:inline-flex;align-items:center;gap:8px;background:var(--lime);color:#071428;font-family:"Archivo";font-weight:800;font-size:.84rem;padding:11px 20px;border:none;border-radius:11px;cursor:pointer;text-decoration:none;transition:.2s}
+  .menu-center .mc-open:hover{filter:brightness(1.06);transform:translateY(-1px)}
+  .menu-center .mc-open svg{width:16px;height:16px}
 
-  /* example banner */
-  .exbanner{display:flex;gap:14px;align-items:flex-start;background:linear-gradient(90deg,rgba(30,82,200,.18),transparent);border:1px solid var(--line);border-left:3px solid var(--blue-soft);border-radius:0 14px 14px 0;padding:16px 20px;margin-top:8px}
+  .badge-data{background:rgba(76,203,143,.16);color:var(--ok)}
+  .badge-info{background:rgba(78,143,230,.18);color:var(--blue-soft)}
+  .badge-result{background:rgba(215,230,75,.16);color:var(--lime-dim)}
+  .badge-proj{background:rgba(156,193,242,.18);color:var(--blue-pale)}
+
+  .menu-arrows{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:8px}
+  .marrow{width:46px;height:46px;border-radius:12px;border:1px solid var(--line);background:rgba(10,26,51,.7);color:var(--white);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s}
+  .marrow:hover{border-color:var(--lime);color:var(--lime)}
+  .marrow svg{width:20px;height:20px}
+  .menu-dots{display:flex;gap:7px;align-items:center}
+  .mdot{width:7px;height:7px;border-radius:50%;background:rgba(156,193,242,.3);cursor:pointer;transition:.2s;border:none;padding:0}
+  .mdot.on{background:var(--lime);transform:scale(1.3)}
+  .menu-hint{text-align:center;color:var(--mute);font-size:.76rem;margin-top:14px;font-family:"Archivo";font-weight:700;letter-spacing:.04em}
+
+  .exbanner{display:flex;gap:14px;align-items:flex-start;background:linear-gradient(90deg,rgba(30,82,200,.18),transparent);border:1px solid var(--line);border-left:3px solid var(--blue-soft);border-radius:0 14px 14px 0;padding:16px 20px;margin-top:40px}
   .exbanner .xt{font-family:"Archivo";font-weight:900;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--blue-soft);flex:0 0 auto;padding-top:2px}
   .exbanner p{margin:0;color:var(--mute);font-size:.92rem}
   .exbanner b{color:var(--white)}
+  .exbanner em{color:var(--blue-soft);font-style:normal}
 
   footer{padding:50px 0;text-align:center;color:var(--mute);font-size:.82rem;border-top:1px solid var(--line)}
-  footer .logo-ring{width:38px;height:38px;margin:0 auto 14px}
+  footer img{height:46px;width:auto;margin:0 auto 16px;display:block;filter:drop-shadow(0 3px 10px rgba(0,0,0,.4))}
   footer .edit{margin-top:10px;font-size:.76rem;color:var(--lime-dim)}
 
   @media(max-width:900px){
-    .hero-grid{grid-template-columns:1fr;gap:10px;padding:56px 0 44px;min-height:auto}
-    .planet-wrap{min-height:230px;order:-1}
+    .hero-grid{grid-template-columns:1fr;gap:6px;padding:48px 0 36px;min-height:auto}
+    .dt-wrap{min-height:300px;order:-1}
     .layers{grid-template-columns:1fr;gap:24px}
     .concentric{min-height:300px;order:-1}
-    .toolgrid{grid-template-columns:1fr}
+    .mitem{width:66px;height:66px;margin:-33px 0 0 -33px}
+    .mitem .mi-ic{font-size:1.2rem}
+    .mitem .mi-t{font-size:.5rem;max-width:60px}
+  }
+  @media(max-width:700px){
+    .menu-stage{height:300px}
+    .menu-center{position:static;transform:none;width:auto;max-width:340px;margin:6px auto 0;pointer-events:auto}
+    .menu-center .mc-desc{min-height:0}
   }
 </style>
 </head>
 <body>
 
-<!-- ================= STICKY NAV ================= -->
+<!-- ============ STICKY NAV ============ -->
 <nav class="topnav">
   <div class="tin">
-    <span class="nbrand">
-      <span class="logo-ring">
-        <svg viewBox="0 0 48 48" fill="none">
-          <circle cx="22" cy="26" r="16" stroke="#f4f8ff" stroke-width="2.4"/>
-          <path d="M34 14 C 30 10, 24 9, 20 11" stroke="#d7e64b" stroke-width="2.4" stroke-linecap="round"/>
-          <circle cx="35" cy="13" r="2.4" fill="#ef6a5a"/>
-        </svg>
-      </span>
+    <a class="nbrand" href="index.html">
+      <img src="assets/img/logo.png" alt="Logo">
       <b>HCD&nbsp;Kit</b>
-    </span>
+    </a>
     <a class="nlink" href="#metodologia">Metodología</a>
-    <a class="nlink" href="#herramientas">Herramientas</a>
+    <a class="nlink" href="#explorar">Herramientas</a>
     <a class="nlink prime" href="proyecto.html">Descripción del proyecto →</a>
   </div>
 </nav>
 
-<!-- ================= HERO ================= -->
+<!-- ============ HERO ============ -->
 <header class="hero">
   <div class="rings">
     <span style="width:700px;height:700px;top:-120px;right:-160px"></span>
@@ -230,13 +207,7 @@
     <div class="hero-grid">
       <div>
         <div class="brandmark">
-          <span class="logo-ring">
-            <svg viewBox="0 0 48 48" fill="none">
-              <circle cx="22" cy="26" r="16" stroke="#f4f8ff" stroke-width="2.4"/>
-              <path d="M34 14 C 30 10, 24 9, 20 11" stroke="#d7e64b" stroke-width="2.4" stroke-linecap="round"/>
-              <circle cx="35" cy="13" r="2.4" fill="#ef6a5a"/>
-            </svg>
-          </span>
+          <img src="assets/img/logo.png" alt="Logo">
           <span class="bt">
             <small>[ Marca del proyecto · editable ]</small>
             <b>HUMAN-CENTERED DESIGN KIT</b>
@@ -246,7 +217,7 @@
         <div class="eyebrow">Diseño centrado en el humano</div>
         <h1>Diseña<br><span class="stroke">para la persona</span></h1>
         <div class="tag">Aterriza el problema antes de construir la solución</div>
-        <p class="lead">Un centro de apoyo para generar soluciones de forma más eficaz — y, a la vez, una plataforma para aprender diseño centrado en el humano, diseño de experiencias, de interfaces y <em style="color:var(--blue-soft);font-style:normal">design thinking</em>. Herramientas que se estudian y se usan: cada una explica su método y te deja capturar datos reales con tu equipo.</p>
+        <p class="lead">Un centro de apoyo para generar soluciones de forma más eficaz — y, a la vez, una plataforma para aprender diseño centrado en el humano, de experiencias, de interfaces y <em>design thinking</em>. Herramientas que se estudian y se usan: cada una explica su método y te deja capturar datos reales con tu equipo.</p>
 
         <div class="meta-row">
           <span class="chip">🧭 <b>Empatizar</b> → Definir</span>
@@ -255,26 +226,67 @@
         </div>
 
         <div class="cta-row">
-          <a class="cta prime" href="#herramientas">
-            Ver las herramientas
+          <a class="cta prime" href="#explorar">
+            Explorar las herramientas
             <svg viewBox="0 0 24 24" fill="none"><path d="M4 12h16M14 6l6 6-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </a>
-          <a class="cta ghost" href="#metodologia">
-            ¿Qué es el HCD?
-          </a>
+          <a class="cta ghost" href="#metodologia">¿Qué es el HCD?</a>
         </div>
       </div>
 
-      <div class="planet-wrap">
-        <div class="orbit" style="width:120%;height:120%"></div>
-        <div class="orbit" style="width:145%;height:145%"></div>
-        <div class="planet"></div>
+      <!-- Design-thinking animated loop -->
+      <div class="dt-wrap">
+        <svg class="dt-svg" viewBox="0 0 380 380" role="img" aria-label="Ciclo iterativo de design thinking: empatizar, definir, idear, prototipar, probar">
+          <circle class="dt-loop" cx="190" cy="190" r="118"/>
+          <!-- traveling spark -->
+          <g class="dt-sparkrot"><circle class="dt-spark" cx="190" cy="72" r="5.5"/></g>
+          <!-- center label -->
+          <text class="dt-center-sub" x="190" y="176" text-anchor="middle">Proceso iterativo</text>
+          <text class="dt-center" x="190" y="200" text-anchor="middle" font-size="19">Design</text>
+          <text class="dt-center" x="190" y="220" text-anchor="middle" font-size="19">Thinking</text>
+
+          <!-- NODES -->
+          <g class="dt-node on" style="--d:0s;--nc:#d7e64b">
+            <circle class="dt-node-ring" cx="190" cy="72" r="26"/>
+            <circle class="dt-node-core" cx="190" cy="72" r="20"/>
+            <text class="dt-ic" x="190" y="78" text-anchor="middle">🫀</text>
+          </g>
+          <text class="dt-lbl" x="190" y="34" text-anchor="middle">Empatiza</text>
+
+          <g class="dt-node" style="--d:1s;--nc:#4e8fe6">
+            <circle class="dt-node-ring" cx="302" cy="153" r="26"/>
+            <circle class="dt-node-core" cx="302" cy="153" r="20"/>
+            <text class="dt-ic" x="302" y="159" text-anchor="middle">🎯</text>
+          </g>
+          <text class="dt-lbl" x="338" y="150" text-anchor="middle">Define</text>
+
+          <g class="dt-node" style="--d:2s;--nc:#2a66e6">
+            <circle class="dt-node-ring" cx="259" cy="285" r="26"/>
+            <circle class="dt-node-core" cx="259" cy="285" r="20"/>
+            <text class="dt-ic" x="259" y="291" text-anchor="middle">💡</text>
+          </g>
+          <text class="dt-lbl" x="259" y="332" text-anchor="middle">Idea</text>
+
+          <g class="dt-node" style="--d:3s;--nc:#4e8fe6">
+            <circle class="dt-node-ring" cx="121" cy="285" r="26"/>
+            <circle class="dt-node-core" cx="121" cy="285" r="20"/>
+            <text class="dt-ic" x="121" y="291" text-anchor="middle">🛠️</text>
+          </g>
+          <text class="dt-lbl" x="121" y="332" text-anchor="middle">Prototipa</text>
+
+          <g class="dt-node" style="--d:4s;--nc:#9cc1f2">
+            <circle class="dt-node-ring" cx="78" cy="153" r="26"/>
+            <circle class="dt-node-core" cx="78" cy="153" r="20"/>
+            <text class="dt-ic" x="78" y="159" text-anchor="middle">🔬</text>
+          </g>
+          <text class="dt-lbl" x="42" y="150" text-anchor="middle">Prueba</text>
+        </svg>
       </div>
     </div>
   </div>
 </header>
 
-<!-- ================= 01 METODOLOGÍA ================= -->
+<!-- ============ 01 METODOLOGÍA ============ -->
 <section id="metodologia">
   <div class="rings"><span style="width:900px;height:900px;top:-200px;left:-300px"></span></div>
   <div class="wrap inner">
@@ -282,9 +294,8 @@
       <span class="numtag">01</span>
       <div class="eyebrow" style="margin-top:8px">La metodología</div>
       <h2>Del humano hacia la interfaz, no al revés</h2>
-      <p>El <b style="color:var(--white)">diseño centrado en el humano</b> es el marco más amplio: parte de entender a las personas reales —sus necesidades, contextos y limitaciones— antes de decidir qué construir. De ahí se desprenden capas cada vez más concretas, hasta llegar al pixel. Esta plataforma recorre ese camino con herramientas para cada etapa.</p>
+      <p>El <b>diseño centrado en el humano</b> es el marco más amplio: parte de entender a las personas reales antes de decidir qué construir. De ahí se desprenden capas cada vez más concretas, hasta llegar al pixel. Esta plataforma recorre ese camino con herramientas para cada etapa.</p>
     </div>
-
     <div class="layers">
       <div class="layerlist">
         <div class="layer" style="--lc:var(--blue-soft)">
@@ -305,10 +316,9 @@
         <div class="layer" style="--lc:var(--lime)">
           <div class="lk">El motor que lo recorre</div>
           <h4>Design thinking &amp; procesos</h4>
-          <p>Empatizar → Definir → Idear → Prototipar → Testear. El proceso iterativo que conecta todas las capas.</p>
+          <p>Empatizar → Definir → Idear → Prototipar → Probar. El proceso iterativo que conecta todas las capas.</p>
         </div>
       </div>
-
       <div class="concentric" aria-hidden="true">
         <div class="ring-d r1">HCD</div>
         <div class="ring-d r2">UCD</div>
@@ -320,126 +330,163 @@
 </section>
 <div class="divline"></div>
 
-<!-- ================= 02 HERRAMIENTAS ================= -->
-<section id="herramientas">
-  <div class="wrap inner">
-    <div class="shead">
-      <span class="numtag">02</span>
-      <div class="eyebrow" style="margin-top:8px">Categoría 1 · Herramientas y enseñanza</div>
-      <h2>Estudia el método y genera los datos</h2>
-      <p>Cada herramienta es una presentación que <b style="color:var(--white)">explica el tema</b> y, a la vez, te deja <b style="color:var(--white)">capturar información real</b> con tu equipo. Las marcadas como colaborativas sincronizan lo que todos escriben a una hoja de cálculo; las informativas son solo de consulta.</p>
-    </div>
-
-    <div class="toolgrid">
-      <!-- Herramienta de datos -->
-      <a class="tool" href="empatia.html" style="--tc:var(--royal-bright)">
-        <div class="ic">🧠</div>
-        <h4>Mapa de empatía</h4>
-        <p>Ponte en los zapatos de tu usuario en seis zonas (dice, piensa, hace, siente, dolores, ganancias) y deriva una necesidad. Captura y votación en equipo.</p>
-        <div class="foot"><span class="badge b-data">● Colaborativo</span><span class="go"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12h16M14 6l6 6-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
-      </a>
-
-      <!-- Herramienta de datos -->
-      <a class="tool" href="aterrizar.html" style="--tc:var(--royal-bright)">
-        <div class="ic">🧭</div>
-        <h4>Aterrizar el reto</h4>
-        <p>Taller paso a paso para convertir un reto amplio en un problema potente y una idea para prototipar. Canvas, ¿Cómo podríamos…?, autorrevisión e ideación.</p>
-        <div class="foot"><span class="badge b-data">● Colaborativo</span><span class="go"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12h16M14 6l6 6-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
-      </a>
-
-      <!-- Herramienta de datos -->
-      <a class="tool" href="riesgo.html" style="--tc:var(--royal-bright)">
-        <div class="ic">⚠️</div>
-        <h4>Riesgo y monitoreo</h4>
-        <p>Escalera del riesgo, grado de peligrosidad y de riesgo, indicadores adelantados/rezagados, jerarquía de controles y cédulas llenables en equipo.</p>
-        <div class="foot"><span class="badge b-data">● Colaborativo</span><span class="go"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12h16M14 6l6 6-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
-      </a>
-
-      <!-- Informativa -->
-      <a class="tool" href="manual-pitch.html" style="--tc:var(--blue-soft)">
-        <div class="ic">🎤</div>
-        <h4>Manual de pitch</h4>
-        <p>Las piezas de un pitch ganador, los criterios de los jueces, el formato de entrega y los checklists de ensayo y envío. Solo consulta.</p>
-        <div class="foot"><span class="badge b-info">Informativa</span><span class="go"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12h16M14 6l6 6-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
-      </a>
-
-      <!-- Informativa (ejemplo NASA) -->
-      <a class="tool" href="investigacion.html" style="--tc:var(--blue-soft)">
-        <div class="ic">🔬</div>
-        <h4>Investigación <span style="font-size:.6rem;font-family:'Archivo';color:var(--blue-pale);border:1px solid var(--line);border-radius:6px;padding:2px 6px;letter-spacing:.04em">EJEMPLO</span></h4>
-        <p>Cómo documentar el marco y las fuentes de un reto. Ejemplo real: la investigación del equipo para el reto de salud de astronautas de la NASA.</p>
-        <div class="foot"><span class="badge b-info">Informativa</span><span class="go"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12h16M14 6l6 6-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
-      </a>
-
-      <!-- Informativa (ejemplo NASA) -->
-      <a class="tool" href="reto.html" style="--tc:var(--blue-soft)">
-        <div class="ic">🎯</div>
-        <h4>Análisis del reto <span style="font-size:.6rem;font-family:'Archivo';color:var(--blue-pale);border:1px solid var(--line);border-radius:6px;padding:2px 6px;letter-spacing:.04em">EJEMPLO</span></h4>
-        <p>Cómo desglosar los objetivos y lineamientos de un reto. Ejemplo real: el análisis del reto de monitoreo de salud para astronautas (NASA Space Apps).</p>
-        <div class="foot"><span class="badge b-info">Informativa</span><span class="go"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12h16M14 6l6 6-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
-      </a>
-
-      <!-- Placeholder para nuevas -->
-      <div class="tool add" style="--tc:var(--mute)">
-        <div class="ic">➕</div>
-        <h4>Más herramientas</h4>
-        <p>Journey map, card sorting, árbol de decisiones, pruebas de usabilidad… Ve agregando aquí las que aprendas en tu formación.</p>
-        <div class="foot"><span class="badge b-soon">Por añadir</span></div>
-      </div>
-    </div>
-
-    <div class="exbanner" style="margin-top:26px">
-      <span class="xt">Ejemplo</span>
-      <p>Las herramientas y datos de ejemplo que verás dentro provienen de un <b>reto real</b>: la propuesta <b>ORBITAL</b> para el reto <em style="color:var(--blue-soft);font-style:normal">Health Monitoring Software for Astronauts</em> de NASA Space Apps CDMX 2026. Sirven como muestra de cómo se llena cada herramienta; al clonar esta plataforma para un proyecto nuevo, sustituyes ese contenido por el tuyo.</p>
-    </div>
-  </div>
-</section>
-<div class="divline"></div>
-
-<!-- ================= 03 DESCRIPCIÓN + RESULTADOS ================= -->
-<section id="resultados">
+<!-- ============ 02 EXPLORAR · MENÚ CIRCULAR ============ -->
+<section id="explorar">
   <div class="rings"><span style="width:1000px;height:1000px;top:-250px;right:-350px"></span></div>
   <div class="wrap inner">
-    <div class="shead">
-      <span class="numtag">03</span>
-      <div class="eyebrow" style="margin-top:8px">Categoría 2 · Descripción del proyecto</div>
-      <h2>Y cuando el proyecto toma forma…</h2>
-      <p>La segunda categoría concentra la <b style="color:var(--white)">descripción de tu proyecto</b> y sus <b style="color:var(--white)">resultados</b>: la presentación de insights que retoma los datos generados por las herramientas, el pitch final para jurado o stakeholders, y el enlace al repositorio de tu prototipo.</p>
+    <div class="shead menu-head" style="text-align:center">
+      <span class="numtag">02</span>
+      <div class="eyebrow" style="margin-top:8px;justify-content:center">Explora el kit</div>
+      <h2>Herramientas &amp; resultados</h2>
+      <p style="margin:0 auto">Gira el menú: cada opción es una herramienta de estudio y captura, o un resultado del proyecto. Toca una opción o usa las flechas.</p>
     </div>
 
-    <div class="toolgrid">
-      <a class="tool" href="proyecto.html" style="--tc:var(--lime)">
-        <div class="ic">📄</div>
-        <h4>Descripción del proyecto</h4>
-        <p>La portada de tu proyecto: qué es, el problema, la solución y el equipo — más los botones hacia todos los resultados. Plantilla lista para rellenar.</p>
-        <div class="foot"><span class="badge b-result">Página central</span><span class="go"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12h16M14 6l6 6-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
-      </a>
+    <div class="menu-stage-wrap">
+      <div class="menu-stage" id="menuStage" tabindex="0" role="listbox" aria-label="Menú de herramientas">
+        <div class="wheel" id="wheel"></div>
+      </div>
+      <div class="menu-center" id="menuCenter" aria-live="polite"></div>
+    </div>
 
-      <a class="tool" href="insights.html" style="--tc:var(--lime)">
-        <div class="ic">📊</div>
-        <h4>Insights</h4>
-        <p>Presentación de hallazgos que retoma automáticamente lo capturado en empatía, aterrizar y riesgo, con trazabilidad de decisiones y borrador de requerimientos.</p>
-        <div class="foot"><span class="badge b-result">Resultado</span><span class="go"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12h16M14 6l6 6-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
-      </a>
+    <div class="menu-arrows">
+      <button class="marrow" id="mPrev" type="button" aria-label="Anterior"><svg viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <div class="menu-dots" id="menuDots"></div>
+      <button class="marrow" id="mNext" type="button" aria-label="Siguiente"><svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    </div>
+    <div class="menu-hint">Gira automáticamente · desliza, arrastra o usa ← →</div>
 
-      <a class="tool" href="pitch-jurado.html" style="--tc:var(--lime)">
-        <div class="ic">🎬</div>
-        <h4>Pitch final</h4>
-        <p>Presentación a pantalla completa para jurado, stakeholders o inversionistas, con la identidad visual del producto. La defensa última del proyecto.</p>
-        <div class="foot"><span class="badge b-result">Resultado</span><span class="go"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12h16M14 6l6 6-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
-      </a>
+    <div class="exbanner">
+      <span class="xt">Ejemplo</span>
+      <p>Las herramientas traen datos de muestra de un <b>reto real</b>: la propuesta <b>ORBITAL</b> para el reto <em>Health Monitoring Software for Astronauts</em> (NASA Space Apps CDMX 2026). Al clonar esta plataforma para un proyecto nuevo, sustituyes ese contenido por el tuyo.</p>
     </div>
   </div>
 </section>
 
 <footer>
-  <div class="logo-ring">
-    <svg viewBox="0 0 48 48" fill="none"><circle cx="22" cy="26" r="16" stroke="#9cc1f2" stroke-width="2.4"/><path d="M34 14 C 30 10, 24 9, 20 11" stroke="#d7e64b" stroke-width="2.4" stroke-linecap="round"/><circle cx="35" cy="13" r="2.4" fill="#ef6a5a"/></svg>
-  </div>
+  <img src="assets/img/logo.png" alt="Logo">
   Human-Centered Design Kit — plataforma reutilizable de diseño centrado en el humano<br/>
   Herramienta para aterrizar problemas, detectar necesidades y presentar resultados.
   <div class="edit">[ Edita marca, textos y ejemplos al clonar este machote para un proyecto nuevo ]</div>
 </footer>
 
+<script>
+(function(){
+  var ITEMS=[
+    {ic:'🧠',name:'Mapa de empatía',badge:'Herramienta',bc:'badge-data',mc:'#2a66e6',href:'empatia.html',desc:'Ponte en los zapatos del usuario en seis zonas y deriva una necesidad. Captura y votación en equipo.'},
+    {ic:'🧭',name:'Aterrizar el reto',badge:'Herramienta',bc:'badge-data',mc:'#2a66e6',href:'aterrizar.html',desc:'Convierte un reto amplio en un problema potente y una idea para prototipar.'},
+    {ic:'⚠️',name:'Riesgo y monitoreo',badge:'Herramienta',bc:'badge-data',mc:'#2a66e6',href:'riesgo.html',desc:'Escalera del riesgo, peligrosidad, controles y cédulas llenables en equipo.'},
+    {ic:'🎤',name:'Manual de pitch',badge:'Informativa',bc:'badge-info',mc:'#4e8fe6',href:'manual-pitch.html',desc:'Las piezas de un pitch ganador, los criterios de los jueces y los checklists. Solo consulta.'},
+    {ic:'🔬',name:'Investigación',badge:'Informativa · ejemplo',bc:'badge-info',mc:'#4e8fe6',href:'investigacion.html',desc:'Cómo documentar el marco y las fuentes de un reto. Ejemplo real de la NASA.'},
+    {ic:'🎯',name:'Análisis del reto',badge:'Informativa · ejemplo',bc:'badge-info',mc:'#4e8fe6',href:'reto.html',desc:'Cómo desglosar los objetivos de un reto. Ejemplo real de la NASA.'},
+    {ic:'📄',name:'Descripción del proyecto',badge:'Página central',bc:'badge-proj',mc:'#9cc1f2',href:'proyecto.html',desc:'La portada de tu proyecto y el acceso a todos los resultados. Plantilla lista para rellenar.'},
+    {ic:'📊',name:'Insights',badge:'Resultado',bc:'badge-result',mc:'#d7e64b',href:'insights.html',desc:'Presentación de hallazgos que retoma lo capturado en las herramientas colaborativas.'},
+    {ic:'🎬',name:'Pitch final',badge:'Resultado',bc:'badge-result',mc:'#d7e64b',href:'pitch-jurado.html',desc:'Presentación a pantalla completa para jurado, stakeholders o inversionistas.'}
+  ];
+  var N=ITEMS.length, step=360/N;
+  var stage=document.getElementById('menuStage'), wheel=document.getElementById('wheel'),
+      center=document.getElementById('menuCenter'), dotsBox=document.getElementById('menuDots');
+  var pos=0, R=150, els=[], dots=[], paused=false, autoT=null;
+
+  // build items + dots
+  ITEMS.forEach(function(it,i){
+    var el=document.createElement('button');
+    el.type='button'; el.className='mitem'; el.style.setProperty('--mc',it.mc);
+    el.setAttribute('role','option'); el.setAttribute('aria-label',it.name);
+    el.innerHTML='<span class="mi-ic">'+it.ic+'</span><span class="mi-t">'+it.name+'</span>';
+    el.dataset.i=i; wheel.appendChild(el); els.push(el);
+    var d=document.createElement('button'); d.type='button'; d.className='mdot'; d.setAttribute('aria-label',it.name);
+    d.addEventListener('click',function(){ goTo(i); kick(); }); dotsBox.appendChild(d); dots.push(d);
+  });
+
+  function computeR(){
+    var w=stage.clientWidth, h=stage.clientHeight, isz=els[0].offsetWidth||80;
+    R=Math.min(w,h)/2 - isz/2 - 10;
+  }
+  function activeIndex(){ return ((Math.round(pos)%N)+N)%N; }
+  function render(){
+    for(var i=0;i<N;i++){
+      var th=(i-pos)*step;
+      // depth emphasis: closeness to top (th=0 => front)
+      var front=Math.cos(th*Math.PI/180); // 1 at top, -1 bottom
+      var sc=0.64+0.36*((front+1)/2);
+      var op=0.5+0.5*((front+1)/2);
+      els[i].style.transform='rotate('+th+'deg) translateY(-'+R+'px) rotate('+(-th)+'deg) scale('+sc.toFixed(3)+')';
+      els[i].style.opacity=op.toFixed(2);
+      els[i].style.zIndex=Math.round(front*100)+100;
+    }
+    var a=activeIndex();
+    for(var j=0;j<N;j++){ els[j].classList.toggle('active',j===a); dots[j].classList.toggle('on',j===a); }
+    var it=ITEMS[a];
+    center.innerHTML='<span class="mc-badge '+it.bc+'">'+it.badge+'</span>'+
+      '<div class="mc-ic">'+it.ic+'</div>'+
+      '<div class="mc-name">'+it.name+'</div>'+
+      '<div class="mc-desc">'+it.desc+'</div>'+
+      '<a class="mc-open" href="'+it.href+'">Abrir <svg viewBox="0 0 24 24" fill="none"><path d="M4 12h16M14 6l6 6-6 6" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>';
+  }
+  function go(p){ pos=p; render(); }
+  function next(){ go(Math.round(pos)+1); }
+  function prev(){ go(Math.round(pos)-1); }
+  function goTo(i){
+    var a=activeIndex(), d=i-a;
+    while(d>N/2) d-=N; while(d<-N/2) d+=N;
+    go(Math.round(pos)+d);
+  }
+  function open(){ window.location.href=ITEMS[activeIndex()].href; }
+
+  // auto rotate
+  function startAuto(){ stopAuto(); autoT=setInterval(function(){ if(!paused) next(); },5000); }
+  function stopAuto(){ if(autoT){ clearInterval(autoT); autoT=null; } }
+  function kick(){ paused=true; stopAuto(); clearTimeout(kick._t); kick._t=setTimeout(function(){ paused=false; startAuto(); },6000); }
+
+  // arrows + keyboard
+  document.getElementById('mNext').addEventListener('click',function(){ next(); kick(); });
+  document.getElementById('mPrev').addEventListener('click',function(){ prev(); kick(); });
+  stage.addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'||e.key==='ArrowDown'){ e.preventDefault(); next(); kick(); }
+    else if(e.key==='ArrowLeft'||e.key==='ArrowUp'){ e.preventDefault(); prev(); kick(); }
+    else if(e.key==='Enter'||e.key===' '){ e.preventDefault(); open(); }
+  });
+  stage.addEventListener('mouseenter',function(){ paused=true; });
+  stage.addEventListener('mouseleave',function(){ if(!drag.on){ paused=false; } });
+
+  // click on items
+  els.forEach(function(el){
+    el.addEventListener('click',function(e){
+      if(drag.moved>6) return; // was a drag
+      var i=+el.dataset.i;
+      if(i===activeIndex()) open(); else { goTo(i); kick(); }
+    });
+  });
+
+  // pointer drag (touch + mouse unified)
+  var drag={on:false,x:0,start:0,moved:0};
+  var STEPPX=72;
+  stage.addEventListener('pointerdown',function(e){
+    if(e.target.closest('.mc-open')) return;
+    drag.on=true; drag.x=e.clientX; drag.start=pos; drag.moved=0;
+    paused=true; stopAuto(); stage.classList.add('dragging');
+    try{ stage.setPointerCapture(e.pointerId); }catch(_){}
+  });
+  stage.addEventListener('pointermove',function(e){
+    if(!drag.on) return;
+    var dx=e.clientX-drag.x; drag.moved=Math.max(drag.moved,Math.abs(dx));
+    pos=drag.start - dx/STEPPX; render();
+  });
+  function endDrag(){
+    if(!drag.on) return; drag.on=false; stage.classList.remove('dragging');
+    go(Math.round(pos)); kick();
+  }
+  stage.addEventListener('pointerup',endDrag);
+  stage.addEventListener('pointercancel',endDrag);
+
+  document.addEventListener('visibilitychange',function(){ paused=document.hidden; });
+  window.addEventListener('resize',function(){ computeR(); render(); });
+
+  // init
+  function init(){ computeR(); render(); startAuto(); }
+  if(document.readyState!=='loading') init(); else document.addEventListener('DOMContentLoaded',init);
+  window.addEventListener('load',function(){ computeR(); render(); });
+})();
+</script>
 </body>
 </html>
