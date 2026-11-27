@@ -116,6 +116,13 @@
 
   /* ---------- CIRCULAR MENU ---------- */
   .menu-head{text-align:center;max-width:60ch;margin:0 auto 10px}
+  .menu-tabs{display:flex;flex-wrap:wrap;justify-content:center;gap:9px;margin:4px auto 20px;max-width:720px}
+  .menu-tab{cursor:pointer;font-family:"Archivo",sans-serif;font-weight:800;font-size:.8rem;letter-spacing:.01em;border:1px solid var(--line);background:rgba(10,26,51,.5);color:var(--mute);border-radius:999px;padding:9px 16px;transition:.2s;display:inline-flex;align-items:center;gap:8px}
+  .menu-tab:hover{color:var(--white);border-color:var(--tc,var(--blue-soft))}
+  .menu-tab i{width:9px;height:9px;border-radius:50%;background:var(--tc,#4e8fe6);display:inline-block}
+  .menu-tab .ct{opacity:.6;font-weight:700}
+  .menu-tab.on{background:var(--tc,#4e8fe6);border-color:var(--tc,#4e8fe6);color:#071428}
+  .menu-tab.on i{background:#071428}.menu-tab.on .ct{opacity:.75}
   .menu-stage-wrap{position:relative;max-width:640px;margin:0 auto}
   .menu-stage{position:relative;width:100%;height:clamp(360px,78vw,480px);margin:0 auto;touch-action:pan-y;outline:none;user-select:none}
   .wheel{position:absolute;inset:0}
@@ -338,8 +345,10 @@
       <span class="numtag">02</span>
       <div class="eyebrow" style="margin-top:8px;justify-content:center">Explora el kit</div>
       <h2>Herramientas &amp; resultados</h2>
-      <p style="margin:0 auto">Gira el menú: cada opción es una herramienta de estudio y captura, o un resultado del proyecto. Toca una opción o usa las flechas.</p>
+      <p style="margin:0 auto">Gira el menú: cada opción es una herramienta de estudio y captura, o un resultado del proyecto. Filtra por categoría, toca una opción o usa las flechas.</p>
     </div>
+
+    <div class="menu-tabs" id="menuTabs" role="tablist" aria-label="Categorías del menú"></div>
 
     <div class="menu-stage-wrap">
       <div class="menu-stage" id="menuStage" tabindex="0" role="listbox" aria-label="Menú de herramientas">
@@ -371,34 +380,68 @@
 
 <script>
 (function(){
-  var ITEMS=[
-    {ic:'🧠',name:'Mapa de empatía',badge:'Herramienta',bc:'badge-data',mc:'#2a66e6',href:'empatia.html',desc:'Ponte en los zapatos del usuario en seis zonas y deriva una necesidad. Captura y votación en equipo.'},
-    {ic:'🧭',name:'Aterrizar el reto',badge:'Herramienta',bc:'badge-data',mc:'#2a66e6',href:'aterrizar.html',desc:'Convierte un reto amplio en un problema potente y una idea para prototipar.'},
-    {ic:'⚠️',name:'Riesgo y monitoreo',badge:'Herramienta',bc:'badge-data',mc:'#2a66e6',href:'riesgo.html',desc:'Escalera del riesgo, peligrosidad, controles y cédulas llenables en equipo.'},
-    {ic:'🌍',name:'¿Qué es el DCH?',badge:'Informativa',bc:'badge-info',mc:'#4e8fe6',href:'que-es-dch.html',desc:'Qué es el Diseño Centrado en el Humano (IDEO U): definición, historia, 3 fases, 8 principios, lenguaje, casos reales y cómo empezar.'},
-    {ic:'🎨',name:'Proceso de Design Thinking',badge:'Informativa',bc:'badge-info',mc:'#4e8fe6',href:'proceso-dt.html',desc:'Las 7 fases del proceso centrado en las personas (IDEO U), paso a paso y con herramientas interactivas para practicar cada etapa.'},
-    {ic:'🎤',name:'Manual de pitch',badge:'Informativa',bc:'badge-info',mc:'#4e8fe6',href:'manual-pitch.html',desc:'Las piezas de un pitch ganador, los criterios de los jueces y los checklists. Solo consulta.'},
-    {ic:'🔬',name:'Investigación',badge:'Informativa · ejemplo',bc:'badge-info',mc:'#4e8fe6',href:'investigacion.html',desc:'Cómo documentar el marco y las fuentes de un reto. Ejemplo real de la NASA.'},
-    {ic:'🎯',name:'Análisis del reto',badge:'Informativa · ejemplo',bc:'badge-info',mc:'#4e8fe6',href:'reto.html',desc:'Cómo desglosar los objetivos de un reto. Ejemplo real de la NASA.'},
-    {ic:'📄',name:'Descripción del proyecto',badge:'Página central',bc:'badge-proj',mc:'#9cc1f2',href:'proyecto.html',desc:'La portada de tu proyecto y el acceso a todos los resultados. Plantilla lista para rellenar.'},
-    {ic:'📊',name:'Insights',badge:'Resultado',bc:'badge-result',mc:'#d7e64b',href:'insights.html',desc:'Presentación de hallazgos que retoma lo capturado en las herramientas colaborativas.'},
-    {ic:'🎬',name:'Pitch final',badge:'Resultado',bc:'badge-result',mc:'#d7e64b',href:'pitch-jurado.html',desc:'Presentación a pantalla completa para jurado, stakeholders o inversionistas.'}
+  var ALL=[
+    {ic:'🧠',name:'Mapa de empatía',cat:'tool',badge:'Herramienta',bc:'badge-data',mc:'#2a66e6',href:'empatia.html',desc:'Ponte en los zapatos del usuario en seis zonas y deriva una necesidad. Captura y votación en equipo.'},
+    {ic:'🧭',name:'Aterrizar el reto',cat:'tool',badge:'Herramienta',bc:'badge-data',mc:'#2a66e6',href:'aterrizar.html',desc:'Convierte un reto amplio en un problema potente y una idea para prototipar.'},
+    {ic:'⚠️',name:'Riesgo y monitoreo',cat:'tool',badge:'Herramienta',bc:'badge-data',mc:'#2a66e6',href:'riesgo.html',desc:'Escalera del riesgo, peligrosidad, controles y cédulas llenables en equipo.'},
+    {ic:'🌍',name:'¿Qué es el DCH?',cat:'info',badge:'Informativa',bc:'badge-info',mc:'#4e8fe6',href:'que-es-dch.html',desc:'Qué es el Diseño Centrado en el Humano (IDEO U): definición, historia, 3 fases, 8 principios, lenguaje, casos reales y cómo empezar.'},
+    {ic:'🎨',name:'Proceso de Design Thinking',cat:'info',badge:'Informativa',bc:'badge-info',mc:'#4e8fe6',href:'proceso-dt.html',desc:'Las 7 fases del proceso centrado en las personas (IDEO U), paso a paso y con herramientas interactivas para practicar cada etapa.'},
+    {ic:'🎤',name:'Manual de pitch',cat:'info',badge:'Informativa',bc:'badge-info',mc:'#4e8fe6',href:'manual-pitch.html',desc:'Las piezas de un pitch ganador, los criterios de los jueces y los checklists. Solo consulta.'},
+    {ic:'🔬',name:'Investigación',cat:'info',badge:'Informativa · ejemplo',bc:'badge-info',mc:'#4e8fe6',href:'investigacion.html',desc:'Cómo documentar el marco y las fuentes de un reto. Ejemplo real de la NASA.'},
+    {ic:'🎯',name:'Análisis del reto',cat:'info',badge:'Informativa · ejemplo',bc:'badge-info',mc:'#4e8fe6',href:'reto.html',desc:'Cómo desglosar los objetivos de un reto. Ejemplo real de la NASA.'},
+    {ic:'📄',name:'Descripción del proyecto',cat:'result',badge:'Página central',bc:'badge-proj',mc:'#9cc1f2',href:'proyecto.html',desc:'La portada de tu proyecto y el acceso a todos los resultados. Plantilla lista para rellenar.'},
+    {ic:'📊',name:'Insights',cat:'result',badge:'Resultado',bc:'badge-result',mc:'#d7e64b',href:'insights.html',desc:'Presentación de hallazgos que retoma lo capturado en las herramientas colaborativas.'},
+    {ic:'🎬',name:'Pitch final',cat:'result',badge:'Resultado',bc:'badge-result',mc:'#d7e64b',href:'pitch-jurado.html',desc:'Presentación a pantalla completa para jurado, stakeholders o inversionistas.'}
   ];
-  var N=ITEMS.length, step=360/N;
+  var CATS=[
+    {id:'all',  label:'Todas',        c:'#9cc1f2'},
+    {id:'tool', label:'Herramientas', c:'#2a66e6'},
+    {id:'info', label:'Informativas', c:'#4e8fe6'},
+    {id:'result',label:'Resultados',  c:'#d7e64b'}
+  ];
+  var ITEMS=ALL.slice(), N=ITEMS.length, step=360/N, curCat='all';
   var stage=document.getElementById('menuStage'), wheel=document.getElementById('wheel'),
-      center=document.getElementById('menuCenter'), dotsBox=document.getElementById('menuDots');
+      center=document.getElementById('menuCenter'), dotsBox=document.getElementById('menuDots'),
+      tabsBox=document.getElementById('menuTabs');
   var pos=0, R=150, els=[], dots=[], paused=false, autoT=null;
 
-  // build items + dots
-  ITEMS.forEach(function(it,i){
-    var el=document.createElement('button');
-    el.type='button'; el.className='mitem'; el.style.setProperty('--mc',it.mc);
-    el.setAttribute('role','option'); el.setAttribute('aria-label',it.name);
-    el.innerHTML='<span class="mi-ic">'+it.ic+'</span><span class="mi-t">'+it.name+'</span>';
-    el.dataset.i=i; wheel.appendChild(el); els.push(el);
-    var d=document.createElement('button'); d.type='button'; d.className='mdot'; d.setAttribute('aria-label',it.name);
-    d.addEventListener('click',function(){ goTo(i); kick(); }); dotsBox.appendChild(d); dots.push(d);
+  // category tabs
+  CATS.forEach(function(cat){
+    var count=cat.id==='all'?ALL.length:ALL.filter(function(x){return x.cat===cat.id;}).length;
+    var t=document.createElement('button'); t.type='button'; t.className='menu-tab'+(cat.id==='all'?' on':'');
+    t.style.setProperty('--tc',cat.c); t.setAttribute('role','tab'); t.dataset.cat=cat.id;
+    t.innerHTML='<i></i>'+cat.label+' <span class="ct">'+count+'</span>';
+    t.addEventListener('click',function(){ setCat(cat.id); });
+    tabsBox.appendChild(t);
   });
+  function setCat(id){
+    if(id===curCat) return;
+    curCat=id;
+    [].forEach.call(tabsBox.children,function(t){ t.classList.toggle('on',t.dataset.cat===id); });
+    ITEMS=(id==='all')?ALL.slice():ALL.filter(function(x){return x.cat===id;});
+    buildWheel(); kick();
+  }
+
+  // build items + dots (rebuilds whenever the filter changes)
+  function buildWheel(){
+    wheel.innerHTML=''; dotsBox.innerHTML=''; els=[]; dots=[];
+    N=ITEMS.length; step=360/N; pos=0;
+    ITEMS.forEach(function(it,i){
+      var el=document.createElement('button');
+      el.type='button'; el.className='mitem'; el.style.setProperty('--mc',it.mc);
+      el.setAttribute('role','option'); el.setAttribute('aria-label',it.name);
+      el.innerHTML='<span class="mi-ic">'+it.ic+'</span><span class="mi-t">'+it.name+'</span>';
+      el.dataset.i=i; wheel.appendChild(el); els.push(el);
+      el.addEventListener('click',function(e){
+        if(drag.moved>6) return;
+        var k=+el.dataset.i;
+        if(k===activeIndex()) open(); else { goTo(k); kick(); }
+      });
+      var d=document.createElement('button'); d.type='button'; d.className='mdot'; d.setAttribute('aria-label',it.name);
+      d.addEventListener('click',(function(k){return function(){ goTo(k); kick(); };})(i)); dotsBox.appendChild(d); dots.push(d);
+    });
+    computeR(); render();
+  }
 
   function computeR(){
     var w=stage.clientWidth, h=stage.clientHeight, isz=els[0].offsetWidth||80;
@@ -458,15 +501,6 @@
   stage.addEventListener('mouseenter',function(){ paused=true; });
   stage.addEventListener('mouseleave',function(){ if(!drag.on){ paused=false; } });
 
-  // click on items
-  els.forEach(function(el){
-    el.addEventListener('click',function(e){
-      if(drag.moved>6) return; // was a drag
-      var i=+el.dataset.i;
-      if(i===activeIndex()) open(); else { goTo(i); kick(); }
-    });
-  });
-
   // pointer drag (touch + mouse unified)
   var drag={on:false,x:0,start:0,moved:0};
   var STEPPX=72;
@@ -492,7 +526,7 @@
   window.addEventListener('resize',function(){ computeR(); render(); });
 
   // init
-  function init(){ computeR(); render(); startAuto(); }
+  function init(){ buildWheel(); startAuto(); }
   if(document.readyState!=='loading') init(); else document.addEventListener('DOMContentLoaded',init);
   window.addEventListener('load',function(){ computeR(); render(); });
 })();
