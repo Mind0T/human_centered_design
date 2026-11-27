@@ -132,7 +132,7 @@
   .mitem:hover{border-color:var(--mc,var(--blue-soft))}
 
   .menu-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:clamp(180px,42vw,230px);
-    text-align:center;pointer-events:none;z-index:2}
+    text-align:center;pointer-events:none;z-index:150}
   .menu-center .mc-badge{display:inline-block;font-family:"Archivo";font-weight:800;font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;padding:4px 11px;border-radius:999px;margin-bottom:10px}
   .menu-center .mc-ic{font-size:2rem;line-height:1;margin-bottom:6px}
   .menu-center .mc-name{font-family:"Archivo";font-weight:900;font-size:1.25rem;line-height:1.05;margin-bottom:8px}
@@ -406,15 +406,22 @@
   }
   function activeIndex(){ return ((Math.round(pos)%N)+N)%N; }
   function render(){
+    // Órbita elíptica = disco visto en ángulo (perspectiva): más ancho que alto.
+    var Rx=R*1.16, Ry=R*0.82;
     for(var i=0;i<N;i++){
-      var th=(i-pos)*step;
-      // depth emphasis: closeness to top (th=0 => front)
-      var front=Math.cos(th*Math.PI/180); // 1 at top, -1 bottom
-      var sc=0.64+0.36*((front+1)/2);
-      var op=0.5+0.5*((front+1)/2);
-      els[i].style.transform='rotate('+th+'deg) translateY(-'+R+'px) rotate('+(-th)+'deg) scale('+sc.toFixed(3)+')';
+      var th=(i-pos)*step, rad=th*Math.PI/180;
+      var front=Math.cos(rad);            // 1 enfrente (arriba/seleccionada), -1 al fondo
+      var depth=(front+1)/2;              // 0 al fondo .. 1 enfrente
+      var x=Math.sin(rad)*Rx;             // reparto horizontal
+      var y=-front*Ry;                    // la de enfrente arriba; las del fondo, abajo
+      var sc=0.38+0.74*depth;             // 0.38 al fondo -> 1.12 enfrente: la seleccionada resalta
+      var op=0.16+0.84*depth;             // se desvanecen hacia el fondo
+      var blur=(1-depth)*2.8;             // y se ven desenfocadas: refuerza la profundidad
+      els[i].style.transform='translate('+x.toFixed(1)+'px,'+y.toFixed(1)+'px) scale('+sc.toFixed(3)+')';
       els[i].style.opacity=op.toFixed(2);
-      els[i].style.zIndex=Math.round(front*100)+100;
+      els[i].style.filter=blur>0.15?'blur('+blur.toFixed(2)+'px)':'none';
+      // Las del fondo (z < 150) quedan detrás de la tarjeta central; las de enfrente, delante.
+      els[i].style.zIndex=Math.round(depth*220)+80;
     }
     var a=activeIndex();
     for(var j=0;j<N;j++){ els[j].classList.toggle('active',j===a); dots[j].classList.toggle('on',j===a); }
